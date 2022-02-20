@@ -7,11 +7,8 @@ venom
     .create(
         'global-bot',
         (base64Qrimg, asciiQR, attempts, urlCode) => {
-            console.log('Terminal qrcode: ', asciiQR);
             console.log('\n\n\n')
             console.log('base64 image string qrcode: ', base64Qrimg);
-            console.log('\n\n\n')
-            console.log('urlCode (data-ref): ', urlCode);
             console.log('\n\n\n')
         },
     )
