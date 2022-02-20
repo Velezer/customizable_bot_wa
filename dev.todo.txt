@@ -1,4 +1,5 @@
 
-typeorm commands entity
-provide qr to url
 session token to database
+provide qr to url
+
+typeorm commands entity
