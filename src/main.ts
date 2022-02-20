@@ -1,6 +1,6 @@
 import * as venom from 'venom-bot';
-import { commands } from './commands';
-import { MessageListener } from './messages'
+import { Commander } from './Commander'
+
 
 async function main() {
     // const foundToken = {}
@@ -17,7 +17,7 @@ async function main() {
     )
         .then(client => {
             client.onAnyMessage(async message => {
-                const mlistener = new MessageListener(message, client, commands)
+                const mlistener = new Commander(message, client)
                 mlistener.run()
             })
         })

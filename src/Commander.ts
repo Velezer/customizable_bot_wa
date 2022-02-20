@@ -1,16 +1,23 @@
 import { Message, Whatsapp } from 'venom-bot';
-import { command } from './commands';
+import { CekCommand } from './Commands/CekCommand';
+import { Command } from './Commands/Command';
+import { JoinGrupCommand } from './Commands/JoinGrupCommand';
+import { TagAllCommand } from './Commands/TagAllCommand';
 
-export class MessageListener {
+export class Commander {
     message: Message;
     client: Whatsapp;
-    commands: command[];
+    commands: Command[];
 
 
-    constructor(message: Message, client: Whatsapp, commands: any) {
+    constructor(message: Message, client: Whatsapp) {
         this.message = message
         this.client = client
-        this.commands = commands
+        this.commands = [
+            new CekCommand(),
+            new TagAllCommand(),
+            new JoinGrupCommand()
+        ]
 
     }
 
@@ -30,7 +37,7 @@ export class MessageListener {
 
                 await client.reply(
                     message.chatId,
-                    command.replyMessage,
+                    command.replyMessageOnSuccess,
                     message.id.toString()
                 );
             }
