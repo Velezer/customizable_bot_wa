@@ -1,8 +1,6 @@
 import { Message, Whatsapp } from 'venom-bot';
-import { CekCommand } from './Commands/CekCommand';
-import { Command } from './Commands/Command';
-import { JoinGrupCommand } from './Commands/JoinGrupCommand';
-import { TagAllCommand } from './Commands/TagAllCommand';
+import { Command } from './Command/Command';
+import { CekCommand, JoinGrupCommand, TagAllCommand } from './Command/commands';
 
 export class Commander {
     message: Message;
@@ -33,13 +31,15 @@ export class Commander {
                 message.fromMe === false
             ) {
 
-                command.cb(client, message)
+                if (await command.cb(client, message)) {
+                    await client.reply(
+                        message.chatId,
+                        command.replyMessageOnSuccess,
+                        message.id.toString()
+                    );
+                }
 
-                await client.reply(
-                    message.chatId,
-                    command.replyMessageOnSuccess,
-                    message.id.toString()
-                );
+
             }
 
         });

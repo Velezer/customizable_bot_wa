@@ -1,11 +1,30 @@
+import { createConnection } from 'typeorm';
 import * as venom from 'venom-bot';
 import { Commander } from './Commander'
+import { Token } from './Token/token.entity';
+import { TokenRepo } from './Token/token.repo';
+import * as dotenv from 'dotenv';
+dotenv.config({ path: '.env.dev.local' })
 
 
 async function main() {
-    // const foundToken = {}
+    const connection = await createConnection({
+        type: "postgres",
+        host: process.env.DB_HOST,
+        port: +process.env.DB_PORT!,
+        username: process.env.DB_USERNAME,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_DBNAME,
+        entities: [Token],
+        synchronize: true
+    });
+
+    const tokenRepo = connection.getCustomRepository(TokenRepo)
+    const sessionName = 'global-bot'
+    const foundToken = await tokenRepo.findBySessionName(sessionName)
+
     venom.create(
-        'global-bot',
+        sessionName,
         (base64Qrimg, asciiQR, attempts, urlCode) => {
             console.log('\n\n\n')
             console.log('base64 image string qrcode: ', base64Qrimg);
@@ -13,13 +32,18 @@ async function main() {
         },
         undefined,
         undefined,
-        undefined
+        foundToken?.session
     )
-        .then(client => {
+        .then(async client => {
             client.onAnyMessage(async message => {
                 const mlistener = new Commander(message, client)
                 mlistener.run()
             })
+            
+            const token = new Token()
+            token.sessionName = sessionName
+            token.session = await client.getSessionTokenBrowser()
+            tokenRepo.save(token)
         })
         .catch(err => {
             console.error('main function error')
