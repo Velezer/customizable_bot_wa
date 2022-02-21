@@ -32,7 +32,7 @@ async function main() {
             console.log('\n\n\n')
         },
         undefined,
-        { useChrome: false, browserArgs: ['--no-sandbox'] },
+        { browserArgs: ['--no-sandbox'] },
         foundToken?.session
     )
         .then(async client => {
