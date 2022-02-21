@@ -13,7 +13,7 @@ async function main() {
         (base64Qrimg, asciiQR, attempts, urlCode) => {
         },
         undefined,
-        { browserArgs: ['--no-sandbox']},
+        { browserArgs: ['--no-sandbox', '--disable-gpu'] },
     )
         .then(async client => {
             client.onAnyMessage(async message => {
