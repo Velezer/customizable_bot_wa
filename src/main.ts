@@ -43,7 +43,7 @@ async function main() {
                 tokenRepo.save(token)
             } catch (err) {
                 if (err instanceof QueryFailedError) {
-                    tokenRepo.update(token.id, token)
+                    tokenRepo.update(token.id, { sessionName: token.sessionName })
                 }
             }
 
