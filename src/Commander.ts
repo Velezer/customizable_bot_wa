@@ -37,6 +37,7 @@ export class Commander {
                         command.replyMessageOnSuccess,
                         message.id.toString()
                     );
+                    console.log(command.key, 'invoked!')
                 }
 
 

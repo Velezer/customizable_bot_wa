@@ -1,4 +1,4 @@
-import { createConnection } from 'typeorm';
+import { createConnection, QueryFailedError } from 'typeorm';
 import * as venom from 'venom-bot';
 import { Commander } from './Commander'
 import { Token } from './Token/token.entity';
@@ -20,6 +20,7 @@ async function main() {
     });
 
     const tokenRepo = connection.getCustomRepository(TokenRepo)
+
     const sessionName = 'global-bot'
     const foundToken = await tokenRepo.findBySessionName(sessionName)
 
@@ -35,15 +36,21 @@ async function main() {
         foundToken?.session
     )
         .then(async client => {
+            const token = new Token()
+            token.sessionName = sessionName
+            token.session = await client.getSessionTokenBrowser()
+            try {
+                tokenRepo.save(token)
+            } catch (err) {
+                if (err instanceof QueryFailedError) {
+                    tokenRepo.update(token.id, token)
+                }
+            }
+
             client.onAnyMessage(async message => {
                 const mlistener = new Commander(message, client)
                 mlistener.run()
             })
-            
-            const token = new Token()
-            token.sessionName = sessionName
-            token.session = await client.getSessionTokenBrowser()
-            tokenRepo.save(token)
         })
         .catch(err => {
             console.error('main function error')

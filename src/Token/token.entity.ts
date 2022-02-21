@@ -6,7 +6,7 @@ export class Token {
     @PrimaryGeneratedColumn()
     id!: number;
 
-    @Column()
+    @Column({ unique: true })
     sessionName!: string;
 
     @Column('jsonb')

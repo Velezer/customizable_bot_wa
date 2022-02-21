@@ -35,10 +35,8 @@ export class TagAllCommand extends Command {
         if (message.isGroupMsg) {
             const groupId = message.chatId
             const groupMembers = await client.getGroupMembersIds(groupId)
-            console.log(groupMembers)
-            console.log(groupMembers.map(member => member.user))
             await client.sendMentioned(groupId, m1, groupMembers.map(member => member.user))
-            return true
+            return false
         } else {
             client.reply(message.chatId, `${this.key} cuma bisa di grup`, message.id)
             return false
