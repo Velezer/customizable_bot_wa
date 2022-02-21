@@ -11,9 +11,6 @@ async function main() {
     venom.create(
         sessionName,
         (base64Qrimg, asciiQR, attempts, urlCode) => {
-            console.log('\n\n\n')
-            console.log('base64 image string qrcode: ', base64Qrimg);
-            console.log('\n\n\n')
         },
         undefined,
         { browserArgs: ['--no-sandbox']},
