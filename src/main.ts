@@ -1,8 +1,6 @@
 import { createConnection, QueryFailedError } from 'typeorm';
 import * as venom from 'venom-bot';
 import { Commander } from './Commander'
-import * as dotenv from 'dotenv';
-dotenv.config({ path: '.env.dev.local' })
 
 
 async function main() {
