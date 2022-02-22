@@ -66,8 +66,8 @@ export class TagAllCommand implements Command {
 }
 
 export class GetGroupMetadataCommand implements Command {
-    key: string = '/group-metadata';
-    description: string = 'dev only';
+    key: string = '/group-data';
+    description: string = 'data grup';
     groupAdminOnly: boolean = true;
 
     async cb(botwa: BotWa, to: string, receivedMessage: string): Promise<void> {
@@ -77,6 +77,8 @@ export class GetGroupMetadataCommand implements Command {
             const metadata = await botwa.getGroupMetadata(to)
 
             let msg = ''
+            msg += metadata.subject + '\n\n' || ''
+            msg += metadata.desc + '\n\n'
             msg += 'yang bikin grup @' + metadata.owner?.split('@')[0] + '\n\n'
             msg += 'list member:\n'
 
@@ -92,9 +94,9 @@ export class GetGroupMetadataCommand implements Command {
 
 }
 export class GetGroupParticipantsCommand implements Command {
-    key: string = '/group-participants';
-    description: string = 'dev only';
-    groupAdminOnly:boolean = true;
+    key: string = '/group-member';
+    description: string = 'list member grup';
+    groupAdminOnly: boolean = true;
 
 
     async cb(botwa: BotWa, to: string, receivedMessage: string): Promise<void> {
