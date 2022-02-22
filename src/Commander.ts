@@ -3,7 +3,7 @@ import { Behavior } from './Behavior/Behavior';
 import { LeaveGroupParticipantBehavior, WelcomeGroupParticipantAddBehavior, WelcomeGroupParticipantInviteBehavior } from './Behavior/behaviors';
 import { BotWa } from './BotWa/BotWa';
 import { Command } from './Command/Command';
-import { CekCommand } from './Command/commands';
+import { CekCommand, MenuCommand } from './Command/commands';
 
 export class Commander {
     message: proto.IWebMessageInfo;
@@ -21,6 +21,9 @@ export class Commander {
             // new TagAllCommand(),
             // new JoinGrupCommand()
         ]
+        this.commands.push(new MenuCommand(this.commands))
+
+
 
         this.behaviors = [
             new WelcomeGroupParticipantAddBehavior(),

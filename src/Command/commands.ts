@@ -3,14 +3,41 @@ import { Command } from "./Command";
 
 
 
-export class CekCommand extends Command {
+export class CekCommand implements Command {
     key: string = '/cek';
+    description: string = 'cek keaktifan bot';
 
     async cb(botwa: BotWa, to: string, receivedMessage: string): Promise<void> {
         const receivedKey = receivedMessage?.split(' ')[0]
 
         if (receivedKey === this.key) {
             await botwa.sendMessage(to, 'bot sudah aktif');
+        }
+
+    }
+}
+
+export class MenuCommand implements Command {
+    key: string = '/menu';
+    description: string = 'nampilin menu';
+    allCommands: Command[];
+
+    constructor(allCommands: Command[]) {
+        this.allCommands = allCommands
+    }
+
+
+    async cb(botwa: BotWa, to: string, receivedMessage: string): Promise<void> {
+        const receivedKey = receivedMessage?.split(' ')[0]
+
+        if (receivedKey === this.key) {
+
+            let msg = ''
+            this.allCommands.forEach(command => {
+                msg += `${command.key} \n${command.description}\n\n`
+            })
+            msg = msg.slice(0, -2)
+            await botwa.sendMessage(to, msg);
         }
 
     }

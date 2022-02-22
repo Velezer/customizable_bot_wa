@@ -2,8 +2,9 @@ import { proto } from "@adiwajshing/baileys"
 import { BotWa } from "../BotWa/BotWa"
 
 
-export abstract class Command {
-    abstract key: string
+export interface Command {
+    key: string
+    description: string
 
-    abstract cb(botwa: BotWa, to: string, receivedMessage: string): Promise<void>
+    cb(botwa: BotWa, to: string, receivedMessage: string): Promise<void>
 }
