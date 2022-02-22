@@ -1,6 +1,6 @@
 import { BotWa } from './BotWa/BotWa'
 import { Commander } from './Commander'
-import makeWASocket, { DisconnectReason, makeWALegacySocket, useSingleFileAuthState, newLegacyAuthCreds, makeInMemoryStore, LegacyAuthenticationCreds, proto } from '@adiwajshing/baileys'
+import makeWASocket, { DisconnectReason, makeWALegacySocket, useSingleFileAuthState, newLegacyAuthCreds, makeInMemoryStore, LegacyAuthenticationCreds, proto, generateWAMessage } from '@adiwajshing/baileys'
 import { Boom } from '@hapi/boom'
 import { LegacyBaileysSock } from './BotWa/LegacyBaileysSock'
 import { loadAuth, saveAuth } from './auth/auth'

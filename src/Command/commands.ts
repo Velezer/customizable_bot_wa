@@ -43,6 +43,38 @@ export class MenuCommand implements Command {
     }
 }
 
+export class TagAllCommand implements Command {
+    key: string = '/tag-all';
+    description: string = 'ngetag seluruh grup';
+
+    async cb(botwa: BotWa, to: string, receivedMessage: string): Promise<void> {
+        const receivedKey = receivedMessage?.split(' ')[0]
+        const m1 = receivedMessage!.split('/tag-all ')[1]
+
+        if (receivedKey === this.key) {
+
+        }
+
+    }
+
+}
+
+export class GetGroupMetadataCommand implements Command {
+    key: string = '/group-metadata';
+    description: string = 'dev only';
+
+    async cb(botwa: BotWa, to: string, receivedMessage: string): Promise<void> {
+        const receivedKey = receivedMessage?.split(' ')[0]
+
+        if (receivedKey === this.key) {
+            const metadata = await botwa.getGroupMetadata(to)
+            await botwa.sendMessage(to, JSON.stringify(metadata))
+        }
+
+    }
+
+}
+
 
 // export class JoinGrupCommand extends Command {
 //     key: string = '/join-grup';
@@ -58,25 +90,3 @@ export class MenuCommand implements Command {
 // }
 
 
-// export class TagAllCommand extends Command {
-//     key: string = '/tag-all';
-//     replyMessageOnSuccess: string = '';
-
-//     async cb(botwa: BotWa, message: proto.IWebMessageInfo): Promise<boolean> {
-//         const receivedMessage = message.message?.conversation
-//         const m1 = receivedMessage!.split('/tag-all ')[1]
-//         const to = message.key.remoteJid
-
-
-//         if (message.participant) {
-//             const groupId = 'message.chatId'
-//             // await botwa.sendMentioned(groupId, m1, [])
-//             return false
-//         } else {
-//             botwa.sendMessage(to!, `${this.key} cuma bisa di grup`)
-//             return false
-//         }
-//         return false
-//     }
-
-// }
