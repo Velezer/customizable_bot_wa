@@ -28,7 +28,6 @@ async function main() {
         }
     })
 
-
     sock.ev.on('messages.upsert', async ({ messages }) => {
         console.log(messages[0])
         const botwa = new BotWa(sock)

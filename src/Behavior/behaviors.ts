@@ -1,4 +1,3 @@
-import { proto } from "@adiwajshing/baileys";
 import { BotWa } from "../BotWa/BotWa";
 import { Behavior, StubType, StubTypeEnum } from "./Behavior";
 
