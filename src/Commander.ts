@@ -3,7 +3,7 @@ import { Behavior } from './Behavior/Behavior';
 import { LeaveGroupParticipantBehavior, WelcomeGroupParticipantAddBehavior, WelcomeGroupParticipantInviteBehavior } from './Behavior/behaviors';
 import { BotWa } from './BotWa/BotWa';
 import { Command } from './Command/Command';
-import { CekCommand, GetGroupMetadataCommand, MenuCommand } from './Command/commands';
+import { CekCommand, GetGroupMetadataCommand, GetGroupParticipantsCommand, MenuCommand, TagAllCommand } from './Command/commands';
 
 export class Commander {
     message: proto.IWebMessageInfo;
@@ -18,8 +18,9 @@ export class Commander {
 
         this.commands = [
             new CekCommand(),
+            new TagAllCommand(),
             new GetGroupMetadataCommand(),
-            // new TagAllCommand(),
+            new GetGroupParticipantsCommand()
             // new JoinGrupCommand()
         ]
         this.commands.push(new MenuCommand(this.commands))
@@ -35,13 +36,18 @@ export class Commander {
     }
 
 
-    runCommands() {
+    async runCommands() {
         if (this.message.key.fromMe) return
 
         const receivedMessage = this.message.message?.conversation!
         const to = this.message.key.remoteJid!
 
+        const senderRoleAdmin = await this.botwa.isSentByAdmin(to, this.message)
+
         this.commands.forEach(async command => {
+            if (command.groupAdminOnly === true) { // admin only command
+                if (senderRoleAdmin === false) return // return if sender is not admin
+            }
             command.cb(this.botwa, to, receivedMessage)
         });
 

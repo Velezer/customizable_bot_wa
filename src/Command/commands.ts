@@ -52,6 +52,12 @@ export class TagAllCommand implements Command {
         const m1 = receivedMessage!.split('/tag-all ')[1]
 
         if (receivedKey === this.key) {
+            const participants = await botwa.getGroupParticipants(to)
+
+            await botwa.sendMessage(to, JSON.stringify(participants))
+
+            const sesuatu = await botwa.sendMentioned(to)
+            await botwa.sendMessage(to, sesuatu)
 
         }
 
@@ -62,13 +68,49 @@ export class TagAllCommand implements Command {
 export class GetGroupMetadataCommand implements Command {
     key: string = '/group-metadata';
     description: string = 'dev only';
+    groupAdminOnly: boolean = true;
 
     async cb(botwa: BotWa, to: string, receivedMessage: string): Promise<void> {
         const receivedKey = receivedMessage?.split(' ')[0]
 
         if (receivedKey === this.key) {
             const metadata = await botwa.getGroupMetadata(to)
-            await botwa.sendMessage(to, JSON.stringify(metadata))
+
+            let msg = ''
+            msg += 'yang bikin grup @' + metadata.owner?.split('@')[0] + '\n\n'
+            msg += 'list member:\n'
+
+            metadata.participants.forEach(p => {
+                const role = p.admin || 'beban'
+                msg += role + ' ' + '@' + p.id.split('@')[0] + '\n'
+            })
+            msg.slice(0, -1)
+            await botwa.sendMessage(to, msg)
+        }
+
+    }
+
+}
+export class GetGroupParticipantsCommand implements Command {
+    key: string = '/group-participants';
+    description: string = 'dev only';
+    groupAdminOnly:boolean = true;
+
+
+    async cb(botwa: BotWa, to: string, receivedMessage: string): Promise<void> {
+        const receivedKey = receivedMessage?.split(' ')[0]
+
+        if (receivedKey === this.key) {
+            const participants = await botwa.getGroupParticipants(to)
+            const neatParticipants = participants.map(p => p.id.split('@')[0])
+
+            let msg = ''
+            neatParticipants.forEach(p => {
+                msg += p + '\n'
+            })
+            msg.slice(0. - 1)
+
+            await botwa.sendMessage(to, msg)
         }
 
     }
