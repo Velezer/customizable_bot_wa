@@ -37,7 +37,7 @@ export class Commander {
 
 
     async runCommands() {
-        if (this.message.key.fromMe) return
+        if (this.message.key.fromMe === true) return
 
         const receivedMessage = this.message.message?.conversation!
         const to = this.message.key.remoteJid!
@@ -46,7 +46,9 @@ export class Commander {
         this.commands.forEach(async command => {
             if (command.groupAdminOnly === true) { // admin only command
                 const senderRoleAdmin = await this.botwa.isSentByAdmin(to, this.message)
-                if (senderRoleAdmin === false) return // return if sender is not admin
+                if (senderRoleAdmin === false) {// check if sender is not admin
+                    this.botwa.sendMessage(to, 'ente bukan admin grup')
+                }
             }
             command.cb(this.botwa, to, receivedMessage)
         });

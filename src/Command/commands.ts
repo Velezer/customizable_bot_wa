@@ -76,9 +76,11 @@ export class GetGroupMetadataCommand implements Command {
         if (receivedKey === this.key) {
             const metadata = await botwa.getGroupMetadata(jid)
 
+            const desc = metadata.desc + '\n\n' || ''
+            
             let msg = ''
-            msg += metadata.subject + '\n\n' || ''
-            msg += metadata.desc + '\n\n'
+            msg += metadata.subject + '\n\n'
+            msg += desc
             msg += 'yang bikin grup @' + metadata.owner?.split('@')[0] + '\n\n'
             msg += 'list member:\n'
 

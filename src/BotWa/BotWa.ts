@@ -31,7 +31,8 @@ export class BotWa {
     }
 
     async isSentByAdmin(jidGroup: string, message: proto.IWebMessageInfo): Promise<boolean> {
-        const sender = message.participant
+        // const sender = message.participant
+        const sender = message.key.participant
 
         const participants = await this.getGroupParticipants(jidGroup)
 
