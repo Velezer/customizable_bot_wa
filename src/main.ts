@@ -11,8 +11,12 @@ async function main() {
     const sock: WAConnection = new WAConnection()
     sock.logger.level = 'debug'
     sock.version = [2, 2143, 3]
+    sock.browserDescription = ['velezer', 'bot', 'bot_wa']
 
-    sock.loadAuthInfo('auth.json')
+    if (auth.isExist('auth.json')) {
+        sock.loadAuthInfo('auth.json')
+    }
+
     await sock.connect()
     auth.saveAuth('auth.json', sock.base64EncodedAuthInfo())
 
