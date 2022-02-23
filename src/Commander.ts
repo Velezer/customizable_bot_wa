@@ -41,7 +41,15 @@ export class Commander {
 
     }
 
+    async isSentByAdmin(receivedMessage: proto.WebMessageInfo, jidGroup: string) {
+        const sender = receivedMessage.key.participant
 
+        const participants = await this.botwa.getGroupParticipants(jidGroup)
+        for (const p of participants) {
+            if (p.jid === sender && p.isAdmin) return true
+        }
+        return false
+    }
 
 
     async runCommands() {
@@ -49,20 +57,17 @@ export class Commander {
         const receivedMessage = this.chatUpdate.messages?.all()[0]!
 
         if (receivedMessage.key.fromMe === true) return
-
         if (!receivedMessage?.message) return
+
         const jid = receivedMessage.key.remoteJid!
 
-
         this.commands.forEach(async command => {
-            // if (command.groupAdminOnly === true) { // admin only command
-            //     const senderRoleAdmin = await this.botwa.isSentByAdmin(jid, receivedMessage)
-            //     if (senderRoleAdmin === false) {// check if sender is not admin
-            //         this.botwa.sendMessage(jid, 'ente bukan admin grup')
-            //     }
-            // }
+            if (! await this.isSentByAdmin(receivedMessage, jid)) return
 
-            command.cb(this.botwa, jid, receivedMessage.message?.conversation!)
+            if (receivedMessage.message?.conversation?.startsWith(command.key)) {
+                command.run(this.botwa, jid, receivedMessage.message?.conversation!)
+            }
+
 
             // if (!this.botwa.checkActivation(jid)) {
             //     this.botwa.sendMessage(jid, 'aktifkan bot sebelum digunakan')
@@ -73,12 +78,16 @@ export class Commander {
     }
 
     runBehaviors() {
+        if (!this.chatUpdate.hasNewMessage) return
+
         const receivedMessage = this.chatUpdate.messages?.all()[0]
         const receivedStubType = receivedMessage?.messageStubType
         const jid = receivedMessage?.key.remoteJid!
 
         this.behaviors.forEach(async behavior => {
-            behavior.cb(this.botwa, jid, receivedStubType!)
+            if (behavior.stubType === receivedStubType) {
+                behavior.run(this.botwa, jid)
+            }
         })
     }
 }

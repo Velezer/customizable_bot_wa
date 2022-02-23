@@ -6,7 +6,6 @@ export interface Command {
     key: string
     example: string
     description: string
-    groupAdminOnly?: boolean
 
-    cb(botwa: BotWa, jid: string, receivedMessage: string): Promise<void>
+    run(botwa: BotWa, jid: string, receivedMessage: string): Promise<void>
 }

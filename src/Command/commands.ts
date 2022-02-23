@@ -6,13 +6,11 @@ export class ActivateCommand implements Command {
     example: string = this.key;
     description: string = 'mengaktifkan bot';
 
-    async cb(botwa: BotWa, to: string, receivedMessage: string): Promise<void> {
+    async run(botwa: BotWa, to: string, receivedMessage: string): Promise<void> {
         const receivedKey = receivedMessage?.split(' ')[0]
 
-        if (receivedKey === this.key) {
-            botwa.activate(to)
-            await botwa.sendMessage(to, 'bot aktif');
-        }
+        botwa.activate(to)
+        await botwa.sendMessage(to, 'bot aktif');
 
     }
 }
@@ -22,12 +20,10 @@ export class CekCommand implements Command {
     example: string = this.key;
     description: string = 'cek keaktifan bot';
 
-    async cb(botwa: BotWa, to: string, receivedMessage: string): Promise<void> {
+    async run(botwa: BotWa, to: string, receivedMessage: string): Promise<void> {
         const receivedKey = receivedMessage?.split(' ')[0]
 
-        if (receivedKey === this.key) {
-            await botwa.sendMessage(to, 'bot sudah aktif');
-        }
+        await botwa.sendMessage(to, 'bot sudah aktif');
 
     }
 }
@@ -43,16 +39,14 @@ export class MenuCommand implements Command {
     }
 
 
-    async cb(botwa: BotWa, jid: string, receivedMessage: string): Promise<void> {
-        if (receivedMessage.startsWith(this.key)) {
+    async run(botwa: BotWa, jid: string, receivedMessage: string): Promise<void> {
 
-            let msg = ''
-            this.allCommands.forEach(command => {
-                msg += `${command.example} \n${command.description}\n\n`
-            })
-            msg = msg.slice(0, -2)
-            await botwa.sendMessage(jid, msg);
-        }
+        let msg = ''
+        this.allCommands.forEach(command => {
+            msg += `${command.example} \n${command.description}\n\n`
+        })
+        msg = msg.slice(0, -2)
+        await botwa.sendMessage(jid, msg);
 
     }
 }
@@ -61,19 +55,15 @@ export class TagAllCommand implements Command {
     key: string = '/tag-all';
     description: string = 'ngetag seluruh grup';
     example: string = this.key + ' pesan';
-    groupAdminOnly: boolean = true;
 
-    async cb(botwa: BotWa, jid: string, receivedMessage: string): Promise<void> {
-        const m1 = receivedMessage.split('/tag-all ')[1]
+    async run(botwa: BotWa, jid: string, receivedMessage: string): Promise<void> {
+        const m1 = receivedMessage.substring(`${this.key.length} `.length)
 
-
-        if (receivedMessage.startsWith(this.key)) {
-            if (!m1) {
-                botwa.sendMentionedAll(jid, '')
-                return
-            }
-            await botwa.sendMentionedAll(jid, m1)
+        if (!m1) {
+            botwa.sendMentionedAll(jid, '')
+            return
         }
+        await botwa.sendMentionedAll(jid, m1)
 
     }
 
@@ -83,29 +73,25 @@ export class GetGroupMetadataCommand implements Command {
     key: string = '/group-data';
     example: string = this.key;
     description: string = 'data grup';
-    groupAdminOnly: boolean = true;
 
-    async cb(botwa: BotWa, jid: string, receivedMessage: string): Promise<void> {
-        const receivedKey = receivedMessage?.split(' ')[0]
+    async run(botwa: BotWa, jid: string, receivedMessage: string): Promise<void> {
 
-        if (receivedKey === this.key) {
-            const metadata = await botwa.getGroupMetadata(jid)
+        const metadata = await botwa.getGroupMetadata(jid)
 
-            let desc = metadata.desc || ''
+        let desc = metadata.desc || ''
 
-            let msg = ''
-            msg += metadata.subject + '\n\n'
-            msg += desc + '\n\n'
-            msg += 'owner grup @' + metadata.owner?.split('@')[0] + '\n\n'
-            msg += 'list member:\n'
+        let msg = ''
+        msg += metadata.subject + '\n\n'
+        msg += desc + '\n\n'
+        msg += 'owner grup @' + metadata.owner?.split('@')[0] + '\n\n'
+        msg += 'list member:\n'
 
-            metadata.participants.forEach(p => {
-                const role = p.isAdmin ? 'admin' : 'beban'
-                msg += role + ' ' + '@' + p.jid.split('@')[0] + '\n'
-            })
-            msg.slice(0, -1)
-            await botwa.sendMessage(jid, msg)
-        }
+        metadata.participants.forEach(p => {
+            const role = p.isAdmin ? 'admin' : 'beban'
+            msg += role + ' ' + '@' + p.jid.split('@')[0] + '\n'
+        })
+        msg.slice(0, -1)
+        await botwa.sendMessage(jid, msg)
 
     }
 
@@ -114,24 +100,20 @@ export class GetGroupParticipantsCommand implements Command {
     key: string = '/group-member';
     description: string = 'list member grup';
     example: string = this.key;
-    groupAdminOnly: boolean = true;
 
 
-    async cb(botwa: BotWa, jid: string, receivedMessage: string): Promise<void> {
-        const receivedKey = receivedMessage?.split(' ')[0]
+    async run(botwa: BotWa, jid: string, receivedMessage: string): Promise<void> {
 
-        if (receivedKey === this.key) {
-            const participants = await botwa.getGroupParticipants(jid)
-            const neatParticipants = participants.map(p => p.jid.split('@')[0])
+        const participants = await botwa.getGroupParticipants(jid)
+        const neatParticipants = participants.map(p => p.jid.split('@')[0])
 
-            let msg = ''
-            neatParticipants.forEach(p => {
-                msg += p + '\n'
-            })
-            msg.slice(0. - 1)
+        let msg = ''
+        neatParticipants.forEach(p => {
+            msg += p + '\n'
+        })
+        msg.slice(0. - 1)
 
-            await botwa.sendMessage(jid, msg)
-        }
+        await botwa.sendMessage(jid, msg)
 
     }
 
@@ -141,15 +123,11 @@ export class OpenGroupSettingsCommand implements Command {
     key: string = '/open-setting';
     example: string = this.key;
     description: string = 'open setting grup';
-    groupAdminOnly: boolean = true;
 
 
-    async cb(botwa: BotWa, jid: string, receivedMessage: string): Promise<void> {
-        const receivedKey = receivedMessage?.split(' ')[0]
+    async run(botwa: BotWa, jid: string, receivedMessage: string): Promise<void> {
 
-        if (receivedKey === this.key) {
-            botwa.openGroupSettings(jid)
-        }
+        botwa.openGroupSettings(jid)
 
     }
 
@@ -158,15 +136,11 @@ export class CloseGroupSettingsCommand implements Command {
     key: string = '/close-setting';
     example: string = this.key;
     description: string = 'close setting grup';
-    groupAdminOnly: boolean = true;
 
 
-    async cb(botwa: BotWa, jid: string, receivedMessage: string): Promise<void> {
-        const receivedKey = receivedMessage?.split(' ')[0]
+    async run(botwa: BotWa, jid: string, receivedMessage: string): Promise<void> {
 
-        if (receivedKey === this.key) {
-            botwa.closeGroupSettings(jid)
-        }
+        botwa.closeGroupSettings(jid)
 
     }
 
@@ -175,15 +149,11 @@ export class OpenGroupChatCommand implements Command {
     key: string = '/open-chat';
     description: string = 'open grup chat';
     example: string = this.key;
-    groupAdminOnly: boolean = true;
 
 
-    async cb(botwa: BotWa, jid: string, receivedMessage: string): Promise<void> {
-        const receivedKey = receivedMessage?.split(' ')[0]
+    async run(botwa: BotWa, jid: string, receivedMessage: string): Promise<void> {
 
-        if (receivedKey === this.key) {
-            botwa.openGroupChat(jid)
-        }
+        botwa.openGroupChat(jid)
 
     }
 
@@ -192,15 +162,39 @@ export class CloseGroupChatCommand implements Command {
     key: string = '/close-chat';
     example: string = this.key;
     description: string = 'close grup chat';
-    groupAdminOnly: boolean = true;
 
 
-    async cb(botwa: BotWa, jid: string, receivedMessage: string): Promise<void> {
-        const receivedKey = receivedMessage?.split(' ')[0]
+    async run(botwa: BotWa, jid: string, receivedMessage: string): Promise<void> {
 
-        if (receivedKey === this.key) {
-            botwa.closeGroupChat(jid)
-        }
+        botwa.closeGroupChat(jid)
+
+    }
+
+}
+export class PromoteCommand implements Command {
+    key: string = '/promote';
+    example: string = this.key + ' 0000000000';
+    description: string = 'promote nomor di grup';
+
+
+    async run(botwa: BotWa, jid: string, receivedMessage: string): Promise<void> {
+        const m1 = receivedMessage.substring(`${this.key.length} `.length)
+
+        botwa.prmote(jid, m1)
+
+    }
+
+}
+export class DemoteCommand implements Command {
+    key: string = '/promote';
+    example: string = this.key + ' 0000000000';
+    description: string = 'promote nomor di grup';
+
+
+    async run(botwa: BotWa, jid: string, receivedMessage: string): Promise<void> {
+        const m1 = receivedMessage.substring(`${this.key.length} `.length)
+
+        botwa.demote(jid, m1)
 
     }
 
@@ -212,7 +206,7 @@ export class CloseGroupChatCommand implements Command {
 //     key: string = '/join link';
 //     replyMessageOnSuccess: string = 'udah masuk grup bro';
 
-//     async cb(botwa: BotWa, jid: string, receivedMessage: string): Promise<void> {
+//     async run(botwa: BotWa, jid: string, receivedMessage: string): Promise<void> {
 //         const receivedKey = receivedMessage?.split(' ')[0]
 //         const m1 = receivedMessage!.split(`${this.key} `)[1]
 

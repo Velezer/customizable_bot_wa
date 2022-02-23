@@ -58,18 +58,18 @@ export class BotWa {
         this.sock.groupSettingChange(jidGroup, GroupSettingChange.messageSend, true)
     }
 
-    async isSentByAdmin(jidGroup: string, message: proto.IWebMessageInfo): Promise<boolean> {
-        // const sender = message.participant
-        const sender = message.key.participant
+    // async isSentByAdmin(jidGroup: string, message: proto.IWebMessageInfo): Promise<boolean> {
+    //     // const sender = message.participant
+    //     const sender = message.key.participant
 
-        const participants = await this.getGroupParticipants(jidGroup)
+    //     const participants = await this.getGroupParticipants(jidGroup)
 
-        for (const p of participants) {
+    //     for (const p of participants) {
 
-            if (p.jid === sender && p.isAdmin) return true
-        }
-        return false
-    }
+    //         if (p.jid === sender && p.isAdmin) return true
+    //     }
+    //     return false
+    // }
 
     // async joinGroup(link: string): Promise<string> {
     //     const response = await this.sock.groupAcceptInvite(link)
@@ -79,5 +79,22 @@ export class BotWa {
     async reply(to: string, message: string, from: proto.WebMessageInfo) {
         await this.sock.sendMessage(to, message, MessageType.text, { quoted: from })
 
+    }
+
+    async demote(jidGroup: string, phoneNumber: string) {
+        const participants = await this.getGroupParticipants(jidGroup)
+        for (const p of participants) {
+            if (p.jid.includes(phoneNumber)) {
+                this.sock.groupDemoteAdmin(jidGroup, [p.jid])
+            }
+        }
+    }
+    async prmote(jidGroup: string, phoneNumber: string) {
+        const participants = await this.getGroupParticipants(jidGroup)
+        for (const p of participants) {
+            if (p.jid.includes(phoneNumber)) {
+                this.sock.groupMakeAdmin(jidGroup, [p.jid])
+            }
+        }
     }
 }
