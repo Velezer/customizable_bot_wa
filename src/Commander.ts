@@ -1,51 +1,71 @@
-import { Message, Whatsapp } from 'venom-bot';
+import { proto } from '@adiwajshing/baileys';
+import { Behavior } from './Behavior/Behavior';
+import { LeaveGroupParticipantBehavior, WelcomeGroupParticipantAddBehavior, WelcomeGroupParticipantInviteBehavior } from './Behavior/behaviors';
+import { BotWa } from './BotWa/BotWa';
 import { Command } from './Command/Command';
-import { CekCommand, JoinGrupCommand, TagAllCommand } from './Command/commands';
+import { CekCommand, CloseGroupChatCommand, CloseGroupSettingsCommand, GetGroupMetadataCommand, GetGroupParticipantsCommand, MenuCommand, OpenGroupChatCommand, OpenGroupSettingsCommand, TagAllCommand } from './Command/commands';
 
 export class Commander {
-    message: Message;
-    client: Whatsapp;
+    message: proto.IWebMessageInfo;
+    botwa: BotWa;
+
     commands: Command[];
+    behaviors: Behavior[];
 
-
-    constructor(message: Message, client: Whatsapp) {
+    constructor(botwa: BotWa, message: proto.IWebMessageInfo) {
+        this.botwa = botwa
         this.message = message
-        this.client = client
+
         this.commands = [
             new CekCommand(),
             new TagAllCommand(),
-            new JoinGrupCommand()
+            new GetGroupMetadataCommand(),
+            new GetGroupParticipantsCommand(),
+            new OpenGroupSettingsCommand(),
+            new CloseGroupSettingsCommand(),
+            new OpenGroupChatCommand(),
+            new CloseGroupChatCommand()
+            // new JoinGrupCommand()
+        ]
+        this.commands.push(new MenuCommand(this.commands))
+
+
+
+        this.behaviors = [
+            new WelcomeGroupParticipantAddBehavior(),
+            new WelcomeGroupParticipantInviteBehavior(),
+            new LeaveGroupParticipantBehavior()
         ]
 
     }
 
 
-    run() {
-        const message = this.message
-        const client = this.client
+    async runCommands() {
+        if (this.message.key.fromMe === true) return
+
+        const receivedMessage = this.message.message?.conversation!
+        const to = this.message.key.remoteJid!
+
 
         this.commands.forEach(async command => {
-            const key = message.body.split(' ')[0]
-            if (
-                key === command.key &&
-                message.fromMe === false
-            ) {
-
-                if (await command.cb(client, message)) {
-                    await client.reply(
-                        message.chatId,
-                        command.replyMessageOnSuccess,
-                        message.id.toString()
-                    );
-                    console.log(command.key, 'invoked!')
+            if (command.groupAdminOnly === true) { // admin only command
+                const senderRoleAdmin = await this.botwa.isSentByAdmin(to, this.message)
+                if (senderRoleAdmin === false) {// check if sender is not admin
+                    this.botwa.sendMessage(to, 'ente bukan admin grup')
                 }
-
-
             }
-
+            command.cb(this.botwa, to, receivedMessage)
         });
 
+    }
 
+    runBehaviors() {
+        const receivedStubType = this.message.messageStubType!
+        const to = this.message.key.remoteJid!
+
+        this.behaviors.forEach(async behavior => {
+            behavior.cb(this.botwa, to, receivedStubType)
+        })
     }
 }
 

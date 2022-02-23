@@ -1,10 +1,11 @@
-import { Message, Whatsapp } from "venom-bot"
+import { proto } from "@adiwajshing/baileys"
+import { BotWa } from "../BotWa/BotWa"
 
 
-export abstract class Command {
-    abstract key: string
+export interface Command {
+    key: string
+    description: string
+    groupAdminOnly?: boolean
 
-    abstract replyMessageOnSuccess: string
-
-    abstract cb(client: Whatsapp, message: Message): Promise<boolean>
+    cb(botwa: BotWa, jid: string, receivedMessage: string): Promise<void>
 }

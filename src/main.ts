@@ -1,65 +1,64 @@
-import { createConnection, QueryFailedError } from 'typeorm';
-import * as venom from 'venom-bot';
+import { BotWa } from './BotWa/BotWa'
 import { Commander } from './Commander'
-import { Token } from './Token/token.entity';
-import { TokenRepo } from './Token/token.repo';
-import * as dotenv from 'dotenv';
-dotenv.config({ path: '.env.dev.local' })
+import P from 'pino'
+import makeWASocket, { AnyWASocket, DisconnectReason, makeWALegacySocket, useSingleFileAuthState, newLegacyAuthCreds, makeInMemoryStore, LegacyAuthenticationCreds, proto, generateWAMessage, fetchLatestBaileysVersion } from '@adiwajshing/baileys'
+import { Boom } from '@hapi/boom'
+import { LegacyBaileysSock } from './BotWa/LegacyBaileysSock'
+import { loadAuth, saveAuth } from './auth/auth'
+import makeLegacySocket from '@adiwajshing/baileys/lib/LegacySocket'
+import { BaileysSock } from './BotWa/BaileysSock'
 
+const store = makeInMemoryStore({ logger: P().child({ level: 'debug', stream: 'store' }) })
+store.readFromFile('./baileys_store_multi.json')
+
+
+const { state, saveState } = useSingleFileAuthState('./auth_info_multi.json')
 
 async function main() {
-    const connection = await createConnection({
-        type: "postgres",
-        host: process.env.DB_HOST,
-        port: +process.env.DB_PORT!,
-        username: process.env.DB_USERNAME,
-        password: process.env.DB_PASSWORD,
-        database: process.env.DB_DBNAME,
-        entities: [Token],
-        synchronize: true
-    });
+    const { version, isLatest } = await fetchLatestBaileysVersion()
+    console.log(`using WA v${version.join('.')}, isLatest: ${isLatest}`)
 
-    const tokenRepo = connection.getCustomRepository(TokenRepo)
+    const sock: BaileysSock = makeWASocket({
+        version,
+        logger: P({ level: 'debug' }),
+        printQRInTerminal: true,
+        auth: state,
+        getMessage: async key => {
+            console.log('==============================')
+            return {
+                conversation: 'hello'
+            }
+        }
+        // version: [2, 2202, 12]
+    })
 
-    const sessionName = 'global-bot'
-    const foundToken = await tokenRepo.findBySessionName(sessionName)
+    store.bind(sock.ev)
 
-    venom.create(
-        sessionName,
-        (base64Qrimg, asciiQR, attempts, urlCode) => {
-            console.log('\n\n\n')
-            console.log('base64 image string qrcode: ', base64Qrimg);
-            console.log('\n\n\n')
-        },
-        undefined,
-        { browserArgs: ['--no-sandbox'], browserWS: `0.0.0.0:${process.env.PORT}` },
-        foundToken?.session
-    )
-        .then(async client => {
-            const token = new Token()
-            token.sessionName = sessionName
-            token.session = await client.getSessionTokenBrowser()
-            try {
-                tokenRepo.save(token)
-            } catch (err) {
-                if (err instanceof QueryFailedError) {
-                    tokenRepo.update(token.id, { sessionName: token.sessionName })
-                }
+    sock.ev.on('creds.update', saveState)
+
+    sock.ev.on('connection.update', (update) => {
+        const { connection, lastDisconnect } = update
+        if (connection === 'close') {
+            const shouldReconnect = (lastDisconnect!.error as Boom)?.output?.statusCode !== DisconnectReason.loggedOut
+
+            if (shouldReconnect) {
+                main()
             }
 
-            client.onAnyMessage(async message => {
-                const mlistener = new Commander(message, client)
-                mlistener.run()
-            })
-        })
-        .catch(err => {
-            console.error('main function error')
-            console.error(err)
-        })
+        } else if (connection === 'open') {
+            console.log('opened connection')
+        }
+    })
 
+    sock.ev.on('messages.upsert', async ({ messages }) => {
+        const botwa = new BotWa(sock)
+        const commander = new Commander(botwa, messages[0])
+
+        commander.runCommands()
+        commander.runBehaviors()
+    })
 
 }
-
 
 
 main()

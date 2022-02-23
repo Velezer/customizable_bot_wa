@@ -1,3 +1,2 @@
 
-session token to database
-provide qr to url
+manage auth
