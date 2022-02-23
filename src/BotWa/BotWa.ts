@@ -11,12 +11,13 @@ export class BotWa {
     }
 
     async sendMessage(to: string, message: string) {
-        await this.sock.sendMessage(to, { text: message})
+        await this.sock.sendMessage(to, { text: message })
     }
 
-    async sendMentioned(to: string) {
-        return this.sock.generateMessageTag()
-        // this.sock.sendMessage(to, {}, { quoted: })
+    async sendMentioned(to: string, m1: string) {
+        const participants = await this.getGroupParticipants(to)
+        const contacts = participants.map(p => p.id)
+        this.sock.sendMessage(to, { text: m1, mentions: contacts },)
     }
 
     async getGroupMetadata(jidGroup: string) {
@@ -28,6 +29,21 @@ export class BotWa {
         const participants = await metadata.participants
 
         return participants
+    }
+
+    async openGroupSettings(jidGroup: string) {
+        this.sock.groupSettingUpdate(jidGroup, "unlocked")
+    }
+
+    async closeGroupSettings(jidGroup: string) {
+        this.sock.groupSettingUpdate(jidGroup, "locked")
+    }
+
+    async openGroupChat(jidGroup: string) {
+        this.sock.groupSettingUpdate(jidGroup, "not_announcement")
+    }
+    async closeGroupChat(jidGroup: string) {
+        this.sock.groupSettingUpdate(jidGroup, "announcement")
     }
 
     async isSentByAdmin(jidGroup: string, message: proto.IWebMessageInfo): Promise<boolean> {
@@ -42,10 +58,10 @@ export class BotWa {
         return false
     }
 
-    // async joinGroup(link: string): Promise<string> {
-    //     // const response = await this.sock.groupAcceptInvite(link)
-    //     return 'response'
-    // }
+    async joinGroup(link: string): Promise<string> {
+        const response = await this.sock.groupAcceptInvite(link)
+        return response
+    }
 
     async reply(to: string, message: string, from: proto.IWebMessageInfo) {
         await this.sock.sendMessage(to, { text: message }, { quoted: from })
