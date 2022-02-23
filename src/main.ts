@@ -12,6 +12,7 @@ const store = makeInMemoryStore({ logger: P().child({ level: 'debug', stream: 's
 store.readFromFile('./baileys_store_multi.json')
 
 
+
 const { state, saveState } = useSingleFileAuthState('./auth_info_multi.json')
 
 async function main() {

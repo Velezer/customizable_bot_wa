@@ -1,7 +1,20 @@
 import { BotWa } from "../BotWa/BotWa";
 import { Command } from "./Command";
 
+export class ActivateCommand implements Command {
+    key: string = '/activate';
+    description: string = 'mengaktifkan bot';
 
+    async cb(botwa: BotWa, to: string, receivedMessage: string): Promise<void> {
+        const receivedKey = receivedMessage?.split(' ')[0]
+
+        if (receivedKey === this.key) {
+            botwa.activate(to)
+            await botwa.sendMessage(to, 'bot aktif');
+        }
+
+    }
+}
 
 export class CekCommand implements Command {
     key: string = '/cek';

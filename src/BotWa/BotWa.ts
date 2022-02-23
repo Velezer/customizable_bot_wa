@@ -6,8 +6,20 @@ import { LegacyBaileysSock } from "./LegacyBaileysSock";
 
 export class BotWa {
     sock: BaileysSock;
+    allowedJidGroup: string[] = [];
+
     constructor(sock: BaileysSock) {
         this.sock = sock
+    }
+
+    checkActivation(jidGroup: string): boolean {
+        if (this.allowedJidGroup.includes(jidGroup)) return true
+        return false
+    }
+
+    activate(jidGroup: string) {
+        if (this.checkActivation(jidGroup)) return
+        this.allowedJidGroup.push(jidGroup)
     }
 
     async sendMessage(to: string, message: string) {

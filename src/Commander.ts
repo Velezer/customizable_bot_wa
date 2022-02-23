@@ -3,7 +3,7 @@ import { Behavior } from './Behavior/Behavior';
 import { LeaveGroupParticipantBehavior, WelcomeGroupParticipantAddBehavior, WelcomeGroupParticipantInviteBehavior } from './Behavior/behaviors';
 import { BotWa } from './BotWa/BotWa';
 import { Command } from './Command/Command';
-import { CekCommand, CloseGroupChatCommand, CloseGroupSettingsCommand, GetGroupMetadataCommand, GetGroupParticipantsCommand, MenuCommand, OpenGroupChatCommand, OpenGroupSettingsCommand, TagAllCommand } from './Command/commands';
+import { ActivateCommand, CekCommand, CloseGroupChatCommand, CloseGroupSettingsCommand, GetGroupMetadataCommand, GetGroupParticipantsCommand, MenuCommand, OpenGroupChatCommand, OpenGroupSettingsCommand, TagAllCommand } from './Command/commands';
 
 export class Commander {
     message: proto.IWebMessageInfo;
@@ -12,11 +12,13 @@ export class Commander {
     commands: Command[];
     behaviors: Behavior[];
 
+
     constructor(botwa: BotWa, message: proto.IWebMessageInfo) {
         this.botwa = botwa
         this.message = message
 
         this.commands = [
+            new ActivateCommand(), // must be top on list
             new CekCommand(),
             new TagAllCommand(),
             new GetGroupMetadataCommand(),
@@ -40,11 +42,14 @@ export class Commander {
     }
 
 
+
+
     async runCommands() {
         if (this.message.key.fromMe === true) return
 
         const receivedMessage = this.message.message?.conversation!
         const to = this.message.key.remoteJid!
+
 
 
         this.commands.forEach(async command => {
@@ -54,7 +59,13 @@ export class Commander {
                     this.botwa.sendMessage(to, 'ente bukan admin grup')
                 }
             }
+
             command.cb(this.botwa, to, receivedMessage)
+
+            if (!this.botwa.checkActivation(to)) {
+                this.botwa.sendMessage(to, 'aktifkan bot sebelum digunakan')
+                return
+            }
         });
 
     }
