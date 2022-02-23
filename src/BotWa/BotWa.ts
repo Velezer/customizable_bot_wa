@@ -1,11 +1,12 @@
 import { proto } from "@adiwajshing/baileys";
+import { BaileysSock } from "./BaileysSock";
 import { LegacyBaileysSock } from "./LegacyBaileysSock";
 
 
 
 export class BotWa {
-    sock: LegacyBaileysSock;
-    constructor(sock: LegacyBaileysSock) {
+    sock: BaileysSock;
+    constructor(sock: BaileysSock) {
         this.sock = sock
     }
 
@@ -14,12 +15,12 @@ export class BotWa {
     }
 
     async sendMentioned(to: string) {
-        return this.sock.generateMessageTag(true)
+        return this.sock.generateMessageTag()
         // this.sock.sendMessage(to, {}, { quoted: })
     }
 
     async getGroupMetadata(to: string) {
-        return await this.sock.groupMetadata(to, false)
+        return await this.sock.groupMetadata(to)
     }
 
     async getGroupParticipants(to: string) {
