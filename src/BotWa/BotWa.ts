@@ -1,14 +1,12 @@
-import { proto } from "@adiwajshing/baileys";
-import { BaileysSock } from "./BaileysSock";
-import { LegacyBaileysSock } from "./LegacyBaileysSock";
+import { GroupSettingChange, MessageType, proto, WAConnection } from "@adiwajshing/baileys";
 
 
 
 export class BotWa {
-    sock: BaileysSock;
+    sock: WAConnection;
     allowedJidGroup: string[] = [];
 
-    constructor(sock: BaileysSock) {
+    constructor(sock: WAConnection) {
         this.sock = sock
     }
 
@@ -23,39 +21,40 @@ export class BotWa {
     }
 
     async sendMessage(to: string, message: string) {
-        await this.sock.sendMessage(to, { text: message })
+        await this.sock.sendMessage(to, message, MessageType.text)
     }
 
     async sendMentioned(to: string, m1: string) {
         const participants = await this.getGroupParticipants(to)
-        const contacts = participants.map(p => p.id)
-        this.sock.sendMessage(to, { text: m1, mentions: contacts },)
+        const contacts = participants.map(p => p.jid)
+        this.sock.sendMessage(to, m1, MessageType.extendedText, { contextInfo: { "mentionedJid": contacts } })
     }
 
     async getGroupMetadata(jidGroup: string) {
-        return await this.sock.groupMetadata(jidGroup)
+        const metadata = await this.sock.groupMetadata(jidGroup)
+        return metadata
     }
 
     async getGroupParticipants(jidGroup: string) {
         const metadata = await this.getGroupMetadata(jidGroup)
-        const participants = await metadata.participants
+        const participants = metadata.participants
 
         return participants
     }
 
     async openGroupSettings(jidGroup: string) {
-        this.sock.groupSettingUpdate(jidGroup, "unlocked")
+        this.sock.groupSettingChange(jidGroup, GroupSettingChange.settingsChange, false)
     }
 
     async closeGroupSettings(jidGroup: string) {
-        this.sock.groupSettingUpdate(jidGroup, "locked")
+        this.sock.groupSettingChange(jidGroup, GroupSettingChange.settingsChange, true)
     }
 
     async openGroupChat(jidGroup: string) {
-        this.sock.groupSettingUpdate(jidGroup, "not_announcement")
+        this.sock.groupSettingChange(jidGroup, GroupSettingChange.messageSend, false)
     }
     async closeGroupChat(jidGroup: string) {
-        this.sock.groupSettingUpdate(jidGroup, "announcement")
+        this.sock.groupSettingChange(jidGroup, GroupSettingChange.messageSend, true)
     }
 
     async isSentByAdmin(jidGroup: string, message: proto.IWebMessageInfo): Promise<boolean> {
@@ -65,18 +64,19 @@ export class BotWa {
         const participants = await this.getGroupParticipants(jidGroup)
 
         for (const p of participants) {
-            if (p.id === sender && p.admin?.endsWith('admin')) return true
+
+            if (p.jid === sender && p.isAdmin) return true
         }
         return false
     }
 
-    async joinGroup(link: string): Promise<string> {
-        const response = await this.sock.groupAcceptInvite(link)
-        return response
-    }
+    // async joinGroup(link: string): Promise<string> {
+    //     const response = await this.sock.groupAcceptInvite(link)
+    //     return response
+    // }
 
-    async reply(to: string, message: string, from: proto.IWebMessageInfo) {
-        await this.sock.sendMessage(to, { text: message }, { quoted: from })
+    async reply(to: string, message: string, from: proto.WebMessageInfo) {
+        await this.sock.sendMessage(to, message, MessageType.text, { quoted: from })
 
     }
 }

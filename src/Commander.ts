@@ -1,4 +1,4 @@
-import { proto } from '@adiwajshing/baileys';
+import { proto, WAChatUpdate } from '@adiwajshing/baileys';
 import { Behavior } from './Behavior/Behavior';
 import { LeaveGroupParticipantBehavior, WelcomeGroupParticipantAddBehavior, WelcomeGroupParticipantInviteBehavior } from './Behavior/behaviors';
 import { BotWa } from './BotWa/BotWa';
@@ -6,16 +6,16 @@ import { Command } from './Command/Command';
 import { ActivateCommand, CekCommand, CloseGroupChatCommand, CloseGroupSettingsCommand, GetGroupMetadataCommand, GetGroupParticipantsCommand, MenuCommand, OpenGroupChatCommand, OpenGroupSettingsCommand, TagAllCommand } from './Command/commands';
 
 export class Commander {
-    message: proto.IWebMessageInfo;
+    chatUpdate: WAChatUpdate;
     botwa: BotWa;
 
     commands: Command[];
     behaviors: Behavior[];
 
 
-    constructor(botwa: BotWa, message: proto.IWebMessageInfo) {
+    constructor(botwa: BotWa, chatUpdate: WAChatUpdate) {
         this.botwa = botwa
-        this.message = message
+        this.chatUpdate = chatUpdate
 
         this.commands = [
             new ActivateCommand(), // must be top on list
@@ -45,25 +45,27 @@ export class Commander {
 
 
     async runCommands() {
-        if (this.message.key.fromMe === true) return
+        if (!this.chatUpdate.hasNewMessage) return
+        const receivedMessage = this.chatUpdate.messages?.all()[0]!
 
-        const receivedMessage = this.message.message?.conversation!
-        const to = this.message.key.remoteJid!
+        if (receivedMessage.key.fromMe === true) return
 
+        if (!receivedMessage?.message) return
+        const jid = receivedMessage.key.remoteJid!
 
 
         this.commands.forEach(async command => {
             if (command.groupAdminOnly === true) { // admin only command
-                const senderRoleAdmin = await this.botwa.isSentByAdmin(to, this.message)
+                const senderRoleAdmin = await this.botwa.isSentByAdmin(jid, receivedMessage)
                 if (senderRoleAdmin === false) {// check if sender is not admin
-                    this.botwa.sendMessage(to, 'ente bukan admin grup')
+                    this.botwa.sendMessage(jid, 'ente bukan admin grup')
                 }
             }
 
-            command.cb(this.botwa, to, receivedMessage)
+            command.cb(this.botwa, jid, receivedMessage.message?.conversation!)
 
-            if (!this.botwa.checkActivation(to)) {
-                this.botwa.sendMessage(to, 'aktifkan bot sebelum digunakan')
+            if (!this.botwa.checkActivation(jid)) {
+                this.botwa.sendMessage(jid, 'aktifkan bot sebelum digunakan')
                 return
             }
         });
@@ -71,11 +73,12 @@ export class Commander {
     }
 
     runBehaviors() {
-        const receivedStubType = this.message.messageStubType!
-        const to = this.message.key.remoteJid!
+        const receivedMessage = this.chatUpdate.messages?.all()[0]!
+        const receivedStubType = receivedMessage.messageStubType!
+        const jid = receivedMessage.key.remoteJid!
 
         this.behaviors.forEach(async behavior => {
-            behavior.cb(this.botwa, to, receivedStubType)
+            behavior.cb(this.botwa, jid, receivedStubType)
         })
     }
 }

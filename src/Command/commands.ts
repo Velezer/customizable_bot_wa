@@ -94,8 +94,8 @@ export class GetGroupMetadataCommand implements Command {
             msg += 'list member:\n'
 
             metadata.participants.forEach(p => {
-                const role = p.admin || 'beban'
-                msg += role + ' ' + '@' + p.id.split('@')[0] + '\n'
+                const role = p.isAdmin? 'admin' : 'beban'
+                msg += role + ' ' + '@' + p.jid.split('@')[0] + '\n'
             })
             msg.slice(0, -1)
             await botwa.sendMessage(jid, msg)
@@ -115,7 +115,7 @@ export class GetGroupParticipantsCommand implements Command {
 
         if (receivedKey === this.key) {
             const participants = await botwa.getGroupParticipants(jid)
-            const neatParticipants = participants.map(p => p.id.split('@')[0])
+            const neatParticipants = participants.map(p => p.jid.split('@')[0])
 
             let msg = ''
             neatParticipants.forEach(p => {
