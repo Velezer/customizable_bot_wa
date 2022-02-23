@@ -18,7 +18,7 @@ export class Commander {
         this.chatUpdate = chatUpdate
 
         this.commands = [
-            new ActivateCommand(), // must be top on list
+            // new ActivateCommand(), // must be top on list
             new CekCommand(),
             new TagAllCommand(),
             new GetGroupMetadataCommand(),
@@ -55,30 +55,30 @@ export class Commander {
 
 
         this.commands.forEach(async command => {
-            if (command.groupAdminOnly === true) { // admin only command
-                const senderRoleAdmin = await this.botwa.isSentByAdmin(jid, receivedMessage)
-                if (senderRoleAdmin === false) {// check if sender is not admin
-                    this.botwa.sendMessage(jid, 'ente bukan admin grup')
-                }
-            }
+            // if (command.groupAdminOnly === true) { // admin only command
+            //     const senderRoleAdmin = await this.botwa.isSentByAdmin(jid, receivedMessage)
+            //     if (senderRoleAdmin === false) {// check if sender is not admin
+            //         this.botwa.sendMessage(jid, 'ente bukan admin grup')
+            //     }
+            // }
 
             command.cb(this.botwa, jid, receivedMessage.message?.conversation!)
 
-            if (!this.botwa.checkActivation(jid)) {
-                this.botwa.sendMessage(jid, 'aktifkan bot sebelum digunakan')
-                return
-            }
+            // if (!this.botwa.checkActivation(jid)) {
+            //     this.botwa.sendMessage(jid, 'aktifkan bot sebelum digunakan')
+            //     return
+            // }
         });
 
     }
 
     runBehaviors() {
-        const receivedMessage = this.chatUpdate.messages?.all()[0]!
-        const receivedStubType = receivedMessage.messageStubType!
-        const jid = receivedMessage.key.remoteJid!
+        const receivedMessage = this.chatUpdate.messages?.all()[0]
+        const receivedStubType = receivedMessage?.messageStubType
+        const jid = receivedMessage?.key.remoteJid!
 
         this.behaviors.forEach(async behavior => {
-            behavior.cb(this.botwa, jid, receivedStubType)
+            behavior.cb(this.botwa, jid, receivedStubType!)
         })
     }
 }

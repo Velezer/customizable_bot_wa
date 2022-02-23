@@ -21,13 +21,14 @@ export class BotWa {
     }
 
     async sendMessage(to: string, message: string) {
-        await this.sock.sendMessage(to, message, MessageType.text)
+        return await this.sock.sendMessage(to, message, MessageType.text)
     }
 
-    async sendMentioned(to: string, m1: string) {
+    async sendMentionedAll(to: string, m1: string) {
         const participants = await this.getGroupParticipants(to)
         const contacts = participants.map(p => p.jid)
-        this.sock.sendMessage(to, m1, MessageType.extendedText, { contextInfo: { "mentionedJid": contacts } })
+        return await this.sock.sendMessage(to, m1, MessageType.extendedText, { contextInfo: { "mentionedJid": contacts } })
+            .catch(err => console.log(err))
     }
 
     async getGroupMetadata(jidGroup: string) {

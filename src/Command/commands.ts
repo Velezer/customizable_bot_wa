@@ -3,6 +3,7 @@ import { Command } from "./Command";
 
 export class ActivateCommand implements Command {
     key: string = '/activate';
+    example: string = this.key;
     description: string = 'mengaktifkan bot';
 
     async cb(botwa: BotWa, to: string, receivedMessage: string): Promise<void> {
@@ -18,6 +19,7 @@ export class ActivateCommand implements Command {
 
 export class CekCommand implements Command {
     key: string = '/cek';
+    example: string = this.key;
     description: string = 'cek keaktifan bot';
 
     async cb(botwa: BotWa, to: string, receivedMessage: string): Promise<void> {
@@ -33,6 +35,7 @@ export class CekCommand implements Command {
 export class MenuCommand implements Command {
     key: string = '/menu';
     description: string = 'nampilin menu';
+    example: string = this.key;
     allCommands: Command[];
 
     constructor(allCommands: Command[]) {
@@ -41,13 +44,11 @@ export class MenuCommand implements Command {
 
 
     async cb(botwa: BotWa, jid: string, receivedMessage: string): Promise<void> {
-        const receivedKey = receivedMessage?.split(' ')[0]
-
-        if (receivedKey === this.key) {
+        if (receivedMessage.startsWith(this.key)) {
 
             let msg = ''
             this.allCommands.forEach(command => {
-                msg += `${command.key} \n${command.description}\n\n`
+                msg += `${command.example} \n${command.description}\n\n`
             })
             msg = msg.slice(0, -2)
             await botwa.sendMessage(jid, msg);
@@ -57,17 +58,21 @@ export class MenuCommand implements Command {
 }
 
 export class TagAllCommand implements Command {
-    key: string = '/tag-all pesan';
+    key: string = '/tag-all';
     description: string = 'ngetag seluruh grup';
+    example: string = this.key + ' pesan';
     groupAdminOnly: boolean = true;
 
     async cb(botwa: BotWa, jid: string, receivedMessage: string): Promise<void> {
-        const receivedKey = receivedMessage?.split(' ')[0]
-        const m1 = receivedMessage!.split('/tag-all ')[1]
+        const m1 = receivedMessage.split('/tag-all ')[1]
 
-        if (receivedKey === this.key) {
-            await botwa.sendMentioned(jid, m1)
 
+        if (receivedMessage.startsWith(this.key)) {
+            if (!m1) {
+                botwa.sendMentionedAll(jid, '')
+                return
+            }
+            await botwa.sendMentionedAll(jid, m1)
         }
 
     }
@@ -76,6 +81,7 @@ export class TagAllCommand implements Command {
 
 export class GetGroupMetadataCommand implements Command {
     key: string = '/group-data';
+    example: string = this.key;
     description: string = 'data grup';
     groupAdminOnly: boolean = true;
 
@@ -94,7 +100,7 @@ export class GetGroupMetadataCommand implements Command {
             msg += 'list member:\n'
 
             metadata.participants.forEach(p => {
-                const role = p.isAdmin? 'admin' : 'beban'
+                const role = p.isAdmin ? 'admin' : 'beban'
                 msg += role + ' ' + '@' + p.jid.split('@')[0] + '\n'
             })
             msg.slice(0, -1)
@@ -107,6 +113,7 @@ export class GetGroupMetadataCommand implements Command {
 export class GetGroupParticipantsCommand implements Command {
     key: string = '/group-member';
     description: string = 'list member grup';
+    example: string = this.key;
     groupAdminOnly: boolean = true;
 
 
@@ -132,6 +139,7 @@ export class GetGroupParticipantsCommand implements Command {
 
 export class OpenGroupSettingsCommand implements Command {
     key: string = '/open-setting';
+    example: string = this.key;
     description: string = 'open setting grup';
     groupAdminOnly: boolean = true;
 
@@ -148,6 +156,7 @@ export class OpenGroupSettingsCommand implements Command {
 }
 export class CloseGroupSettingsCommand implements Command {
     key: string = '/close-setting';
+    example: string = this.key;
     description: string = 'close setting grup';
     groupAdminOnly: boolean = true;
 
@@ -165,6 +174,7 @@ export class CloseGroupSettingsCommand implements Command {
 export class OpenGroupChatCommand implements Command {
     key: string = '/open-chat';
     description: string = 'open grup chat';
+    example: string = this.key;
     groupAdminOnly: boolean = true;
 
 
@@ -180,6 +190,7 @@ export class OpenGroupChatCommand implements Command {
 }
 export class CloseGroupChatCommand implements Command {
     key: string = '/close-chat';
+    example: string = this.key;
     description: string = 'close grup chat';
     groupAdminOnly: boolean = true;
 

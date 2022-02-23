@@ -4,6 +4,7 @@ import { BotWa } from "../BotWa/BotWa"
 
 export interface Command {
     key: string
+    example: string
     description: string
     groupAdminOnly?: boolean
 
