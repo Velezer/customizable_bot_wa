@@ -18,7 +18,7 @@ async function main() {
     const { version, isLatest } = await fetchLatestBaileysVersion()
     console.log(`using WA v${version.join('.')}, isLatest: ${isLatest}`)
 
-    const sock: AnyWASocket = makeWASocket({
+    const sock: BaileysSock = makeWASocket({
         version,
         logger: P({ level: 'debug' }),
         printQRInTerminal: true,

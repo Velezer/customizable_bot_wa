@@ -11,7 +11,7 @@ export class BotWa {
     }
 
     async sendMessage(to: string, message: string) {
-        await this.sock.sendMessage(to, { text: message })
+        await this.sock.sendMessage(to, { text: message})
     }
 
     async sendMentioned(to: string) {
@@ -19,21 +19,21 @@ export class BotWa {
         // this.sock.sendMessage(to, {}, { quoted: })
     }
 
-    async getGroupMetadata(to: string) {
-        return await this.sock.groupMetadata(to)
+    async getGroupMetadata(jidGroup: string) {
+        return await this.sock.groupMetadata(jidGroup)
     }
 
-    async getGroupParticipants(to: string) {
-        const metadata = await this.getGroupMetadata(to)
+    async getGroupParticipants(jidGroup: string) {
+        const metadata = await this.getGroupMetadata(jidGroup)
         const participants = await metadata.participants
 
         return participants
     }
 
-    async isSentByAdmin(to: string, message: proto.IWebMessageInfo): Promise<boolean> {
+    async isSentByAdmin(jidGroup: string, message: proto.IWebMessageInfo): Promise<boolean> {
         const sender = message.participant
 
-        const participants = await this.getGroupParticipants(to)
+        const participants = await this.getGroupParticipants(jidGroup)
 
         for (const p of participants) {
             if (p.id === sender && p.admin?.endsWith('admin')) return true

@@ -27,7 +27,7 @@ export class MenuCommand implements Command {
     }
 
 
-    async cb(botwa: BotWa, to: string, receivedMessage: string): Promise<void> {
+    async cb(botwa: BotWa, jid: string, receivedMessage: string): Promise<void> {
         const receivedKey = receivedMessage?.split(' ')[0]
 
         if (receivedKey === this.key) {
@@ -37,7 +37,7 @@ export class MenuCommand implements Command {
                 msg += `${command.key} \n${command.description}\n\n`
             })
             msg = msg.slice(0, -2)
-            await botwa.sendMessage(to, msg);
+            await botwa.sendMessage(jid, msg);
         }
 
     }
@@ -47,17 +47,17 @@ export class TagAllCommand implements Command {
     key: string = '/tag-all';
     description: string = 'ngetag seluruh grup';
 
-    async cb(botwa: BotWa, to: string, receivedMessage: string): Promise<void> {
+    async cb(botwa: BotWa, jid: string, receivedMessage: string): Promise<void> {
         const receivedKey = receivedMessage?.split(' ')[0]
         const m1 = receivedMessage!.split('/tag-all ')[1]
 
         if (receivedKey === this.key) {
-            const participants = await botwa.getGroupParticipants(to)
+            const participants = await botwa.getGroupParticipants(jid)
 
-            await botwa.sendMessage(to, JSON.stringify(participants))
+            await botwa.sendMessage(jid, JSON.stringify(participants))
 
-            const sesuatu = await botwa.sendMentioned(to)
-            await botwa.sendMessage(to, sesuatu)
+            const sesuatu = await botwa.sendMentioned(jid)
+            await botwa.sendMessage(jid, sesuatu)
 
         }
 
@@ -70,11 +70,11 @@ export class GetGroupMetadataCommand implements Command {
     description: string = 'data grup';
     groupAdminOnly: boolean = true;
 
-    async cb(botwa: BotWa, to: string, receivedMessage: string): Promise<void> {
+    async cb(botwa: BotWa, jid: string, receivedMessage: string): Promise<void> {
         const receivedKey = receivedMessage?.split(' ')[0]
 
         if (receivedKey === this.key) {
-            const metadata = await botwa.getGroupMetadata(to)
+            const metadata = await botwa.getGroupMetadata(jid)
 
             let msg = ''
             msg += metadata.subject + '\n\n' || ''
@@ -87,7 +87,7 @@ export class GetGroupMetadataCommand implements Command {
                 msg += role + ' ' + '@' + p.id.split('@')[0] + '\n'
             })
             msg.slice(0, -1)
-            await botwa.sendMessage(to, msg)
+            await botwa.sendMessage(jid, msg)
         }
 
     }
@@ -99,11 +99,11 @@ export class GetGroupParticipantsCommand implements Command {
     groupAdminOnly: boolean = true;
 
 
-    async cb(botwa: BotWa, to: string, receivedMessage: string): Promise<void> {
+    async cb(botwa: BotWa, jid: string, receivedMessage: string): Promise<void> {
         const receivedKey = receivedMessage?.split(' ')[0]
 
         if (receivedKey === this.key) {
-            const participants = await botwa.getGroupParticipants(to)
+            const participants = await botwa.getGroupParticipants(jid)
             const neatParticipants = participants.map(p => p.id.split('@')[0])
 
             let msg = ''
@@ -112,7 +112,7 @@ export class GetGroupParticipantsCommand implements Command {
             })
             msg.slice(0. - 1)
 
-            await botwa.sendMessage(to, msg)
+            await botwa.sendMessage(jid, msg)
         }
 
     }
