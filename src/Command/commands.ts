@@ -7,8 +7,6 @@ export class ActivateCommand implements Command {
     description: string = 'mengaktifkan bot';
 
     async run(botwa: BotWa, to: string, receivedMessage: string): Promise<void> {
-        const receivedKey = receivedMessage?.split(' ')[0]
-
         botwa.activate(to)
         await botwa.sendMessage(to, 'bot aktif');
 
@@ -21,8 +19,6 @@ export class CekCommand implements Command {
     description: string = 'cek keaktifan bot';
 
     async run(botwa: BotWa, to: string, receivedMessage: string): Promise<void> {
-        const receivedKey = receivedMessage?.split(' ')[0]
-
         await botwa.sendMessage(to, 'bot sudah aktif');
 
     }
@@ -85,7 +81,7 @@ export class GetGroupMetadataCommand implements Command {
         msg += '_Deskripsi_\n'
         msg += desc + '\n\n'
         msg += '---'
-        msg += 'owner grup wa.me' + metadata.owner?.split('@')[0] + '\n\n'
+        msg += 'owner grup wa.me/' + metadata.owner?.split('@')[0] + '\n\n'
         msg += 'list member:\n'
 
         metadata.participants.forEach(p => {
@@ -206,19 +202,17 @@ export class DemoteCommand implements Command {
 
 
 
-// export class JoinGrupCommand implements Command {
-//     key: string = '/join link';
-//     replyMessageOnSuccess: string = 'udah masuk grup bro';
+export class JoinGrupCommand implements Command {
+    key: string = '/join';
+    example: string = '/join link';
+    description: string = '/join grup pake link';
 
-//     async run(botwa: BotWa, jid: string, receivedMessage: string): Promise<void> {
-//         const receivedKey = receivedMessage?.split(' ')[0]
-//         const m1 = receivedMessage!.split(`${this.key} `)[1]
+    async run(botwa: BotWa, jid: string, receivedMessage: string): Promise<void> {
+        const m1 = receivedMessage.slice(this.key.length + 1)
 
-//         if (receivedKey === this.key) {
-//             botwa.joinGroup(link)
-//         }
+        botwa.joinGroup(m1)
 
-//     }
-// }
+    }
+}
 
 

@@ -71,10 +71,10 @@ export class BotWa {
     //     return false
     // }
 
-    // async joinGroup(link: string): Promise<string> {
-    //     const response = await this.sock.groupAcceptInvite(link)
-    //     return response
-    // }
+    async joinGroup(link: string): Promise<string> {
+        const response = await this.sock.acceptInvite(link)
+        return response
+    }
 
     async reply(to: string, message: string, from: proto.WebMessageInfo) {
         await this.sock.sendMessage(to, message, MessageType.text, { quoted: from })

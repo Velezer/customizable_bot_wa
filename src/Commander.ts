@@ -22,7 +22,7 @@ export class Commander {
             new CekCommand(),
             new TagAllCommand(),
             new GetGroupMetadataCommand(),
-            new GetGroupParticipantsCommand(),
+            // new GetGroupParticipantsCommand(),
             new OpenGroupSettingsCommand(),
             new CloseGroupSettingsCommand(),
             new OpenGroupChatCommand(),
