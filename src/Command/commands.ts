@@ -85,12 +85,12 @@ export class GetGroupMetadataCommand implements Command {
         msg += '_Deskripsi_\n'
         msg += desc + '\n\n'
         msg += '---'
-        msg += 'owner grup @' + metadata.owner?.split('@')[0] + '\n\n'
+        msg += 'owner grup wa.me' + metadata.owner?.split('@')[0] + '\n\n'
         msg += 'list member:\n'
 
         metadata.participants.forEach(p => {
             const role = p.isAdmin ? 'admin' : 'member'
-            msg += role + ' ' + '@' + p.jid.split('@')[0] + '\n'
+            msg += role + ' ' + 'wa.me/' + p.jid.split('@')[0] + '\n'
         })
         msg.slice(0, -1)
         await botwa.sendMessage(jid, msg)
