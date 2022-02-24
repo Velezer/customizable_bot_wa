@@ -2,6 +2,8 @@ tokens/
 auth.json
 auth_info_multi.json
 baileys_store_multi.json
+activation.key
+oced.bot
 
 # Logs
 logs

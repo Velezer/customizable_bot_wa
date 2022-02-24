@@ -1,38 +1,26 @@
-import { proto, WAChatUpdate } from '@adiwajshing/baileys';
+import { GroupSettingChange, proto, WAChatUpdate } from '@adiwajshing/baileys';
 import { Behavior } from './Behavior/Behavior';
 import { LeaveGroupParticipantBehavior, WelcomeGroupParticipantAddBehavior, WelcomeGroupParticipantInviteBehavior } from './Behavior/behaviors';
 import { BotWa } from './BotWa/BotWa';
-import { Command } from './Command/Command';
+import { allCommands, Command } from './Command/Command';
 import { ActivateCommand, CekCommand, CloseGroupChatCommand, CloseGroupSettingsCommand, DemoteCommand, GetGroupMetadataCommand, GetGroupParticipantsCommand, MenuCommand, OpenGroupChatCommand, OpenGroupSettingsCommand, PromoteCommand, TagAllCommand } from './Command/commands';
+import { GroupChat } from './groups/Group';
+import { GroupManager } from './groups/GroupManager';
+import fs from 'fs'
+import { OcedBot } from './ocedbot/OcedBot';
 
 export class Commander {
     chatUpdate: WAChatUpdate;
     botwa: BotWa;
 
-    commands: Command[];
+    groupChats: GroupChat[] = GroupManager.getRegisteredGroup()
+    commands: Command[] = allCommands
     behaviors: Behavior[];
 
 
     constructor(botwa: BotWa, chatUpdate: WAChatUpdate) {
         this.botwa = botwa
         this.chatUpdate = chatUpdate
-
-        this.commands = [
-            // new ActivateCommand(), // must be top on list
-            new CekCommand(),
-            new TagAllCommand(),
-            new GetGroupMetadataCommand(),
-            // new GetGroupParticipantsCommand(),
-            new OpenGroupSettingsCommand(),
-            new CloseGroupSettingsCommand(),
-            new OpenGroupChatCommand(),
-            new CloseGroupChatCommand(),
-            new PromoteCommand(),
-            new DemoteCommand(),
-            // new JoinGrupCommand()
-        ]
-        this.commands.push(new MenuCommand(this.commands))
-
 
 
         this.behaviors = [
@@ -58,26 +46,43 @@ export class Commander {
         if (!this.chatUpdate.hasNewMessage) return
         const receivedMessage = this.chatUpdate.messages?.all()[0]!
 
+        console.log(receivedMessage)
+
         if (receivedMessage.key.fromMe === true) return
         if (!receivedMessage?.message) return
 
         const jid = receivedMessage.key.remoteJid!
 
-        this.commands.forEach(async command => {
-            if (! await this.isSentByAdmin(receivedMessage, jid)) return
+        if (! await this.isSentByAdmin(receivedMessage, jid)) return
 
-            if (receivedMessage.message?.conversation?.startsWith(command.key)) {
-                command.run(this.botwa, jid, receivedMessage.message?.conversation!).catch(err => console.error(err))
-            }
+        this.groupChats.forEach(group => {
+
+            this.commands.forEach(async command => {
+                const conversation = receivedMessage.message?.conversation!
+
+                if (!conversation.startsWith(command.key)) return
+
+                const isGroupRegistered = group.jid === jid
+                if (!isGroupRegistered) {
+                    this.botwa.sendMessage(jid, 'silakan hubungi wa.me/' + OcedBot.getPhoneNumber() + ' untuk sewa bot')
+                    return
+                }
+
+                const hasCommand = group.commandKeys.includes(command.key)
+                if (!hasCommand) {
+                    this.botwa.sendMessage(jid, 'silakan upgrade bot biar bisa pake command ' + command.key + '\nkamu bisa hubungi wa.me/' + fs.readFileSync('oced.txt'))
+                    return
+                }
+
+                command.run(this.botwa, jid, conversation).catch(err => console.error(err))
+            });
+        })
 
 
-            // if (!this.botwa.checkActivation(jid)) {
-            //     this.botwa.sendMessage(jid, 'aktifkan bot sebelum digunakan')
-            //     return
-            // }
-        });
 
     }
+
+
 
     runBehaviors() {
         if (!this.chatUpdate.hasNewMessage) return
