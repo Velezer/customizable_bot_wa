@@ -7,6 +7,7 @@ export class GroupManager {
     static filename: string = 'groups.json'
 
     static getRegisteredGroup(): GroupChat[] {
+        if (!fs.existsSync(this.filename)) return []
         const groups = fs.readFileSync(this.filename) as any as GroupChat[]
         return groups
     }
