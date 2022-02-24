@@ -82,7 +82,7 @@ export class GetGroupMetadataCommand implements Command {
 
         let msg = ''
         msg += metadata.subject + '\n\n'
-        msg += '_Deskripsi_'
+        msg += '_Deskripsi_\n'
         msg += desc + '\n\n'
         msg += '---'
         msg += 'owner grup @' + metadata.owner?.split('@')[0] + '\n\n'
