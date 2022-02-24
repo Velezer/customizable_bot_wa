@@ -57,7 +57,7 @@ export class TagAllCommand implements Command {
     example: string = this.key + ' pesan';
 
     async run(botwa: BotWa, jid: string, receivedMessage: string): Promise<void> {
-        const m1 = receivedMessage.substring(`${this.key.length} `.length)
+        const m1 = receivedMessage.slice(this.key.length + 1)
 
         if (!m1) {
             botwa.sendMentionedAll(jid, '')
@@ -82,12 +82,14 @@ export class GetGroupMetadataCommand implements Command {
 
         let msg = ''
         msg += metadata.subject + '\n\n'
+        msg += '_Deskripsi_'
         msg += desc + '\n\n'
+        msg += '---'
         msg += 'owner grup @' + metadata.owner?.split('@')[0] + '\n\n'
         msg += 'list member:\n'
 
         metadata.participants.forEach(p => {
-            const role = p.isAdmin ? 'admin' : 'beban'
+            const role = p.isAdmin ? 'admin' : 'member'
             msg += role + ' ' + '@' + p.jid.split('@')[0] + '\n'
         })
         msg.slice(0, -1)
@@ -174,28 +176,30 @@ export class CloseGroupChatCommand implements Command {
 export class PromoteCommand implements Command {
     key: string = '/promote';
     example: string = this.key + ' 0000000000';
-    description: string = 'promote nomor di grup';
+    description: string = 'promote member grup';
 
 
     async run(botwa: BotWa, jid: string, receivedMessage: string): Promise<void> {
-        const m1 = receivedMessage.substring(`${this.key.length} `.length)
+        const m1 = receivedMessage.slice(this.key.length + 1)
 
-        botwa.prmote(jid, m1)
+        botwa.promote(jid, m1)
+        botwa.sendMessage(jid, m1 + ' dipromote')
 
     }
 
 }
+
 export class DemoteCommand implements Command {
-    key: string = '/promote';
+    key: string = '/demote';
     example: string = this.key + ' 0000000000';
-    description: string = 'promote nomor di grup';
+    description: string = 'demote member grup';
 
 
     async run(botwa: BotWa, jid: string, receivedMessage: string): Promise<void> {
-        const m1 = receivedMessage.substring(`${this.key.length} `.length)
-
+        const m1 = receivedMessage.slice(this.key.length + 1)
         botwa.demote(jid, m1)
 
+        botwa.sendMessage(jid, m1 + ' didemote')
     }
 
 }

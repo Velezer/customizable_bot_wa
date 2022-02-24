@@ -82,6 +82,7 @@ export class BotWa {
     }
 
     async demote(jidGroup: string, phoneNumber: string) {
+        phoneNumber += '@s.whatsapp.net'
         const participants = await this.getGroupParticipants(jidGroup)
         for (const p of participants) {
             if (p.jid.includes(phoneNumber)) {
@@ -89,7 +90,8 @@ export class BotWa {
             }
         }
     }
-    async prmote(jidGroup: string, phoneNumber: string) {
+    async promote(jidGroup: string, phoneNumber: string) {
+        phoneNumber += '@s.whatsapp.net'
         const participants = await this.getGroupParticipants(jidGroup)
         for (const p of participants) {
             if (p.jid.includes(phoneNumber)) {

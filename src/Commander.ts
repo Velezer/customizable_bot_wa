@@ -3,7 +3,7 @@ import { Behavior } from './Behavior/Behavior';
 import { LeaveGroupParticipantBehavior, WelcomeGroupParticipantAddBehavior, WelcomeGroupParticipantInviteBehavior } from './Behavior/behaviors';
 import { BotWa } from './BotWa/BotWa';
 import { Command } from './Command/Command';
-import { ActivateCommand, CekCommand, CloseGroupChatCommand, CloseGroupSettingsCommand, GetGroupMetadataCommand, GetGroupParticipantsCommand, MenuCommand, OpenGroupChatCommand, OpenGroupSettingsCommand, TagAllCommand } from './Command/commands';
+import { ActivateCommand, CekCommand, CloseGroupChatCommand, CloseGroupSettingsCommand, DemoteCommand, GetGroupMetadataCommand, GetGroupParticipantsCommand, MenuCommand, OpenGroupChatCommand, OpenGroupSettingsCommand, PromoteCommand, TagAllCommand } from './Command/commands';
 
 export class Commander {
     chatUpdate: WAChatUpdate;
@@ -26,7 +26,9 @@ export class Commander {
             new OpenGroupSettingsCommand(),
             new CloseGroupSettingsCommand(),
             new OpenGroupChatCommand(),
-            new CloseGroupChatCommand()
+            new CloseGroupChatCommand(),
+            new PromoteCommand(),
+            new DemoteCommand(),
             // new JoinGrupCommand()
         ]
         this.commands.push(new MenuCommand(this.commands))
@@ -42,7 +44,7 @@ export class Commander {
     }
 
     async isSentByAdmin(receivedMessage: proto.WebMessageInfo, jidGroup: string) {
-        const sender = receivedMessage.key.participant
+        const sender = receivedMessage.participant
 
         const participants = await this.botwa.getGroupParticipants(jidGroup)
         for (const p of participants) {
@@ -65,7 +67,7 @@ export class Commander {
             if (! await this.isSentByAdmin(receivedMessage, jid)) return
 
             if (receivedMessage.message?.conversation?.startsWith(command.key)) {
-                command.run(this.botwa, jid, receivedMessage.message?.conversation!)
+                command.run(this.botwa, jid, receivedMessage.message?.conversation!).catch(err => console.error(err))
             }
 
 
