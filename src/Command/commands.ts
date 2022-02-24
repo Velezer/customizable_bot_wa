@@ -248,11 +248,26 @@ export class RegisterGroupCommand implements Command {
 
         const activationKey = OcedBot.getActivationKey()
         if (m1 === activationKey) {
-            GroupManager.register(jid)
+            botwa.sendMessage(jid, 'sedang mengaktivasi...')
 
-            const generatedActivationKey = 'ocedbotkey'
-            OcedBot.generateActivationKey()
+            let isRegistered = false
+            try {
+                isRegistered = GroupManager.register(jid)
+            } catch (err) {
+                console.error(err)
+                botwa.sendMessage(jid, 'aktivasi gagal, mohon hubungi wa.me/' + OcedBot.getPhoneNumber())
+                return
             }
+
+            if (isRegistered) {
+                botwa.sendMessage(jid, 'aktivasi sukses')
+
+                OcedBot.generateActivationKey()
+            }
+        } else {
+            botwa.sendMessage(jid, 'aktivasi gagal, mohon periksa key-aktivasi anda')
+
+        }
 
     }
 }

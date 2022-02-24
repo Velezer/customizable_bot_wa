@@ -3,16 +3,13 @@ import fs from 'fs'
 export class OcedBot {
     static activationKeyFile: string = 'activation.key'
 
-    static getPhoneNumber() {
-        if (!fs.existsSync('oced.bot')) {
-            throw new Error("oced.bot ga ada");
+
+
+    static getActivationKey(): string {
+        if (!fs.existsSync(this.activationKeyFile)) {
+            throw new Error(this.activationKeyFile + " 404 alias ga ada");
         }
-
-        return fs.readFileSync('oced.bot')
-    }
-
-    static getActivationKey() {
-        const activationKey = fs.readFileSync(this.activationKeyFile) as unknown as string
+        const activationKey = fs.readFileSync(this.activationKeyFile, { encoding: 'utf-8' }) as unknown as string
         return activationKey
     }
 
@@ -20,4 +17,13 @@ export class OcedBot {
         fs.writeFileSync(this.activationKeyFile, 'ocedkey')
     }
 
+
+    static getPhoneNumber() {
+        const file = 'oced.bot'
+        if (!fs.existsSync(file)) {
+            throw new Error(file + " 404 alias ga ada");
+        }
+
+        return fs.readFileSync(file)
+    }
 }

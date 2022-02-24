@@ -8,7 +8,8 @@ export class GroupManager {
 
     static getRegisteredGroup(): GroupChat[] {
         if (!fs.existsSync(this.filename)) return []
-        const groups = fs.readFileSync(this.filename) as any as GroupChat[]
+        const groupsString = fs.readFileSync(this.filename, { encoding: 'utf8' })
+        const groups = JSON.parse(groupsString)
         return groups
     }
 
@@ -25,6 +26,7 @@ export class GroupManager {
         for (const g of this.getRegisteredGroup()) {
             if (g.jid === jidGroup) return true
         }
-        return false
+        throw new Error("gagal registrasi");
+
     }
 }

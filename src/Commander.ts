@@ -42,14 +42,15 @@ export class Commander {
     }
 
     async silakanSewa(jid: string) {
-        this.botwa.sendMessage(jid, 'silakan hubungi wa.me/' + OcedBot.getPhoneNumber() + ' untuk sewa bot' +
-        '\natau jika sudah silakan gunakan command /sewa')
+        this.botwa.sendMessage(jid, 'silakan hubungi dahulu \nwa.me/' + OcedBot.getPhoneNumber() + ' untuk sewa bot' +
+            '\n\njika sudah silakan gunakan command \n/sewa')
     }
 
     async runCommands() {
         if (!this.chatUpdate.hasNewMessage) return
         const receivedMessage = this.chatUpdate.messages?.all()[0]!
 
+        console.log(receivedMessage)
 
         if (receivedMessage.key.fromMe === true) return
         if (!receivedMessage?.message) return
@@ -59,6 +60,14 @@ export class Commander {
         if (! await this.isSentByGroupAdmin(receivedMessage, jid)) return
         const conversation = receivedMessage.message?.conversation!
 
+        if (conversation.startsWith('/sewa')) {
+            for (const c of this.commands) {
+                if (c.key === '/sewa') {
+                    c.run(this.botwa, jid, conversation).catch(err => console.error(err))
+                    return
+                }
+            }
+        }
         if (this.groupChats.length < 1) {
             if (conversation.startsWith('/')) {
                 this.silakanSewa(jid)
@@ -71,7 +80,6 @@ export class Commander {
             this.commands.forEach(async command => {
 
                 if (!conversation.startsWith(command.key)) return
-                console.log(receivedMessage)
 
                 const isGroupRegistered = group.jid === jid
                 if (!isGroupRegistered) {

@@ -2,9 +2,10 @@ import { BotWa } from './BotWa/BotWa'
 import { Commander } from './Commander'
 import makeWASocket, { DisconnectReason, proto, WAConnection } from '@adiwajshing/baileys'
 import * as auth from './auth/auth'
+import { GroupManager } from './groups/GroupManager'
 
 
-
+console.log(GroupManager.getRegisteredGroup())
 
 async function main() {
     const sock: WAConnection = new WAConnection()
