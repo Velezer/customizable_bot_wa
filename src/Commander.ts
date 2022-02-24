@@ -31,7 +31,7 @@ export class Commander {
 
     }
 
-    async isSentByAdmin(receivedMessage: proto.WebMessageInfo, jidGroup: string) {
+    async isSentByGroupAdmin(receivedMessage: proto.WebMessageInfo, jidGroup: string) {
         const sender = receivedMessage.participant
 
         const participants = await this.botwa.getGroupParticipants(jidGroup)
@@ -41,30 +41,41 @@ export class Commander {
         return false
     }
 
+    async silakanSewa(jid: string) {
+        this.botwa.sendMessage(jid, 'silakan hubungi wa.me/' + OcedBot.getPhoneNumber() + ' untuk sewa bot' +
+        '\natau jika sudah silakan gunakan command /sewa')
+    }
 
     async runCommands() {
         if (!this.chatUpdate.hasNewMessage) return
         const receivedMessage = this.chatUpdate.messages?.all()[0]!
 
-        console.log(receivedMessage)
 
         if (receivedMessage.key.fromMe === true) return
         if (!receivedMessage?.message) return
 
         const jid = receivedMessage.key.remoteJid!
 
-        if (! await this.isSentByAdmin(receivedMessage, jid)) return
+        if (! await this.isSentByGroupAdmin(receivedMessage, jid)) return
+        const conversation = receivedMessage.message?.conversation!
+
+        if (this.groupChats.length < 1) {
+            if (conversation.startsWith('/')) {
+                this.silakanSewa(jid)
+                return
+            }
+        }
 
         this.groupChats.forEach(group => {
 
             this.commands.forEach(async command => {
-                const conversation = receivedMessage.message?.conversation!
 
                 if (!conversation.startsWith(command.key)) return
+                console.log(receivedMessage)
 
                 const isGroupRegistered = group.jid === jid
                 if (!isGroupRegistered) {
-                    this.botwa.sendMessage(jid, 'silakan hubungi wa.me/' + OcedBot.getPhoneNumber() + ' untuk sewa bot')
+                    this.silakanSewa(jid)
                     return
                 }
 
