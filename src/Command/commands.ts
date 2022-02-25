@@ -218,8 +218,11 @@ export class JoinGroupCommand implements Command {
     async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
         const m1 = conversation.slice(this.key.length + 1)
 
-        botwa.joinGroup(m1)
         LoggerOcedBot.log(botwa, 'bot masuk grup link ' + m1)
+        botwa.joinGroup(m1)
+            .catch(err => {
+                botwa.sendMessage(groupChat.jid, 'bot gagal masuk grup link ' + m1)
+            })
 
     }
 }
@@ -261,7 +264,7 @@ export class RegisterGroupCommand implements Command {
             }
         } else {
             botwa.sendMessage(jid, 'aktivasi gagal, mohon periksa key-aktivasi anda')
-            LoggerOcedBot.log(botwa, 'aktivasi gagal! diperkirakan ada kesalahan key')
+            LoggerOcedBot.log(botwa, 'aktivasi gagal, diperkirakan ada kesalahan key')
         }
 
     }

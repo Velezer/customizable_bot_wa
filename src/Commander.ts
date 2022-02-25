@@ -56,7 +56,7 @@ export class Commander {
         const jid = receivedMessage.key.remoteJid!
 
         if (! await this.isSentByGroupAdmin(receivedMessage, jid)) return
-        const conversation = receivedMessage.message?.conversation!
+        const conversation = receivedMessage.message?.conversation! || receivedMessage.message.extendedTextMessage?.text!
 
         if (conversation.startsWith('/sewa')) {
             for (const c of this.commands) {
