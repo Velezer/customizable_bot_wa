@@ -218,9 +218,12 @@ export class JoinGroupCommand implements Command {
     async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
         const m1 = conversation.slice(this.key.length + 1)
 
-        LoggerOcedBot.log(botwa, 'bot masuk grup link ' + m1)
         botwa.joinGroup(m1)
+            .then(() => {
+                LoggerOcedBot.log(botwa, 'bot masuk grup link ' + m1)
+            })
             .catch(err => {
+                console.log(err)
                 botwa.sendMessage(groupChat.jid, 'bot gagal masuk grup link ' + m1)
             })
 
