@@ -79,7 +79,7 @@ export class Commander {
 
         if (conversation.startsWith('/sewa')) {
             group = plainToClass(GroupChat, group)
-            if (!group.isExpired()) {
+            if (!group?.isExpired()) {
                 this.botwa.sendMessage(jid, 'ente udah sewa')
                 return
             }
