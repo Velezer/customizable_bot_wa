@@ -79,18 +79,19 @@ export class Commander {
             return
         }
 
-        if (conversation.startsWith('/sewa')) {
-            const c = this.commands.find(c => c.key === '/sewa')!
-            const groupChat: GroupChat = new GroupChat(jid)
-            c.run(this.botwa, groupChat, conversation).catch(err => console.error(err))
-            return
-        }
-
         group = plainToClass(GroupChat, group)
         if (group?.isExpired()) {
             this.botwa.sendMessage(jid, 'key-aktivasi sudah expired')
             this.silakanSewa(jid)
+        } else {
+            if (conversation.startsWith('/sewa')) {
+                const c = this.commands.find(c => c.key === '/sewa')!
+                const groupChat: GroupChat = new GroupChat(jid)
+                c.run(this.botwa, groupChat, conversation).catch(err => console.error(err))
+                return
+            }
         }
+
 
         const isBotAdmin = await this.isBotAdmin(participants)
         if (!isBotAdmin) {
