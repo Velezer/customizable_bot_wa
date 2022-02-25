@@ -10,7 +10,7 @@ export class BotWa {
         this.sock = sock
     }
 
-    async getUserInfo(){
+    async getUserInfo() {
         return this.sock.user
     }
 
@@ -28,6 +28,11 @@ export class BotWa {
     async getGroupMetadata(jidGroup: string) {
         const metadata = await this.sock.groupMetadata(jidGroup)
         return metadata
+    }
+
+    async getGroupSubject(jidGroup: string) {
+        const subject = (await this.sock.groupMetadata(jidGroup)).subject
+        return subject
     }
 
     async getGroupParticipants(jidGroup: string) {
