@@ -34,7 +34,7 @@ export class GroupChat {
         }
     }
 
-    getRegisteredTime(){
+    getRegisteredTime() {
         return this.registeredTime = new Date(this.registeredTime)
     }
 
@@ -51,10 +51,13 @@ export class GroupChat {
         const registeredTime = this.getRegisteredTime()
         expired30Days.setDate(registeredTime.getDate() + 30)
 
-        return expired30Days.toLocaleString('id-ID', { month: 'long', year: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' })
+        return 'tanggal ' + expired30Days.toLocaleString('id-ID', { month: 'long', year: 'numeric', day: 'numeric' }) +
+            ' jam ' + this.registeredTime.toLocaleString('id-ID', { hour: 'numeric', minute: 'numeric' })
     }
 
     registeredAt(): string {
-        return this.registeredTime.toLocaleString('id-ID', { month: 'long', year: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' })
+        return 'tanggal ' + this.registeredTime.toLocaleString('id-ID', { month: 'long', year: 'numeric', day: 'numeric' }) +
+            ' jam ' + this.registeredTime.toLocaleString('id-ID', { hour: 'numeric', minute: 'numeric' })
+
     }
 }
