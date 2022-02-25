@@ -182,10 +182,16 @@ export class PromoteCommand implements Command {
 
 
     async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
-        const m1 = conversation.slice(this.key.length + 1)
+        let m1 = conversation.slice(this.key.length + 1)
 
-        botwa.promote(groupChat.jid, m1)
-        botwa.sendMessage(groupChat.jid, m1 + ' dipromote')
+        if (m1.startsWith('@')) {
+            m1 = m1.slice(1)
+        }
+        
+        botwa.promote(groupChat.jid, m1).then(() => {
+
+            botwa.sendMessage(groupChat.jid, m1 + ' dipromote')
+        })
 
     }
 
@@ -199,10 +205,17 @@ export class DemoteCommand implements Command {
 
 
     async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
-        const m1 = conversation.slice(this.key.length + 1)
-        botwa.demote(groupChat.jid, m1)
+        let m1 = conversation.slice(this.key.length + 1)
 
-        botwa.sendMessage(groupChat.jid, m1 + ' didemote')
+        if (m1.startsWith('@')) {
+            m1 = m1.slice(1)
+        }
+        botwa.demote(groupChat.jid, m1).then(() => {
+
+            botwa.sendMessage(groupChat.jid, m1 + ' didemote')
+
+        })
+
     }
 
 }
@@ -267,7 +280,7 @@ export class RegisterGroupCommand implements Command {
             }
         } else {
             botwa.sendMessage(jid, 'aktivasi gagal, mohon periksa key-aktivasi anda')
-            LoggerOcedBot.log(botwa, 'aktivasi gagal, diperkirakan ada kesalahan key')
+            LoggerOcedBot.log(botwa, 'upaya aktivasi gagal, diperkirakan ada kesalahan key')
         }
 
     }
