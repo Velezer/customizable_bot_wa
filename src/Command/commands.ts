@@ -257,7 +257,7 @@ export class RegisterGroupCommand implements Command {
     async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
         const m1 = conversation.slice(this.key.length + 1)
         const jid = groupChat.jid
-        const groupSubject = botwa.getGroupSubject(groupChat.jid)
+        const groupSubject = await botwa.getGroupSubject(groupChat.jid)
 
         if (!m1) {
             botwa.sendMessage(jid, 'silakan hubungi \nwa.me/' + OcedBot.getPhoneNumber() + ' untuk mendapatkan key-aktivasi')
