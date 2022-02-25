@@ -187,11 +187,14 @@ export class PromoteCommand implements Command {
         if (m1.startsWith('@')) {
             m1 = m1.slice(1)
         }
-        
-        botwa.promote(groupChat.jid, m1).then(() => {
 
-            botwa.sendMessage(groupChat.jid, m1 + ' dipromote')
-        })
+        botwa.promote(groupChat.jid, m1)
+            .then(() => {
+                botwa.sendMessage(groupChat.jid, m1 + ' dipromote')
+            }).catch(err => {
+                botwa.sendMessage(groupChat.jid, 'promote gagal')
+                LoggerOcedBot.log(botwa, err)
+            })
 
     }
 
@@ -210,11 +213,14 @@ export class DemoteCommand implements Command {
         if (m1.startsWith('@')) {
             m1 = m1.slice(1)
         }
-        botwa.demote(groupChat.jid, m1).then(() => {
+        botwa.demote(groupChat.jid, m1)
+            .then(() => {
+                botwa.sendMessage(groupChat.jid, m1 + ' didemote')
 
-            botwa.sendMessage(groupChat.jid, m1 + ' didemote')
-
-        })
+            }).catch(err => {
+                botwa.sendMessage(groupChat.jid, 'demote gagal')
+                LoggerOcedBot.log(botwa, err)
+            })
 
     }
 
