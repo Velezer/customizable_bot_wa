@@ -1,4 +1,4 @@
-import { GroupSettingChange, proto, WAChatUpdate } from '@adiwajshing/baileys';
+import { GroupSettingChange, proto, WAChatUpdate, WAGroupParticipant } from '@adiwajshing/baileys';
 import { Behavior } from './Behavior/Behavior';
 import { LeaveGroupParticipantBehavior, WelcomeGroupParticipantAddBehavior, WelcomeGroupParticipantInviteBehavior } from './Behavior/behaviors';
 import { BotWa } from './BotWa/BotWa';
@@ -30,10 +30,9 @@ export class Commander {
 
     }
 
-    async isSentByGroupAdmin(receivedMessage: proto.WebMessageInfo, jidGroup: string) {
+    async isSentByGroupAdmin(receivedMessage: proto.WebMessageInfo, jidGroup: string, participants: WAGroupParticipant[]) {
         const sender = receivedMessage.participant
 
-        const participants = await this.botwa.getGroupParticipants(jidGroup)
         for (const p of participants) {
             if (p.jid === sender && p.isAdmin) return true
         }
@@ -45,10 +44,9 @@ export class Commander {
             '\n\njika sudah silakan gunakan command \n/sewa')
     }
 
-    async isOcedBotAdmin(jidGroup: string) {
+    async isBotAdmin(participants: WAGroupParticipant[]) {
         const userInfo = this.botwa.getUserInfo()
 
-        const participants = await this.botwa.getGroupParticipants(jidGroup)
         for (const p of participants) {
             if (p.jid === (await userInfo).jid && p.isAdmin) return true
         }
@@ -56,67 +54,51 @@ export class Commander {
     }
 
     async runCommands() {
+
         if (!this.chatUpdate.hasNewMessage) return
         const receivedMessage = this.chatUpdate.messages?.all()[0]!
 
-        console.log(receivedMessage)
         const jid = receivedMessage.key.remoteJid!
-        
+        const participants = await this.botwa.getGroupParticipants(jid)
+
         if (receivedMessage.key.fromMe === true) return
         if (!receivedMessage?.message) return
-        
-        if (! await this.isSentByGroupAdmin(receivedMessage, jid)) return
+
+        if (! await this.isSentByGroupAdmin(receivedMessage, jid, participants)) return
         const conversation = receivedMessage.message?.conversation! || receivedMessage.message.extendedTextMessage?.text!
 
         if (conversation.startsWith('/sewa')) {
-            for (const c of this.commands) {
-                if (c.key === '/sewa') {
-                    const groupChat: GroupChat = new GroupChat(jid)
-                    c.run(this.botwa, groupChat, conversation).catch(err => console.error(err))
-                    return
-                }
-            }
-        }
-        if (this.groupChats.length < 1) {
-            if (conversation.startsWith('/')) {
-                this.silakanSewa(jid)
-                return
-            }
+            const c = this.commands.find(c => c.key === '/sewa')!
+            const groupChat: GroupChat = new GroupChat(jid)
+            c.run(this.botwa, groupChat, conversation).catch(err => console.error(err))
+            return
         }
 
-        const isGroupRegistered = this.groupChats.map(g => g.jid).includes(jid)
-        if (!isGroupRegistered) {
+        const group = this.groupChats.find(g => g.jid === jid)
+        if (!group && conversation.startsWith('/')) {
             this.silakanSewa(jid)
             return
         }
 
-        const group = this.groupChats.find(g => g.jid === jid)!
+        const isBotAdmin = await this.isBotAdmin(participants)
+        if (!isBotAdmin) {
+            this.botwa.sendMessage(jid, 'jadiin admin dulu dong')
+            return
+        }
 
+        const command = this.commands.find(c => conversation.startsWith(c.key))
+        if (!command) return
+        
+        const hasCommand = group!.commandKeys.includes(command.key)
+        if (!hasCommand) {
+            this.botwa.sendMessage(jid, 'silakan upgrade bot biar bisa pake command \n' + command.key + '\nkamu bisa hubungi \nwa.me/' + OcedBot.getPhoneNumber())
+            return
+        }
 
-        this.commands.forEach(async command => {
-
-            if (!conversation.startsWith(command.key)) return
-
-            const hasCommand = group.commandKeys.includes(command.key)
-            if (!hasCommand) {
-                this.botwa.sendMessage(jid, 'silakan upgrade bot biar bisa pake command \n' + command.key + '\nkamu bisa hubungi \nwa.me/' + OcedBot.getPhoneNumber())
-                return
-            }
-
-            const isOcedBotAdmin = await this.isOcedBotAdmin(jid)
-
-            if (!isOcedBotAdmin) {
-                this.botwa.sendMessage(jid, 'jadiin admin dulu dong')
-                return
-            }
-
-            command.run(this.botwa, group, conversation).catch(err => {
-                console.error(err)
-                LoggerOcedBot.log(this.botwa, err)
-            })
+        command.run(this.botwa, group!, conversation).catch(err => {
+            console.error(err)
+            LoggerOcedBot.log(this.botwa, err)
         })
-
-
 
     }
 
