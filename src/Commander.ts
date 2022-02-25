@@ -74,17 +74,17 @@ export class Commander {
             }
         }
 
+        const isGroupRegistered = this.groupChats.map(g => g.jid).includes(jid)
+        if (!isGroupRegistered) {
+            this.silakanSewa(jid)
+            return
+        }
+
         this.groupChats.forEach(group => {
 
             this.commands.forEach(async command => {
 
                 if (!conversation.startsWith(command.key)) return
-
-                const isGroupRegistered = group.jid === jid
-                if (!isGroupRegistered) {
-                    this.silakanSewa(jid)
-                    return
-                }
 
                 const hasCommand = group.commandKeys.includes(command.key)
                 if (!hasCommand) {
