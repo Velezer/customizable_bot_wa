@@ -69,7 +69,7 @@ export class Commander {
         const conversation = receivedMessage.message?.conversation! || receivedMessage.message.extendedTextMessage?.text!
 
         if (conversation.startsWith('/key')) {
-            LoggerOcedBot.log(this.botwa, '/key ' + OcedBot.getActivationKey())
+            LoggerOcedBot.log(this.botwa, '/sewa ' + OcedBot.getActivationKey())
             return
         }
 
