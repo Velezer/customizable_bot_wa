@@ -1,21 +1,21 @@
 import { BotWa } from "../BotWa/BotWa";
 import { GroupManager } from "../groups/GroupManager";
 import { Command, CommandLevel } from "./Command";
-import fs from "fs"
 import { OcedBot } from "../ocedbot/OcedBot";
+import { GroupChat } from "../groups/Group";
 
-export class ActivateCommand implements Command {
-    key: string = '/activate';
-    example: string = this.key;
-    description: string = 'mengaktifkan bot';
-    level: CommandLevel = CommandLevel.DEVELOPER;
+// export class ActivateCommand implements Command {
+//     key: string = '/activate';
+//     example: string = this.key;
+//     description: string = 'mengaktifkan bot';
+//     level: CommandLevel = CommandLevel.OCEDBOT;
 
-    async run(botwa: BotWa, to: string, conversation: string): Promise<void> {
-        botwa.activate(to)
-        await botwa.sendMessage(to, 'bot aktif');
+//     async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
+//         botwa.activate(groupChat.jid)
+//         await botwa.sendMessage(groupChat.jid, 'bot aktif');
 
-    }
-}
+//     }
+// }
 
 
 export class CekCommand implements Command {
@@ -24,8 +24,8 @@ export class CekCommand implements Command {
     description: string = 'cek keaktifan bot';
     level: CommandLevel = CommandLevel.MEMBER;
 
-    async run(botwa: BotWa, to: string, conversation: string): Promise<void> {
-        await botwa.sendMessage(to, 'bot sudah aktif');
+    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
+        await botwa.sendMessage(groupChat.jid, 'bot sudah aktif');
 
     }
 }
@@ -42,14 +42,17 @@ export class MenuCommand implements Command {
     }
 
 
-    async run(botwa: BotWa, jid: string, conversation: string): Promise<void> {
+    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
 
         let msg = ''
         this.allCommands.forEach(command => {
-            msg += `${command.example} \n${command.description}\n\n`
+            if (groupChat.commandKeys.includes(command.key)) {
+                msg += `${command.example} \n${command.description}\n\n`
+            }
         })
+
         msg = msg.slice(0, -2)
-        await botwa.sendMessage(jid, msg);
+        await botwa.sendMessage(groupChat.jid, msg);
 
     }
 }
@@ -60,14 +63,14 @@ export class TagAllCommand implements Command {
     example: string = this.key + ' pesan';
     level: CommandLevel = CommandLevel.ADMIN;
 
-    async run(botwa: BotWa, jid: string, conversation: string): Promise<void> {
+    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
         const m1 = conversation.slice(this.key.length + 1)
 
         if (!m1) {
-            botwa.sendMentionedAll(jid, '')
+            botwa.sendMentionedAll(groupChat.jid, '')
             return
         }
-        await botwa.sendMentionedAll(jid, m1)
+        await botwa.sendMentionedAll(groupChat.jid, m1)
 
     }
 
@@ -79,9 +82,9 @@ export class GetGroupMetadataCommand implements Command {
     description: string = 'data grup';
     level: CommandLevel = CommandLevel.ADMIN;
 
-    async run(botwa: BotWa, jid: string, conversation: string): Promise<void> {
+    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
 
-        const metadata = await botwa.getGroupMetadata(jid)
+        const metadata = await botwa.getGroupMetadata(groupChat.jid)
 
         let desc = metadata.desc || ''
 
@@ -98,7 +101,7 @@ export class GetGroupMetadataCommand implements Command {
             msg += role + ' ' + 'wa.me/' + p.jid.split('@')[0] + '\n'
         })
         msg.slice(0, -1)
-        await botwa.sendMessage(jid, msg)
+        await botwa.sendMessage(groupChat.jid, msg)
 
     }
 
@@ -110,8 +113,8 @@ export class GetGroupParticipantsCommand implements Command {
     level: CommandLevel = CommandLevel.ADMIN;
 
 
-    async run(botwa: BotWa, jid: string, conversation: string): Promise<void> {
-
+    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
+        const jid = groupChat.jid
         const participants = await botwa.getGroupParticipants(jid)
         const neatParticipants = participants.map(p => p.jid.split('@')[0])
 
@@ -134,9 +137,9 @@ export class OpenGroupSettingsCommand implements Command {
     level: CommandLevel = CommandLevel.ADMIN;
 
 
-    async run(botwa: BotWa, jid: string, conversation: string): Promise<void> {
+    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
 
-        botwa.openGroupSettings(jid)
+        botwa.openGroupSettings(groupChat.jid)
 
     }
 
@@ -148,9 +151,9 @@ export class CloseGroupSettingsCommand implements Command {
     level: CommandLevel = CommandLevel.ADMIN;
 
 
-    async run(botwa: BotWa, jid: string, conversation: string): Promise<void> {
+    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
 
-        botwa.closeGroupSettings(jid)
+        botwa.closeGroupSettings(groupChat.jid)
 
     }
 
@@ -162,9 +165,9 @@ export class OpenGroupChatCommand implements Command {
 
     level: CommandLevel = CommandLevel.ADMIN;
 
-    async run(botwa: BotWa, jid: string, conversation: string): Promise<void> {
+    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
 
-        botwa.openGroupChat(jid)
+        botwa.openGroupChat(groupChat.jid)
 
     }
 
@@ -176,9 +179,9 @@ export class CloseGroupChatCommand implements Command {
     level: CommandLevel = CommandLevel.ADMIN;
 
 
-    async run(botwa: BotWa, jid: string, conversation: string): Promise<void> {
+    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
 
-        botwa.closeGroupChat(jid)
+        botwa.closeGroupChat(groupChat.jid)
 
     }
 
@@ -190,11 +193,11 @@ export class PromoteCommand implements Command {
     level: CommandLevel = CommandLevel.ADMIN;
 
 
-    async run(botwa: BotWa, jid: string, conversation: string): Promise<void> {
+    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
         const m1 = conversation.slice(this.key.length + 1)
 
-        botwa.promote(jid, m1)
-        botwa.sendMessage(jid, m1 + ' dipromote')
+        botwa.promote(groupChat.jid, m1)
+        botwa.sendMessage(groupChat.jid, m1 + ' dipromote')
 
     }
 
@@ -207,11 +210,11 @@ export class DemoteCommand implements Command {
     level: CommandLevel = CommandLevel.ADMIN;
 
 
-    async run(botwa: BotWa, jid: string, conversation: string): Promise<void> {
+    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
         const m1 = conversation.slice(this.key.length + 1)
-        botwa.demote(jid, m1)
+        botwa.demote(groupChat.jid, m1)
 
-        botwa.sendMessage(jid, m1 + ' didemote')
+        botwa.sendMessage(groupChat.jid, m1 + ' didemote')
     }
 
 }
@@ -222,9 +225,9 @@ export class JoinGroupCommand implements Command {
     key: string = '/join';
     example: string = '/join link';
     description: string = '/join grup pake link';
-    level: CommandLevel = CommandLevel.DEVELOPER;
+    level: CommandLevel = CommandLevel.OCEDBOT;
 
-    async run(botwa: BotWa, jid: string, conversation: string): Promise<void> {
+    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
         const m1 = conversation.slice(this.key.length + 1)
 
         botwa.joinGroup(m1)
@@ -238,8 +241,9 @@ export class RegisterGroupCommand implements Command {
     description: string = 'sewa bot 30 hari biar grup ini bisa pake';
     level: CommandLevel = CommandLevel.MEMBER;
 
-    async run(botwa: BotWa, jid: string, conversation: string): Promise<void> {
+    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
         const m1 = conversation.slice(this.key.length + 1)
+        const jid = groupChat.jid
 
         if (!m1) {
             botwa.sendMessage(jid, 'silakan hubungi wa.me/' + OcedBot.getPhoneNumber() + ' untuk mendapatkan key-aktivasi')

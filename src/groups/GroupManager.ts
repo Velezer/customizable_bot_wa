@@ -9,6 +9,7 @@ export class GroupManager {
     static getRegisteredGroup(): GroupChat[] {
         if (!fs.existsSync(this.filename)) return []
         const groupsString = fs.readFileSync(this.filename, { encoding: 'utf8' })
+        if (!groupsString || groupsString === '') return []
         const groups = JSON.parse(groupsString)
         return groups
     }

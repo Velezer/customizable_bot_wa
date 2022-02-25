@@ -1,11 +1,11 @@
-import { proto } from "@adiwajshing/baileys"
 import { BotWa } from "../BotWa/BotWa"
-import { CekCommand, CloseGroupChatCommand, CloseGroupSettingsCommand, DemoteCommand, GetGroupMetadataCommand, JoinGroupCommand, OpenGroupChatCommand, OpenGroupSettingsCommand, PromoteCommand, RegisterGroupCommand, TagAllCommand } from "./commands"
+import { GroupChat } from "../groups/Group"
+import { CekCommand, CloseGroupChatCommand, CloseGroupSettingsCommand, DemoteCommand, GetGroupMetadataCommand, JoinGroupCommand, MenuCommand, OpenGroupChatCommand, OpenGroupSettingsCommand, PromoteCommand, RegisterGroupCommand, TagAllCommand } from "./commands"
 
 export enum CommandLevel {
     MEMBER,
     ADMIN,
-    DEVELOPER
+    OCEDBOT
 }
 
 export interface Command {
@@ -14,7 +14,7 @@ export interface Command {
     description: string
     level: CommandLevel
 
-    run(botwa: BotWa, jid: string, conversation: string): Promise<void>
+    run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void>
 }
 
 export const allCommands = [
@@ -30,5 +30,7 @@ export const allCommands = [
     new PromoteCommand(),
     new DemoteCommand(),
     new JoinGroupCommand(),
-    new RegisterGroupCommand()
+    new RegisterGroupCommand(),
 ]
+
+allCommands.push(new MenuCommand(allCommands))

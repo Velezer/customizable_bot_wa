@@ -3,10 +3,8 @@ import { Behavior } from './Behavior/Behavior';
 import { LeaveGroupParticipantBehavior, WelcomeGroupParticipantAddBehavior, WelcomeGroupParticipantInviteBehavior } from './Behavior/behaviors';
 import { BotWa } from './BotWa/BotWa';
 import { allCommands, Command } from './Command/Command';
-import { ActivateCommand, CekCommand, CloseGroupChatCommand, CloseGroupSettingsCommand, DemoteCommand, GetGroupMetadataCommand, GetGroupParticipantsCommand, MenuCommand, OpenGroupChatCommand, OpenGroupSettingsCommand, PromoteCommand, TagAllCommand } from './Command/commands';
 import { GroupChat } from './groups/Group';
 import { GroupManager } from './groups/GroupManager';
-import fs from 'fs'
 import { OcedBot } from './ocedbot/OcedBot';
 
 export class Commander {
@@ -63,7 +61,8 @@ export class Commander {
         if (conversation.startsWith('/sewa')) {
             for (const c of this.commands) {
                 if (c.key === '/sewa') {
-                    c.run(this.botwa, jid, conversation).catch(err => console.error(err))
+                    const groupChat: GroupChat = new GroupChat(jid)
+                    c.run(this.botwa, groupChat, conversation).catch(err => console.error(err))
                     return
                 }
             }
@@ -89,11 +88,11 @@ export class Commander {
 
                 const hasCommand = group.commandKeys.includes(command.key)
                 if (!hasCommand) {
-                    this.botwa.sendMessage(jid, 'silakan upgrade bot biar bisa pake command ' + command.key + '\nkamu bisa hubungi wa.me/' + fs.readFileSync('oced.txt'))
+                    this.botwa.sendMessage(jid, 'silakan upgrade bot biar bisa pake command \n' + command.key + '\nkamu bisa hubungi \nwa.me/' + OcedBot.getPhoneNumber())
                     return
                 }
 
-                command.run(this.botwa, jid, conversation).catch(err => console.error(err))
+                command.run(this.botwa, group, conversation).catch(err => console.error(err))
             });
         })
 

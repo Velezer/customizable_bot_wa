@@ -10,15 +10,15 @@ export class BotWa {
         this.sock = sock
     }
 
-    checkActivation(jidGroup: string): boolean {
-        if (this.allowedJidGroup.includes(jidGroup)) return true
-        return false
-    }
+    // checkActivation(jidGroup: string): boolean {
+    //     if (this.allowedJidGroup.includes(jidGroup)) return true
+    //     return false
+    // }
 
-    activate(jidGroup: string) {
-        if (this.checkActivation(jidGroup)) return
-        this.allowedJidGroup.push(jidGroup)
-    }
+    // activate(jidGroup: string) {
+    //     if (this.checkActivation(jidGroup)) return
+    //     this.allowedJidGroup.push(jidGroup)
+    // }
 
     async sendMessage(to: string, message: string) {
         return await this.sock.sendMessage(to, message, MessageType.text)
