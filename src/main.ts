@@ -1,17 +1,18 @@
 import { BotWa } from './BotWa/BotWa'
 import { Commander } from './Commander'
-import makeWASocket, { DisconnectReason, proto, WAConnection } from '@adiwajshing/baileys'
+import makeWASocket, { DisconnectReason, proto, ReconnectMode, WAConnection } from '@adiwajshing/baileys'
 import * as auth from './auth/auth'
 import { GroupManager } from './groups/GroupManager'
+import { OcedBot } from './ocedbot/OcedBot'
 
 
-console.log(GroupManager.getRegisteredGroup())
 
 async function main() {
     const sock: WAConnection = new WAConnection()
     sock.logger.level = 'debug'
     sock.version = [2, 2143, 3]
-    sock.browserDescription = ['velezer', 'Chrome', 'bot_wa']
+    sock.browserDescription = ['velezer', 'Chrome', 'OcedBot']
+    sock.autoReconnect = ReconnectMode.onAllErrors
 
     if (auth.isExist('auth.json')) {
         sock.loadAuthInfo('auth.json')
@@ -31,4 +32,4 @@ async function main() {
 }
 
 
-main()
+main()   

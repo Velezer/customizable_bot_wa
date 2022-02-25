@@ -1,5 +1,14 @@
 import fs from 'fs'
 
+function getRandomString(length:number) {
+    var randomChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var result = '';
+    for ( var i = 0; i < length; i++ ) {
+        result += randomChars.charAt(Math.floor(Math.random() * randomChars.length));
+    }
+    return result;
+}
+
 export class OcedBot {
     static activationKeyFile: string = 'activation.key'
 
@@ -7,14 +16,14 @@ export class OcedBot {
 
     static getActivationKey(): string {
         if (!fs.existsSync(this.activationKeyFile)) {
-            throw new Error(this.activationKeyFile + " 404 alias ga ada");
+            this.generateActivationKey()
         }
-        const activationKey = fs.readFileSync(this.activationKeyFile, { encoding: 'utf-8' }) as unknown as string
+        const activationKey = fs.readFileSync(this.activationKeyFile, { encoding: 'utf-8' })
         return activationKey
     }
 
     static generateActivationKey() {
-        fs.writeFileSync(this.activationKeyFile, 'ocedkey')
+        fs.writeFileSync(this.activationKeyFile, getRandomString(15))
     }
 
 

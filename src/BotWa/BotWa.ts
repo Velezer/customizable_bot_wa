@@ -10,16 +10,6 @@ export class BotWa {
         this.sock = sock
     }
 
-    // checkActivation(jidGroup: string): boolean {
-    //     if (this.allowedJidGroup.includes(jidGroup)) return true
-    //     return false
-    // }
-
-    // activate(jidGroup: string) {
-    //     if (this.checkActivation(jidGroup)) return
-    //     this.allowedJidGroup.push(jidGroup)
-    // }
-
     async sendMessage(to: string, message: string) {
         return await this.sock.sendMessage(to, message, MessageType.text)
     }
@@ -58,18 +48,6 @@ export class BotWa {
         this.sock.groupSettingChange(jidGroup, GroupSettingChange.messageSend, true)
     }
 
-    // async isSentByAdmin(jidGroup: string, message: proto.IWebMessageInfo): Promise<boolean> {
-    //     // const sender = message.participant
-    //     const sender = message.key.participant
-
-    //     const participants = await this.getGroupParticipants(jidGroup)
-
-    //     for (const p of participants) {
-
-    //         if (p.jid === sender && p.isAdmin) return true
-    //     }
-    //     return false
-    // }
 
     async joinGroup(link: string): Promise<string> {
         const response = await this.sock.acceptInvite(link)

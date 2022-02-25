@@ -40,7 +40,7 @@ export class Commander {
     }
 
     async silakanSewa(jid: string) {
-        this.botwa.sendMessage(jid, 'silakan hubungi dahulu \nwa.me/' + OcedBot.getPhoneNumber() + ' untuk sewa bot' +
+        this.botwa.sendMessage(jid, 'silakan hubungi dahulu \nwa.me/' + OcedBot.getPhoneNumber() + '\nuntuk sewa bot' +
             '\n\njika sudah silakan gunakan command \n/sewa')
     }
 

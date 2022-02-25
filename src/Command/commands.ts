@@ -3,19 +3,7 @@ import { GroupManager } from "../groups/GroupManager";
 import { Command, CommandLevel } from "./Command";
 import { OcedBot } from "../ocedbot/OcedBot";
 import { GroupChat } from "../groups/Group";
-
-// export class ActivateCommand implements Command {
-//     key: string = '/activate';
-//     example: string = this.key;
-//     description: string = 'mengaktifkan bot';
-//     level: CommandLevel = CommandLevel.OCEDBOT;
-
-//     async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
-//         botwa.activate(groupChat.jid)
-//         await botwa.sendMessage(groupChat.jid, 'bot aktif');
-
-//     }
-// }
+import { LoggerOcedBot } from "../logger/Logger";
 
 
 export class CekCommand implements Command {
@@ -231,6 +219,7 @@ export class JoinGroupCommand implements Command {
         const m1 = conversation.slice(this.key.length + 1)
 
         botwa.joinGroup(m1)
+        LoggerOcedBot.log(botwa, 'bot masuk grup link ' + m1)
 
     }
 }
@@ -246,7 +235,7 @@ export class RegisterGroupCommand implements Command {
         const jid = groupChat.jid
 
         if (!m1) {
-            botwa.sendMessage(jid, 'silakan hubungi wa.me/' + OcedBot.getPhoneNumber() + ' untuk mendapatkan key-aktivasi')
+            botwa.sendMessage(jid, 'silakan hubungi \nwa.me/' + OcedBot.getPhoneNumber() + ' untuk mendapatkan key-aktivasi')
             return
         }
 
@@ -259,18 +248,20 @@ export class RegisterGroupCommand implements Command {
                 isRegistered = GroupManager.register(jid)
             } catch (err) {
                 console.error(err)
-                botwa.sendMessage(jid, 'aktivasi gagal, mohon hubungi wa.me/' + OcedBot.getPhoneNumber())
+                botwa.sendMessage(jid, 'aktivasi gagal, mohon hubungi \nwa.me/' + OcedBot.getPhoneNumber())
+                LoggerOcedBot.log(botwa, 'aktivasi gagal dengan key ' + activationKey)
                 return
             }
 
             if (isRegistered) {
                 botwa.sendMessage(jid, 'aktivasi sukses')
 
+                LoggerOcedBot.log(botwa, 'aktivasi sukses dengan key ' + activationKey)
                 OcedBot.generateActivationKey()
             }
         } else {
             botwa.sendMessage(jid, 'aktivasi gagal, mohon periksa key-aktivasi anda')
-
+            LoggerOcedBot.log(botwa, 'aktivasi gagal! diperkirakan ada kesalahan key')
         }
 
     }
