@@ -45,17 +45,27 @@ export class Commander {
             '\n\njika sudah silakan gunakan command \n/sewa')
     }
 
+    async isOcedBotAdmin(jidGroup: string) {
+        const userInfo = this.botwa.getUserInfo()
+
+        const participants = await this.botwa.getGroupParticipants(jidGroup)
+        for (const p of participants) {
+            if (p.jid === (await userInfo).jid && p.isAdmin) return true
+        }
+        return false
+    }
+
     async runCommands() {
         if (!this.chatUpdate.hasNewMessage) return
         const receivedMessage = this.chatUpdate.messages?.all()[0]!
 
         console.log(receivedMessage)
         const jid = receivedMessage.key.remoteJid!
-        if (! await this.isSentByGroupAdmin(receivedMessage, jid)) return
-
+        
         if (receivedMessage.key.fromMe === true) return
         if (!receivedMessage?.message) return
-
+        
+        if (! await this.isSentByGroupAdmin(receivedMessage, jid)) return
         const conversation = receivedMessage.message?.conversation! || receivedMessage.message.extendedTextMessage?.text!
 
         if (conversation.startsWith('/sewa')) {
@@ -90,6 +100,13 @@ export class Commander {
             const hasCommand = group.commandKeys.includes(command.key)
             if (!hasCommand) {
                 this.botwa.sendMessage(jid, 'silakan upgrade bot biar bisa pake command \n' + command.key + '\nkamu bisa hubungi \nwa.me/' + OcedBot.getPhoneNumber())
+                return
+            }
+
+            const isOcedBotAdmin = await this.isOcedBotAdmin(jid)
+
+            if (!isOcedBotAdmin) {
+                this.botwa.sendMessage(jid, 'jadiin admin dulu dong')
                 return
             }
 

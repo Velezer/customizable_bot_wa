@@ -10,6 +10,10 @@ export class BotWa {
         this.sock = sock
     }
 
+    async getUserInfo(){
+        return this.sock.user
+    }
+
     async sendMessage(to: string, message: string) {
         return await this.sock.sendMessage(to, message, MessageType.text)
     }
