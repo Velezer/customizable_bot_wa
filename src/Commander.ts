@@ -80,20 +80,20 @@ export class Commander {
             return
         }
 
-        this.groupChats.forEach(group => {
+        const group = this.groupChats.find(g => g.jid === jid)!
 
-            this.commands.forEach(async command => {
 
-                if (!conversation.startsWith(command.key)) return
+        this.commands.forEach(async command => {
 
-                const hasCommand = group.commandKeys.includes(command.key)
-                if (!hasCommand) {
-                    this.botwa.sendMessage(jid, 'silakan upgrade bot biar bisa pake command \n' + command.key + '\nkamu bisa hubungi \nwa.me/' + OcedBot.getPhoneNumber())
-                    return
-                }
+            if (!conversation.startsWith(command.key)) return
 
-                command.run(this.botwa, group, conversation).catch(err => console.error(err))
-            });
+            const hasCommand = group.commandKeys.includes(command.key)
+            if (!hasCommand) {
+                this.botwa.sendMessage(jid, 'silakan upgrade bot biar bisa pake command \n' + command.key + '\nkamu bisa hubungi \nwa.me/' + OcedBot.getPhoneNumber())
+                return
+            }
+
+            command.run(this.botwa, group, conversation).catch(err => console.error(err))
         })
 
 
