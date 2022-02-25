@@ -193,7 +193,6 @@ export class PromoteCommand implements Command {
                 botwa.sendMessage(groupChat.jid, m1 + ' dipromote')
             }).catch(err => {
                 botwa.sendMessage(groupChat.jid, 'promote gagal')
-                LoggerOcedBot.log(botwa, err)
             })
 
     }
@@ -216,10 +215,8 @@ export class DemoteCommand implements Command {
         botwa.demote(groupChat.jid, m1)
             .then(() => {
                 botwa.sendMessage(groupChat.jid, m1 + ' didemote')
-
             }).catch(err => {
                 botwa.sendMessage(groupChat.jid, 'demote gagal')
-                LoggerOcedBot.log(botwa, err)
             })
 
     }

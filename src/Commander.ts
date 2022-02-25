@@ -5,6 +5,7 @@ import { BotWa } from './BotWa/BotWa';
 import { allCommands, Command } from './Command/Command';
 import { GroupChat } from './groups/Group';
 import { GroupManager } from './groups/GroupManager';
+import { LoggerOcedBot } from './logger/Logger';
 import { OcedBot } from './ocedbot/OcedBot';
 
 export class Commander {
@@ -93,7 +94,10 @@ export class Commander {
                 return
             }
 
-            command.run(this.botwa, group, conversation).catch(err => console.error(err))
+            command.run(this.botwa, group, conversation).catch(err => {
+                console.error(err)
+                LoggerOcedBot.log(this.botwa, err)
+            })
         })
 
 
