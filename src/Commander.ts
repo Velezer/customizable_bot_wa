@@ -50,13 +50,12 @@ export class Commander {
         const receivedMessage = this.chatUpdate.messages?.all()[0]!
 
         console.log(receivedMessage)
+        const jid = receivedMessage.key.remoteJid!
+        if (! await this.isSentByGroupAdmin(receivedMessage, jid)) return
 
         if (receivedMessage.key.fromMe === true) return
         if (!receivedMessage?.message) return
 
-        const jid = receivedMessage.key.remoteJid!
-
-        if (! await this.isSentByGroupAdmin(receivedMessage, jid)) return
         const conversation = receivedMessage.message?.conversation! || receivedMessage.message.extendedTextMessage?.text!
 
         if (conversation.startsWith('/sewa')) {

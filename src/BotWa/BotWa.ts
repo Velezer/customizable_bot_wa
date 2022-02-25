@@ -64,7 +64,7 @@ export class BotWa {
         const participants = await this.getGroupParticipants(jidGroup)
         for (const p of participants) {
             if (p.jid.includes(phoneNumber)) {
-                this.sock.groupDemoteAdmin(jidGroup, [p.jid])
+                return await this.sock.groupDemoteAdmin(jidGroup, [p.jid])
             }
         }
     }
@@ -73,7 +73,7 @@ export class BotWa {
         const participants = await this.getGroupParticipants(jidGroup)
         for (const p of participants) {
             if (p.jid.includes(phoneNumber)) {
-                this.sock.groupMakeAdmin(jidGroup, [p.jid])
+                return await this.sock.groupMakeAdmin(jidGroup, [p.jid])
             }
         }
     }
