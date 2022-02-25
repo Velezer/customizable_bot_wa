@@ -15,11 +15,12 @@ function fillCommandkeys(): string[] {
 export class GroupChat {
     jid: string
     commandKeys: string[]
-    // datetime: Date | undefined
+    registeredTime: Date
 
     constructor(jidGroup: string) {
         this.jid = jidGroup
         this.commandKeys = fillCommandkeys()
+        this.registeredTime = new Date()
     }
 
     addCommandKey(commandKey: string) {
@@ -31,5 +32,23 @@ export class GroupChat {
         if (index) {
             this.commandKeys.splice(index, 1)
         }
+    }
+
+    isExpired(): boolean {
+        const expired30Days = new Date()
+        expired30Days.setDate(this.registeredTime.getDate() + 30)
+
+        return new Date() > expired30Days
+    }
+
+    expiredAt(): string {
+        const expired30Days = new Date()
+        expired30Days.setDate(this.registeredTime.getDate() + 30)
+
+        return expired30Days.toLocaleString('id-ID', { month: 'long', year: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' })
+    }
+
+    registeredAt(): string {
+        return this.registeredTime.toLocaleString('id-ID', { month: 'long', year: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' })
     }
 }

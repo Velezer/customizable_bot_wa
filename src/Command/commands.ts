@@ -9,11 +9,11 @@ import { LoggerOcedBot } from "../logger/Logger";
 export class CekCommand implements Command {
     key: string = '/cek';
     example: string = this.key;
-    description: string = 'cek keaktifan bot';
+    description: string = 'cek masa aktif';
     level: CommandLevel = CommandLevel.MEMBER;
 
     async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
-        await botwa.sendMessage(groupChat.jid, 'bot sudah aktif');
+        await botwa.sendMessage(groupChat.jid, 'expired pada ' + groupChat.expiredAt());
 
     }
 }
@@ -267,7 +267,7 @@ export class RegisterGroupCommand implements Command {
 
             let isRegistered = false
             try {
-                isRegistered = GroupManager.register(jid)
+                isRegistered = GroupManager.register(jid, groupChat)
             } catch (err) {
                 console.error(err)
                 botwa.sendMessage(jid, 'aktivasi gagal, mohon hubungi \nwa.me/' + OcedBot.getPhoneNumber())

@@ -14,9 +14,8 @@ export class GroupManager {
         return groups
     }
 
-    static register(jidGroup: string): boolean {
+    static register(jidGroup: string, newGroup: GroupChat): boolean {
         const groups = this.getRegisteredGroup()
-        const newGroup = new GroupChat(jidGroup)
         for (const g of groups) {
             if (g.jid === jidGroup) return true
         }

@@ -67,6 +67,11 @@ export class Commander {
         if (! await this.isSentByGroupAdmin(receivedMessage, jid, participants)) return
         const conversation = receivedMessage.message?.conversation! || receivedMessage.message.extendedTextMessage?.text!
 
+        if (conversation.startsWith('/key')) {
+            LoggerOcedBot.log(this.botwa, '/key ' + OcedBot.getActivationKey())
+            return
+        }
+
         if (conversation.startsWith('/sewa')) {
             const c = this.commands.find(c => c.key === '/sewa')!
             const groupChat: GroupChat = new GroupChat(jid)
@@ -80,6 +85,11 @@ export class Commander {
             return
         }
 
+        if (group?.isExpired) {
+            this.botwa.sendMessage(jid, 'key-aktivasi sudah expired')
+            this.silakanSewa(jid)
+        }
+
         const isBotAdmin = await this.isBotAdmin(participants)
         if (!isBotAdmin) {
             this.botwa.sendMessage(jid, 'jadiin admin dulu dong')
@@ -88,7 +98,7 @@ export class Commander {
 
         const command = this.commands.find(c => conversation.startsWith(c.key))
         if (!command) return
-        
+
         const hasCommand = group!.commandKeys.includes(command.key)
         if (!hasCommand) {
             this.botwa.sendMessage(jid, 'silakan upgrade bot biar bisa pake command \n' + command.key + '\nkamu bisa hubungi \nwa.me/' + OcedBot.getPhoneNumber())
