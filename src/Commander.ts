@@ -54,6 +54,8 @@ export class Commander {
         return false
     }
 
+
+
     async runCommands() {
 
         if (!this.chatUpdate.hasNewMessage) return
@@ -74,7 +76,20 @@ export class Commander {
         }
 
         let group = this.groupChats.find(g => g.jid === jid)
-        if (!group && conversation.startsWith('/') && conversation.startsWith('/sewa')) {
+
+        if (conversation.startsWith('/sewa')) {
+            group = plainToClass(GroupChat, group)
+            if (!group.isExpired()) {
+                this.botwa.sendMessage(jid, 'ente udah sewa')
+                return
+            }
+            const c = this.commands.find(c => c.key === '/sewa')!
+            const groupChat: GroupChat = new GroupChat(jid)
+            c.run(this.botwa, groupChat, conversation).catch(err => console.error(err))
+            return
+        }
+
+        if (!group && conversation.startsWith('/')) {
             this.silakanSewa(jid)
             return
         }
@@ -83,13 +98,6 @@ export class Commander {
         if (group?.isExpired()) {
             this.botwa.sendMessage(jid, 'key-aktivasi sudah expired')
             this.silakanSewa(jid)
-        } else {
-            if (conversation.startsWith('/sewa')) {
-                const c = this.commands.find(c => c.key === '/sewa')!
-                const groupChat: GroupChat = new GroupChat(jid)
-                c.run(this.botwa, groupChat, conversation).catch(err => console.error(err))
-                return
-            }
         }
 
 
