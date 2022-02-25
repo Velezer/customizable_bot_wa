@@ -1,4 +1,5 @@
 import { GroupSettingChange, proto, WAChatUpdate, WAGroupParticipant } from '@adiwajshing/baileys';
+import { plainToClass } from 'class-transformer';
 import { Behavior } from './Behavior/Behavior';
 import { LeaveGroupParticipantBehavior, WelcomeGroupParticipantAddBehavior, WelcomeGroupParticipantInviteBehavior } from './Behavior/behaviors';
 import { BotWa } from './BotWa/BotWa';
@@ -79,13 +80,14 @@ export class Commander {
             return
         }
 
-        const group = this.groupChats.find(g => g.jid === jid)
+        let group = this.groupChats.find(g => g.jid === jid)
         if (!group && conversation.startsWith('/')) {
             this.silakanSewa(jid)
             return
         }
 
-        if (group?.isExpired) {
+        group = plainToClass(GroupChat, group)
+        if (group?.isExpired()) {
             this.botwa.sendMessage(jid, 'key-aktivasi sudah expired')
             this.silakanSewa(jid)
         }

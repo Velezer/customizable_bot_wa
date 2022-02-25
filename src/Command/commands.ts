@@ -4,6 +4,7 @@ import { Command, CommandLevel } from "./Command";
 import { OcedBot } from "../ocedbot/OcedBot";
 import { GroupChat } from "../groups/Group";
 import { LoggerOcedBot } from "../logger/Logger";
+import { plainToClass } from "class-transformer";
 
 
 export class CekCommand implements Command {
@@ -13,7 +14,8 @@ export class CekCommand implements Command {
     level: CommandLevel = CommandLevel.MEMBER;
 
     async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
-        await botwa.sendMessage(groupChat.jid, 'expired pada ' + groupChat.expiredAt());
+        groupChat = plainToClass(GroupChat, groupChat)
+        await botwa.sendMessage(groupChat.jid, 'terdaftar pada ' + groupChat.registeredAt + '\nexpired pada ' + groupChat.expiredAt());
 
     }
 }
@@ -267,7 +269,7 @@ export class RegisterGroupCommand implements Command {
 
             let isRegistered = false
             try {
-                isRegistered = GroupManager.register(jid, groupChat)
+                isRegistered = GroupManager.register(groupChat)
             } catch (err) {
                 console.error(err)
                 botwa.sendMessage(jid, 'aktivasi gagal, mohon hubungi \nwa.me/' + OcedBot.getPhoneNumber())
