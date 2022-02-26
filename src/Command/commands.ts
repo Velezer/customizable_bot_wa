@@ -307,7 +307,7 @@ export class CustomMenuCommand implements Command {
 
     async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
         const m12 = conversation.slice(this.key.length + 1)
-        const m1 = m12.split(' ')[0]
+        let m1 = m12.split(' ')[0]
         const m2 = m12.slice(m1.length + 1)
 
         const jid = groupChat.jid
@@ -315,6 +315,10 @@ export class CustomMenuCommand implements Command {
         if (!m1) {
             botwa.sendMessage(jid, 'silakan tambahkan data terlebih dahulu')
             return
+        }
+
+        if (m1.startsWith('/')) {
+            m1 = '/' + m1
         }
 
         groupChat.addGroupCommand(m1, m2)
