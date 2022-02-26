@@ -1,4 +1,5 @@
 import { Command, allCommands, CommandLevel } from "../Command/Command";
+import { GroupCommand } from "./GroupCommand";
 
 function fillCommandkeys(): string[] {
     let result: string[] = []
@@ -16,7 +17,7 @@ export class GroupChat {
     jid: string
     commandKeys: string[]
     registeredTime: Date
-    groupCommands: GroupCommand[]    
+    groupCommands: GroupCommand[] = []
 
     constructor(jidGroup: string) {
         this.jid = jidGroup
@@ -24,18 +25,17 @@ export class GroupChat {
         this.registeredTime = new Date()
     }
 
-    addGroupCommand(key:string, value:string){
-    this.groupCommands.push({key,value})
+    addGroupCommand(key: string, value: string) {
+        this.groupCommands.push({ key, value })
 
-}
+    }
 
-    removeGroupCommand(key: string){
-    const index = this.groupCommands.indexOf()
-    if (index) {
-        this.groupCommands.splice(index,1)
-
-}
-}
+    removeGroupCommand(key: string) {
+        const index = this.groupCommands.findIndex(g => g.key === key)
+        if (index) {
+            this.groupCommands.splice(index, 1)
+        }
+    }
 
     addCommandKey(commandKey: string) {
         this.commandKeys.push(commandKey)
