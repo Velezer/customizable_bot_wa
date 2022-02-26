@@ -16,12 +16,20 @@ export class GroupChat {
     jid: string
     commandKeys: string[]
     registeredTime: Date
+    groupCommands: GroupCommand[]    
 
     constructor(jidGroup: string) {
         this.jid = jidGroup
         this.commandKeys = fillCommandkeys()
         this.registeredTime = new Date()
     }
+
+    addGroupCommand(key:string, value:string){
+    this.groupCommands.push({key,value})
+
+}
+
+    removeGroupCommand(key: string){}
 
     addCommandKey(commandKey: string) {
         this.commandKeys.push(commandKey)
