@@ -1,2 +1,2 @@
 
-manage auth
+/join still need fix

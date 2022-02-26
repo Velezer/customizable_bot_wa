@@ -8,5 +8,5 @@ export type StubType = proto.WebMessageInfo.WebMessageInfoStubType;
 export abstract class Behavior {
     abstract stubType: StubType
 
-    abstract cb(botwa: BotWa, to: string, receivedStubType: StubType): Promise<void>
+    abstract run(botwa: BotWa, jid: string): Promise<void>
 }

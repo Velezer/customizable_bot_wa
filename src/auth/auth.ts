@@ -1,12 +1,15 @@
-import { addTransactionCapability, LegacyAuthenticationCreds } from "@adiwajshing/baileys";
 import fs from 'fs'
 
-export function saveAuth(data: Partial<LegacyAuthenticationCreds>) {
-    fs.writeFileSync('auth.json', JSON.stringify(data)) 
+export function saveAuth(file: string, data: any) {
+    fs.writeFileSync(file, JSON.stringify(data, null, '\t'))
 }
 
-export function loadAuth(): LegacyAuthenticationCreds {
-    const rawData = fs.readFileSync('auth.json')
-    const data = JSON.parse(rawData.toString())
-    return data
+export function isExist(file: string): boolean {
+    return fs.existsSync(file)
 }
+
+// export function loadAuth(file: string) {
+//     const rawData = fs.readFileSync(file)
+//     const data = JSON.parse(rawData.toString())
+//     return data
+// }

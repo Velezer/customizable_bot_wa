@@ -1,82 +1,89 @@
-import { proto } from "@adiwajshing/baileys";
-import { BaileysSock } from "./BaileysSock";
-import { LegacyBaileysSock } from "./LegacyBaileysSock";
+import { GroupSettingChange, MessageType, proto, WAConnection } from "@adiwajshing/baileys";
 
 
 
 export class BotWa {
-    sock: BaileysSock;
+    sock: WAConnection;
     allowedJidGroup: string[] = [];
 
-    constructor(sock: BaileysSock) {
+    constructor(sock: WAConnection) {
         this.sock = sock
     }
 
-    checkActivation(jidGroup: string): boolean {
-        if (this.allowedJidGroup.includes(jidGroup)) return true
-        return false
-    }
-
-    activate(jidGroup: string) {
-        if (this.checkActivation(jidGroup)) return
-        this.allowedJidGroup.push(jidGroup)
+    async getUserInfo() {
+        return this.sock.user
     }
 
     async sendMessage(to: string, message: string) {
-        await this.sock.sendMessage(to, { text: message })
+        return await this.sock.sendMessage(to, message, MessageType.text)
     }
 
-    async sendMentioned(to: string, m1: string) {
+    async sendMentionedAll(to: string, m1: string) {
         const participants = await this.getGroupParticipants(to)
-        const contacts = participants.map(p => p.id)
-        this.sock.sendMessage(to, { text: m1, mentions: contacts },)
+        const contacts = participants.map(p => p.jid)
+        return await this.sock.sendMessage(to, m1, MessageType.extendedText, { contextInfo: { "mentionedJid": contacts } })
+            .catch(err => console.log(err))
     }
 
     async getGroupMetadata(jidGroup: string) {
-        return await this.sock.groupMetadata(jidGroup)
+        const metadata = await this.sock.groupMetadata(jidGroup)
+        return metadata
+    }
+
+    async getGroupSubject(jidGroup: string) {
+        const subject = (await this.sock.groupMetadata(jidGroup)).subject
+        return subject
     }
 
     async getGroupParticipants(jidGroup: string) {
         const metadata = await this.getGroupMetadata(jidGroup)
-        const participants = await metadata.participants
+        const participants = metadata.participants
 
         return participants
     }
 
     async openGroupSettings(jidGroup: string) {
-        this.sock.groupSettingUpdate(jidGroup, "unlocked")
+        this.sock.groupSettingChange(jidGroup, GroupSettingChange.settingsChange, false)
     }
 
     async closeGroupSettings(jidGroup: string) {
-        this.sock.groupSettingUpdate(jidGroup, "locked")
+        this.sock.groupSettingChange(jidGroup, GroupSettingChange.settingsChange, true)
     }
 
     async openGroupChat(jidGroup: string) {
-        this.sock.groupSettingUpdate(jidGroup, "not_announcement")
+        this.sock.groupSettingChange(jidGroup, GroupSettingChange.messageSend, false)
     }
     async closeGroupChat(jidGroup: string) {
-        this.sock.groupSettingUpdate(jidGroup, "announcement")
+        this.sock.groupSettingChange(jidGroup, GroupSettingChange.messageSend, true)
     }
 
-    async isSentByAdmin(jidGroup: string, message: proto.IWebMessageInfo): Promise<boolean> {
-        // const sender = message.participant
-        const sender = message.key.participant
-
-        const participants = await this.getGroupParticipants(jidGroup)
-
-        for (const p of participants) {
-            if (p.id === sender && p.admin?.endsWith('admin')) return true
-        }
-        return false
-    }
 
     async joinGroup(link: string): Promise<string> {
-        const response = await this.sock.groupAcceptInvite(link)
+        const response = await this.sock.acceptInvite(link)
         return response
     }
 
-    async reply(to: string, message: string, from: proto.IWebMessageInfo) {
-        await this.sock.sendMessage(to, { text: message }, { quoted: from })
+    async reply(to: string, message: string, from: proto.WebMessageInfo) {
+        await this.sock.sendMessage(to, message, MessageType.text, { quoted: from })
 
+    }
+
+    async demote(jidGroup: string, phoneNumber: string) {
+        phoneNumber += '@s.whatsapp.net'
+        const participants = await this.getGroupParticipants(jidGroup)
+        for (const p of participants) {
+            if (p.jid.includes(phoneNumber)) {
+                return await this.sock.groupDemoteAdmin(jidGroup, [p.jid])
+            }
+        }
+    }
+    async promote(jidGroup: string, phoneNumber: string) {
+        phoneNumber += '@s.whatsapp.net'
+        const participants = await this.getGroupParticipants(jidGroup)
+        for (const p of participants) {
+            if (p.jid.includes(phoneNumber)) {
+                return await this.sock.groupMakeAdmin(jidGroup, [p.jid])
+            }
+        }
     }
 }
