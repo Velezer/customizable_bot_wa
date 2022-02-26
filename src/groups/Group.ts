@@ -29,7 +29,13 @@ export class GroupChat {
 
 }
 
-    removeGroupCommand(key: string){}
+    removeGroupCommand(key: string){
+    const index = this.groupCommands.indexOf()
+    if (index) {
+        this.groupCommands.splice(index,1)
+
+}
+}
 
     addCommandKey(commandKey: string) {
         this.commandKeys.push(commandKey)
