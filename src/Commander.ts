@@ -77,7 +77,7 @@ export class Commander {
             if (group) {
                 group = plainToClass(GroupChat, group)
                 if (!group.isExpired()) {
-                    this.botwa.sendMessage(jid, 'ente udah sewa/trial')
+                    this.botwa.sendMessage(jid, 'bot masih dalam masa sewa/trial')
                     return
                 }
             }
