@@ -2,6 +2,8 @@ import { BotWa } from './BotWa/BotWa'
 import { Commander } from './Commander'
 import { ReconnectMode, WAConnection } from '@adiwajshing/baileys'
 import * as auth from './auth/auth'
+import { OcedBot } from './ocedbot/OcedBot'
+import { LoggerOcedBot } from './logger/Logger'
 
 
 
@@ -19,21 +21,32 @@ async function main() {
     await sock.connect()
     auth.saveAuth('auth.json', sock.base64EncodedAuthInfo())
 
-    sock.on('chat-update', async (message) => {
-        const botwa = new BotWa(sock)
-        const commander = new Commander(botwa, message)
+    sock.on('chat-update', async (chatUpdate) => {
+        if (!chatUpdate.hasNewMessage) return
+        const receivedMessage = chatUpdate.messages?.all()[0]!
+        if (receivedMessage.key.fromMe === true) return
+        if (!receivedMessage?.message) return
 
-        commander.runCommands()
+        const botwa = new BotWa(sock)
+
+        if (receivedMessage.message?.conversation?.startsWith('/key')) {
+            LoggerOcedBot.log(botwa, '/sewa ' + OcedBot.getActivationKey())
+            return
+        }
+
+        const commander = new Commander(botwa, chatUpdate)
+        commander.runCommands(receivedMessage)
         commander.runBehaviors()
     })
 
 }
 
 function run() {
-    main().catch(err => {
-        console.error(err)
-        main()
-    })
+    main()
+        .catch(err => {
+            console.error(err)
+            main()
+        })
 }
 
 

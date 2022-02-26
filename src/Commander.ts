@@ -6,6 +6,7 @@ import { BotWa } from './BotWa/BotWa';
 import { Command } from './Command/Command';
 import { ActivateCommand } from './Command/commands';
 import { allCommands } from './Command/regular.command';
+import { RegisterGroupCommand, TrialCommand } from './Command/special.command';
 import { GroupChat } from './groups/Group';
 import { GroupManager } from './groups/GroupManager';
 import { LoggerOcedBot } from './logger/Logger';
@@ -58,42 +59,30 @@ export class Commander {
 
 
 
-    async runCommands() {
-
-        if (!this.chatUpdate.hasNewMessage) return
-        const receivedMessage = this.chatUpdate.messages?.all()[0]!
-
+    async runCommands(receivedMessage: proto.WebMessageInfo) {
         const jid = receivedMessage.key.remoteJid!
         const participants = await this.botwa.getGroupParticipants(jid)
 
-        if (receivedMessage.key.fromMe === true) return
-        if (!receivedMessage?.message) return
 
         if (! await this.isSentByGroupAdmin(receivedMessage, jid, participants)) return
-        const conversation = receivedMessage.message?.conversation! || receivedMessage.message.extendedTextMessage?.text!
+        const conversation = receivedMessage.message?.conversation || receivedMessage.message?.extendedTextMessage?.text
         if (!conversation) return
 
-        if (conversation.startsWith('/key')) {
-            LoggerOcedBot.log(this.botwa, '/sewa ' + OcedBot.getActivationKey())
-            return
-        }
 
         let group = this.groupChats.find(g => g.jid === jid)
 
         if (conversation.startsWith('/trial')) {
             if (group) {
-                group = plainToClass(GroupChat, group)
-                if (!group.isTrialExpired()) {
-                    this.botwa.sendMessage(jid, 'ente udah udah pernah trial')
-                    return
-                }
+                this.botwa.sendMessage(jid, 'ente udah udah pernah trial')
+                return
             }
 
-            const c = this.commands.find(c => c.key === '/trial')!
+            const c = new TrialCommand()
             const groupChat: GroupChat = new GroupChat(jid)
             c.run(this.botwa, groupChat, conversation).catch(err => console.error(err))
             return
         }
+
         if (conversation.startsWith('/sewa')) {
             if (group) {
                 group = plainToClass(GroupChat, group)
@@ -103,7 +92,7 @@ export class Commander {
                 }
             }
 
-            const c = this.commands.find(c => c.key === '/sewa')!
+            const c = new RegisterGroupCommand()
             const groupChat: GroupChat = new GroupChat(jid)
             c.run(this.botwa, groupChat, conversation).catch(err => console.error(err))
             return
@@ -116,7 +105,7 @@ export class Commander {
 
         group = plainToClass(GroupChat, group)
         if (group?.isExpired()) {
-            this.botwa.sendMessage(jid, 'key-aktivasi sudah expired')
+            this.botwa.sendMessage(jid, 'bot sudah expired')
             this.silakanSewa(jid)
             return
         }
@@ -133,6 +122,7 @@ export class Commander {
             command.run(this.botwa, group, conversation)
             return
         }
+
         const m0 = conversation.split(' ')[0]
         const customCommand = group?.groupCommands.find(c => m0 === c.key)
         if (customCommand) {
