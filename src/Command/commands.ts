@@ -35,11 +35,20 @@ export class MenuCommand implements Command {
     async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
 
         let msg = ''
+        msg += '_Main Menu_\n\n'
         this.allCommands.forEach(command => {
             if (groupChat.commandKeys.includes(command.key)) {
                 msg += `${command.example} \n${command.description}\n\n`
             }
         })
+
+        if (groupChat.groupCommands.length > 0) {
+            msg += '\n\n_Custom Menu_\n\n'
+            groupChat.groupCommands.forEach(command => {
+                msg += `${command.key}\n\n`
+            })
+        }
+
 
         msg = msg.slice(0, -2)
         await botwa.sendMessage(groupChat.jid, msg);
@@ -291,3 +300,108 @@ export class RegisterGroupCommand implements Command {
     }
 }
 
+export class CustomMenuCommand implements Command {
+    key: string = '/add-menu';
+    example: string = '/add-menu /nama-menu data';
+    description: string = 'menambahkan menu';
+    level: CommandLevel = CommandLevel.ADMIN;
+
+    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
+        const m12 = conversation.slice(this.key.length + 1)
+        let m1 = m12.split(' ')[0]
+        const m2 = m12.slice(m1.length + 1)
+
+        const jid = groupChat.jid
+
+        if (!m1) {
+            botwa.sendMessage(jid, 'silakan tambahkan data terlebih dahulu')
+            return
+        }
+
+        if (!m1.startsWith('/')) {
+            m1 = '/' + m1
+        }
+
+        groupChat.addGroupCommand(m1, m2)
+        GroupManager.update(groupChat)
+        botwa.sendMessage(jid, 'menu ditambahkan')
+
+
+    }
+}
+
+export class RemoveCustomMenuCommand implements Command {
+    key: string = '/remove-menu';
+    example: string = '/remove-menu /nama-menu';
+    description: string = 'menghapus menu';
+    level: CommandLevel = CommandLevel.ADMIN;
+
+    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
+        let m1 = conversation.slice(this.key.length + 1)
+
+        const jid = groupChat.jid
+
+        if (!m1) {
+            botwa.sendMessage(jid, 'kasi nama menunya bos')
+            return
+        }
+
+        if (!m1.startsWith('/')) {
+            groupChat.removeGroupCommand(m1)
+            m1 = '/' + m1
+        }
+
+        groupChat.removeGroupCommand(m1)
+        GroupManager.update(groupChat)
+        botwa.sendMessage(jid, 'menu dihapus')
+
+
+    }
+}
+
+export class ActivateCommand implements Command {
+    key: string = '/activate';
+    example: string = '/activate /command';
+    description: string = 'mengaktifkan command';
+    level: CommandLevel = CommandLevel.ADMIN;
+
+    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
+        const m1 = conversation.slice(this.key.length + 1)
+
+        const jid = groupChat.jid
+
+        if (!m1) {
+            botwa.sendMessage(jid, 'kasi nama command nya bos')
+            return
+        }
+
+        groupChat.addCommandKey(m1)
+        GroupManager.update(groupChat)
+        botwa.sendMessage(jid, 'command ditambahkan')
+
+
+    }
+}
+export class DeactivateCommand implements Command {
+    key: string = '/deactivate';
+    example: string = '/deactivate /command';
+    description: string = 'menonaktifkan command';
+    level: CommandLevel = CommandLevel.ADMIN;
+
+    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
+        const m1 = conversation.slice(this.key.length + 1)
+
+        const jid = groupChat.jid
+
+        if (!m1) {
+            botwa.sendMessage(jid, 'kasi nama command nya bos')
+            return
+        }
+
+        groupChat.removeCommandkey(m1)
+        GroupManager.update(groupChat)
+        botwa.sendMessage(jid, 'command dinonaktifkan')
+
+
+    }
+}

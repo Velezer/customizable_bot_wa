@@ -4,6 +4,7 @@ import { Behavior } from './Behavior/Behavior';
 import { LeaveGroupParticipantBehavior, WelcomeGroupParticipantAddBehavior, WelcomeGroupParticipantInviteBehavior } from './Behavior/behaviors';
 import { BotWa } from './BotWa/BotWa';
 import { allCommands, Command } from './Command/Command';
+import { ActivateCommand } from './Command/commands';
 import { GroupChat } from './groups/Group';
 import { GroupManager } from './groups/GroupManager';
 import { LoggerOcedBot } from './logger/Logger';
@@ -69,6 +70,7 @@ export class Commander {
 
         if (! await this.isSentByGroupAdmin(receivedMessage, jid, participants)) return
         const conversation = receivedMessage.message?.conversation! || receivedMessage.message.extendedTextMessage?.text!
+        if (!conversation) return
 
         if (conversation.startsWith('/key')) {
             LoggerOcedBot.log(this.botwa, '/sewa ' + OcedBot.getActivationKey())
@@ -101,6 +103,7 @@ export class Commander {
         if (group?.isExpired()) {
             this.botwa.sendMessage(jid, 'key-aktivasi sudah expired')
             this.silakanSewa(jid)
+            return
         }
 
 
@@ -110,12 +113,24 @@ export class Commander {
             return
         }
 
-        const command = this.commands.find(c => conversation.startsWith(c.key))
+        if (conversation.startsWith('/activate')) {
+            const command = new ActivateCommand()
+            command.run(this.botwa, group, conversation)
+            return
+        }
+        const m0 = conversation.split(' ')[0]
+        const customCommand = group.groupCommands.find(c => m0 === c.key)
+        if (customCommand) {
+            this.botwa.sendMessage(jid, customCommand.value)
+            return
+        }
+
+        const command = this.commands.find(c => m0 === c.key)
         if (!command) return
 
         const hasCommand = group!.commandKeys.includes(command.key)
         if (!hasCommand) {
-            this.botwa.sendMessage(jid, 'silakan upgrade bot biar bisa pake command \n' + command.key + '\nkamu bisa hubungi \nwa.me/' + OcedBot.getPhoneNumber())
+            this.botwa.sendMessage(jid, 'silakan aktifkan command\n' + command.key)
             return
         }
 
