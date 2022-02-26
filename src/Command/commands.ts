@@ -35,6 +35,7 @@ export class MenuCommand implements Command {
     async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
 
         let msg = ''
+        msg += '_Main Menu_\n\n'
         this.allCommands.forEach(command => {
             if (groupChat.commandKeys.includes(command.key)) {
                 msg += `${command.example} \n${command.description}\n\n`
