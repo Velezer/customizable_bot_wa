@@ -318,7 +318,7 @@ export class CustomMenuCommand implements Command {
             return
         }
 
-        if (m1.startsWith('/')) {
+        if (!m1.startsWith('/')) {
             m1 = '/' + m1
         }
 
@@ -346,7 +346,7 @@ export class RemoveCustomMenuCommand implements Command {
             return
         }
 
-        if (m1.startsWith('/')) {
+        if (!m1.startsWith('/')) {
             groupChat.removeGroupCommand(m1)
             m1 = '/' + m1
         }
