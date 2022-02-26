@@ -1,4 +1,5 @@
-import { Command, allCommands, CommandLevel } from "../Command/Command";
+import { Command, CommandLevel } from "../Command/Command";
+import { allCommands } from "../Command/regular.command";
 import { GroupCommand } from "./GroupCommand";
 
 function fillCommandkeys(): string[] {
