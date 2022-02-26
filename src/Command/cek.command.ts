@@ -14,9 +14,9 @@ export class CekCommand implements Command {
     async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
         groupChat = plainToClass(GroupChat, groupChat)
         if (groupChat.trial === true) {
-            await botwa.sendMessage(groupChat.jid, 'trial pada\n' + groupChat.registeredAt() + '\n\nexpired pada\n' + groupChat.expiredAt());
+            await botwa.sendMessage(groupChat.jid, 'trial pada\n' + groupChat.registeredAt() + '\n\ntrial expired pada\n' + groupChat.trialExpiredAt());
         } else {
-            await botwa.sendMessage(groupChat.jid, 'sewa pada\n' + groupChat.registeredAt() + '\n\nexpired pada\n' + groupChat.trialExpiredAt());
+            await botwa.sendMessage(groupChat.jid, 'sewa pada\n' + groupChat.registeredAt() + '\n\nexpired pada\n' + groupChat.expiredAt());
         }
 
     }
