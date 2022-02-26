@@ -33,7 +33,7 @@ export class GroupChat {
 
     removeGroupCommand(key: string) {
         const index = this.groupCommands.findIndex(g => g.key === key)
-        if (index) {
+        if (index > -1) {
             this.groupCommands.splice(index, 1)
         }
     }
@@ -44,7 +44,7 @@ export class GroupChat {
 
     removeCommandkey(commandKey: string) {
         const index = this.commandKeys.indexOf(commandKey)
-        if (index) {
+        if (index > -1) {
             this.commandKeys.splice(index, 1)
         }
     }

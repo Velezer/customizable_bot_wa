@@ -27,7 +27,9 @@ export class GroupManager {
         if (found) {
             found.registeredTime = new Date()
             const index = groups.findIndex(g => g.jid === found!.jid)
-            groups.splice(index, 1)
+            if (index > -1) {
+                groups.splice(index, 1)
+            }
         }
 
         groups.push(newGroup)
@@ -46,7 +48,7 @@ export class GroupManager {
     static update(group: GroupChat) {
         let groups = this.getRegisteredGroup()
         let index = groups.findIndex(g => g.jid === group.jid)
-        if (index) {
+        if (index > -1) {
             groups[index] = group
             fs.writeFileSync(this.filename, JSON.stringify(groups))
         }
