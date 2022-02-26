@@ -119,7 +119,7 @@ export class Commander {
             return
         }
         const m0 = conversation.split(' ')[0]
-        const customCommand = group.groupCommands.find(c => m0 === c.key)
+        const customCommand = group?.groupCommands.find(c => m0 === c.key)
         if (customCommand) {
             this.botwa.sendMessage(jid, customCommand.value)
             return
