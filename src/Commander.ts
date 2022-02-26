@@ -69,6 +69,7 @@ export class Commander {
 
         if (! await this.isSentByGroupAdmin(receivedMessage, jid, participants)) return
         const conversation = receivedMessage.message?.conversation! || receivedMessage.message.extendedTextMessage?.text!
+        if (!conversation) return
 
         if (conversation.startsWith('/key')) {
             LoggerOcedBot.log(this.botwa, '/sewa ' + OcedBot.getActivationKey())
