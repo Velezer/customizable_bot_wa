@@ -4,6 +4,7 @@ import { Behavior } from './Behavior/Behavior';
 import { LeaveGroupParticipantBehavior, WelcomeGroupParticipantAddBehavior, WelcomeGroupParticipantInviteBehavior } from './Behavior/behaviors';
 import { BotWa } from './BotWa/BotWa';
 import { allCommands, Command } from './Command/Command';
+import { ActivateCommand } from './Command/commands';
 import { GroupChat } from './groups/Group';
 import { GroupManager } from './groups/GroupManager';
 import { LoggerOcedBot } from './logger/Logger';
@@ -102,6 +103,7 @@ export class Commander {
         if (group?.isExpired()) {
             this.botwa.sendMessage(jid, 'key-aktivasi sudah expired')
             this.silakanSewa(jid)
+            return
         }
 
 
@@ -111,18 +113,24 @@ export class Commander {
             return
         }
 
+        if (conversation.startsWith('/activate')) {
+            const command = new ActivateCommand()
+            command.run(this.botwa, group, conversation)
+            return
+        }
+
         const customCommand = group.groupCommands.find(c => conversation.startsWith(c.key))
-        if(customCommand){
+        if (customCommand) {
             this.botwa.sendMessage(jid, customCommand.value)
             return
         }
-        
+
         const command = this.commands.find(c => conversation.startsWith(c.key))
         if (!command) return
 
         const hasCommand = group!.commandKeys.includes(command.key)
         if (!hasCommand) {
-            this.botwa.sendMessage(jid, 'silakan upgrade bot biar bisa pake command \n' + command.key + '\nkamu bisa hubungi \nwa.me/' + OcedBot.getPhoneNumber())
+            this.botwa.sendMessage(jid, 'silakan tambahkan command\n' + command.key)
             return
         }
 

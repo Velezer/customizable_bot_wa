@@ -324,3 +324,27 @@ export class CustomMenuCommand implements Command {
 
     }
 }
+
+export class ActivateCommand implements Command {
+    key: string = '/activate';
+    example: string = '/activate /command';
+    description: string = 'mengaktifkan command';
+    level: CommandLevel = CommandLevel.ADMIN;
+
+    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
+        const m1 = conversation.slice(this.key.length + 1)
+
+        const jid = groupChat.jid
+
+        if (!m1) {
+            botwa.sendMessage(jid, 'command apa yg mau ditambahin?')
+            return
+        }
+
+        groupChat.addCommandKey(m1)
+        GroupManager.update(groupChat)
+        botwa.sendMessage(jid, 'command ditambahkan')
+
+
+    }
+}
