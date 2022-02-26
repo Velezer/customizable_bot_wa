@@ -26,7 +26,8 @@ export class GroupChat {
     }
 
     addGroupCommand(key: string, value: string) {
-        this.groupCommands.push({ key, value })
+        const command: GroupCommand = { key, value }
+        this.groupCommands.push(command)
 
     }
 

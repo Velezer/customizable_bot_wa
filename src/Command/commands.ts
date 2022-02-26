@@ -41,6 +41,14 @@ export class MenuCommand implements Command {
             }
         })
 
+        if (groupChat.groupCommands.length > 0) {
+            msg += '\n\n_Custom Menu_\n\n'
+            groupChat.groupCommands.forEach(command => {
+                msg += `${command.key} \n${command.value}\n\n`
+            })
+        }
+
+
         msg = msg.slice(0, -2)
         await botwa.sendMessage(groupChat.jid, msg);
 
@@ -291,3 +299,28 @@ export class RegisterGroupCommand implements Command {
     }
 }
 
+export class AddMenuGroupCommand implements Command {
+    key: string = '/add-menu';
+    example: string = '/add-menu key data';
+    description: string = 'menambahkan menu';
+    level: CommandLevel = CommandLevel.ADMIN;
+
+    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
+        const m12 = conversation.slice(this.key.length + 1)
+        const m1 = m12.split(' ')[0]
+        const m2 = m12.slice(m1.length + 1)
+
+        const jid = groupChat.jid
+
+        if (!m1) {
+            botwa.sendMessage(jid, 'silakan tambahkan data terlebih dahulu')
+            return
+        }
+
+        groupChat.addGroupCommand(m1, m2)
+        GroupManager.update(groupChat)
+        botwa.sendMessage(jid, 'menu ditambahkan')
+
+
+    }
+}
