@@ -13,7 +13,6 @@ export class OcedBot {
     static activationKeyFile: string = 'activation.key'
 
 
-
     static getActivationKey(): string {
         if (!fs.existsSync(this.activationKeyFile)) {
             this.generateActivationKey()

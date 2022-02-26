@@ -1,5 +1,5 @@
 import { BotWa } from "../BotWa/BotWa"
-import { GroupChat } from "../groups/Group"
+import { GroupChat } from "../groups/GroupChat"
 
 export enum CommandLevel {
     MEMBER,

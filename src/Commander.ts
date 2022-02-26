@@ -7,7 +7,7 @@ import { Command } from './Command/Command';
 import { ActivateCommand } from './Command/commands';
 import { allCommands } from './Command/regular.command';
 import { RegisterGroupCommand, TrialCommand } from './Command/special.command';
-import { GroupChat } from './groups/Group';
+import { GroupChat } from './groups/GroupChat';
 import { GroupManager } from './groups/GroupManager';
 import { LoggerOcedBot } from './logger/Logger';
 import { OcedBot } from './ocedbot/OcedBot';
@@ -58,22 +58,12 @@ export class Commander {
     }
 
 
-
-    async runCommands(receivedMessage: proto.WebMessageInfo) {
-        const jid = receivedMessage.key.remoteJid!
-        const participants = await this.botwa.getGroupParticipants(jid)
-
-
-        if (! await this.isSentByGroupAdmin(receivedMessage, jid, participants)) return
-        const conversation = receivedMessage.message?.conversation || receivedMessage.message?.extendedTextMessage?.text
-        if (!conversation) return
-
-
+    async runCommands(jid: string, conversation: string) {
         let group = this.groupChats.find(g => g.jid === jid)
 
         if (conversation.startsWith('/trial')) {
             if (group) {
-                this.botwa.sendMessage(jid, 'ente udah udah pernah trial')
+                this.botwa.sendMessage(jid, 'trial habis')
                 return
             }
 
@@ -110,12 +100,6 @@ export class Commander {
             return
         }
 
-
-        const isBotAdmin = await this.isBotAdmin(participants)
-        if (!isBotAdmin) {
-            this.botwa.sendMessage(jid, 'jadiin admin dulu dong')
-            return
-        }
 
         if (conversation.startsWith('/activate')) {
             const command = new ActivateCommand()

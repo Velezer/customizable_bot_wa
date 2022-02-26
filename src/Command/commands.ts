@@ -2,7 +2,7 @@ import { BotWa } from "../BotWa/BotWa";
 import { GroupManager } from "../groups/GroupManager";
 import { Command, CommandLevel } from "./Command";
 import { OcedBot } from "../ocedbot/OcedBot";
-import { GroupChat } from "../groups/Group";
+import { GroupChat } from "../groups/GroupChat";
 import { LoggerOcedBot } from "../logger/Logger";
 import { plainToClass } from "class-transformer";
 

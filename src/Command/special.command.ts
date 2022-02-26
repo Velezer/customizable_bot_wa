@@ -1,5 +1,5 @@
 import { BotWa } from "../BotWa/BotWa";
-import { GroupChat } from "../groups/Group";
+import { GroupChat } from "../groups/GroupChat";
 import { GroupManager } from "../groups/GroupManager";
 import { LoggerOcedBot } from "../logger/Logger";
 import { OcedBot } from "../ocedbot/OcedBot";

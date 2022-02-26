@@ -1,5 +1,5 @@
 import fs from 'fs'
-import { GroupChat } from './Group'
+import { GroupChat } from './GroupChat'
 
 
 export class GroupManager {

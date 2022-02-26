@@ -56,35 +56,36 @@ export class GroupChat {
     }
 
     isExpired(): boolean {
-        const expired30Days = new Date()
         const registeredTime = this.getRegisteredTime()
+        const expired30Days = new Date(registeredTime)
         expired30Days.setDate(registeredTime.getDate() + 30)
 
         return new Date() > expired30Days
     }
+    
     isTrialExpired(): boolean {
-        const expired2Days = new Date()
         const registeredTime = this.getRegisteredTime()
-        expired2Days.setDate(registeredTime.getDate() + 2)
+        const expired2Days = new Date(registeredTime)
+        expired2Days.setDate(registeredTime.getDate() + 1)
 
         return new Date() > expired2Days
     }
 
     expiredAt(): string {
-        const expired30Days = new Date()
         const registeredTime = this.getRegisteredTime()
+        const expired30Days = new Date(registeredTime)
         expired30Days.setDate(registeredTime.getDate() + 30)
 
         return expired30Days.toLocaleString('id-ID', { month: 'long', year: 'numeric', day: 'numeric' }) +
-            ' jam ' + this.registeredTime.toLocaleString('id-ID', { hour: 'numeric', minute: 'numeric' })
+            ' jam ' + expired30Days.toLocaleString('id-ID', { hour: 'numeric', minute: 'numeric' })
     }
     trialExpiredAt(): string {
-        const expired2Days = new Date()
         const registeredTime = this.getRegisteredTime()
-        expired2Days.setDate(registeredTime.getDate() + 2)
+        const expired2Days = new Date(registeredTime)
+        expired2Days.setDate(registeredTime.getDate() + 1)
 
         return expired2Days.toLocaleString('id-ID', { month: 'long', year: 'numeric', day: 'numeric' }) +
-            ' jam ' + this.registeredTime.toLocaleString('id-ID', { hour: 'numeric', minute: 'numeric' })
+            ' jam ' + expired2Days.toLocaleString('id-ID', { hour: 'numeric', minute: 'numeric' })
     }
 
     registeredAt(): string {
