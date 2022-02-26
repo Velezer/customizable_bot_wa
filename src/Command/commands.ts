@@ -7,18 +7,7 @@ import { LoggerOcedBot } from "../logger/Logger";
 import { plainToClass } from "class-transformer";
 
 
-export class CekCommand implements Command {
-    key: string = '/cek';
-    example: string = this.key;
-    description: string = 'cek masa aktif';
-    level: CommandLevel = CommandLevel.MEMBER;
 
-    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
-        groupChat = plainToClass(GroupChat, groupChat)
-        await botwa.sendMessage(groupChat.jid, 'sewa pada\n' + groupChat.registeredAt() + '\n\nexpired pada\n' + groupChat.expiredAt());
-
-    }
-}
 
 export class MenuCommand implements Command {
     key: string = '/menu';
@@ -257,48 +246,7 @@ export class JoinGroupCommand implements Command {
     }
 }
 
-export class RegisterGroupCommand implements Command {
-    key: string = '/sewa';
-    example: string = '/sewa key-aktivasi';
-    description: string = 'sewa bot 30 hari biar grup ini bisa pake';
-    level: CommandLevel = CommandLevel.MEMBER;
 
-    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
-        const m1 = conversation.slice(this.key.length + 1)
-        const jid = groupChat.jid
-        const groupSubject = await botwa.getGroupSubject(groupChat.jid)
-
-        if (!m1) {
-            botwa.sendMessage(jid, 'silakan hubungi \nwa.me/' + OcedBot.getPhoneNumber() + ' untuk mendapatkan key-aktivasi')
-            return
-        }
-
-        const activationKey = OcedBot.getActivationKey()
-        if (m1 === activationKey) {
-            botwa.sendMessage(jid, 'sedang mengaktivasi...')
-            let isRegistered = false
-            try {
-                isRegistered = GroupManager.register(groupChat)
-            } catch (err) {
-                console.error(err)
-                botwa.sendMessage(jid, 'aktivasi gagal, mohon hubungi \nwa.me/' + OcedBot.getPhoneNumber())
-                LoggerOcedBot.log(botwa, 'aktivasi gagal dengan key ' + activationKey + '\n\n' + groupSubject)
-                return
-            }
-
-            if (isRegistered) {
-                botwa.sendMessage(jid, 'aktivasi sukses')
-
-                LoggerOcedBot.log(botwa, 'aktivasi sukses dengan key ' + activationKey + '\n\n' + groupSubject)
-                OcedBot.generateActivationKey()
-            }
-        } else {
-            botwa.sendMessage(jid, 'aktivasi gagal, mohon periksa key-aktivasi anda')
-            LoggerOcedBot.log(botwa, 'upaya aktivasi gagal, diperkirakan ada kesalahan key' + '\n\n' + groupSubject)
-        }
-
-    }
-}
 
 export class CustomMenuCommand implements Command {
     key: string = '/add-menu';
@@ -405,3 +353,4 @@ export class DeactivateCommand implements Command {
 
     }
 }
+

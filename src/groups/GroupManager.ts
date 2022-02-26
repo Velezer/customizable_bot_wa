@@ -21,18 +21,18 @@ export class GroupManager {
     }
 
 
-    static register(newGroup: GroupChat): boolean {
+    static register(newGroup: GroupChat, trial: boolean = false): boolean {
+        newGroup.trial = trial
         let groups = this.getRegisteredGroup()
+
         let found = groups.find(g => g.jid === newGroup.jid)
         if (found) {
             found.registeredTime = new Date()
-            const index = groups.findIndex(g => g.jid === found!.jid)
-            if (index > -1) {
-                groups.splice(index, 1)
-            }
+            groups.push(found)
+        } else {
+            groups.push(newGroup)
         }
 
-        groups.push(newGroup)
         fs.writeFileSync(this.filename, JSON.stringify(groups))
 
         groups = this.getRegisteredGroup()

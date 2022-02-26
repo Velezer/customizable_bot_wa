@@ -18,6 +18,7 @@ export class GroupChat {
     commandKeys: string[]
     registeredTime: Date
     groupCommands: GroupCommand[] = []
+    trial: boolean = false
 
     constructor(jidGroup: string) {
         this.jid = jidGroup
@@ -60,6 +61,13 @@ export class GroupChat {
 
         return new Date() > expired30Days
     }
+    isTrialExpired(): boolean {
+        const expired2Days = new Date()
+        const registeredTime = this.getRegisteredTime()
+        expired2Days.setDate(registeredTime.getDate() + 2)
+
+        return new Date() > expired2Days
+    }
 
     expiredAt(): string {
         const expired30Days = new Date()
@@ -67,6 +75,14 @@ export class GroupChat {
         expired30Days.setDate(registeredTime.getDate() + 30)
 
         return expired30Days.toLocaleString('id-ID', { month: 'long', year: 'numeric', day: 'numeric' }) +
+            ' jam ' + this.registeredTime.toLocaleString('id-ID', { hour: 'numeric', minute: 'numeric' })
+    }
+    trialExpiredAt(): string {
+        const expired2Days = new Date()
+        const registeredTime = this.getRegisteredTime()
+        expired2Days.setDate(registeredTime.getDate() + 2)
+
+        return expired2Days.toLocaleString('id-ID', { month: 'long', year: 'numeric', day: 'numeric' }) +
             ' jam ' + this.registeredTime.toLocaleString('id-ID', { hour: 'numeric', minute: 'numeric' })
     }
 

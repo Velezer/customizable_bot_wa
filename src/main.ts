@@ -1,9 +1,7 @@
 import { BotWa } from './BotWa/BotWa'
 import { Commander } from './Commander'
-import makeWASocket, { DisconnectReason, proto, ReconnectMode, WAConnection } from '@adiwajshing/baileys'
+import { ReconnectMode, WAConnection } from '@adiwajshing/baileys'
 import * as auth from './auth/auth'
-import { GroupManager } from './groups/GroupManager'
-import { OcedBot } from './ocedbot/OcedBot'
 
 
 
@@ -31,7 +29,12 @@ async function main() {
 
 }
 
+function run() {
+    main().catch(err => {
+        console.error(err)
+        main()
+    })
+}
 
-main().catch(err => {
-    console.error(err)
-})   
+
+run()

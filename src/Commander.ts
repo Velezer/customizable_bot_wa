@@ -79,6 +79,20 @@ export class Commander {
 
         let group = this.groupChats.find(g => g.jid === jid)
 
+        if (conversation.startsWith('/trial')) {
+            if (group) {
+                group = plainToClass(GroupChat, group)
+                if (!group.isTrialExpired()) {
+                    this.botwa.sendMessage(jid, 'ente udah udah pernah trial')
+                    return
+                }
+            }
+
+            const c = this.commands.find(c => c.key === '/trial')!
+            const groupChat: GroupChat = new GroupChat(jid)
+            c.run(this.botwa, groupChat, conversation).catch(err => console.error(err))
+            return
+        }
         if (conversation.startsWith('/sewa')) {
             if (group) {
                 group = plainToClass(GroupChat, group)
