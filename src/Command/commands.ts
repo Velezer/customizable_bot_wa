@@ -299,7 +299,7 @@ export class RegisterGroupCommand implements Command {
     }
 }
 
-export class AddMenuGroupCommand implements Command {
+export class CustomMenuCommand implements Command {
     key: string = '/add-menu';
     example: string = '/add-menu key data';
     description: string = 'menambahkan menu';
