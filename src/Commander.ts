@@ -118,14 +118,14 @@ export class Commander {
             command.run(this.botwa, group, conversation)
             return
         }
-
-        const customCommand = group.groupCommands.find(c => conversation.startsWith(c.key))
+        const m0 = conversation.split(' ')[0]
+        const customCommand = group.groupCommands.find(c => m0 === c.key)
         if (customCommand) {
             this.botwa.sendMessage(jid, customCommand.value)
             return
         }
 
-        const command = this.commands.find(c => conversation.startsWith(c.key))
+        const command = this.commands.find(c => m0 === c.key)
         if (!command) return
 
         const hasCommand = group!.commandKeys.includes(command.key)
