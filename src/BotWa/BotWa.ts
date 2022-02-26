@@ -13,7 +13,11 @@ export class BotWa {
         const buttonsMessage: proto.ButtonsMessage = {
             contentText: 'content TEXT',
             footerText: 'footer texT',
-            buttons: [{ buttonId: 'BUTTONID', buttonText: { displayText: 'buttondisplaytext' }, type: proto.Button.ButtonType.RESPONSE }],
+            buttons: [
+                { buttonId: 'BUTTONID', buttonText: { displayText: 'buttondisplaytext' }, type: proto.Button.ButtonType.RESPONSE },
+                { buttonId: 'native', buttonText: { displayText: 'nativeflow' }, type: proto.Button.ButtonType.NATIVE_FLOW },
+                { buttonId: 'unknown', buttonText: { displayText: 'unknown' }, type: proto.Button.ButtonType.UNKNOWN },
+            ],
             headerType: proto.ButtonsMessage.ButtonsMessageHeaderType.EMPTY,
             toJSON: function (): { [k: string]: any; } {
                 throw new Error("Function not implemented.");
