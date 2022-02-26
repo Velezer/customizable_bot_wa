@@ -9,15 +9,17 @@ export class BotWa {
     constructor(sock: WAConnection) {
         this.sock = sock
     }
-    async sendButtonMessage(to: string) {
+    async sendButtonMessage(to: string, contentText: string, footerText: string, messsages: string[]) {
+        const buttons: proto.IButton[] = []
+        messsages.forEach(m => {
+            buttons.push(
+                { buttonId: m + 'id', buttonText: { displayText: m }, type: proto.Button.ButtonType.RESPONSE },
+            )
+        })
         const buttonsMessage: proto.ButtonsMessage = {
-            contentText: 'content TEXT',
-            footerText: 'footer texT',
-            buttons: [
-                // { buttonId: 'BUTTONID', buttonText: { displayText: 'buttondisplaytext' }, type: proto.Button.ButtonType.RESPONSE },
-                // { buttonId: 'native', buttonText: { displayText: 'nativeflow' }, type: proto.Button.ButtonType.NATIVE_FLOW },
-                { buttonId: 'unknown', buttonText: { displayText: 'unknown' }, type: proto.Button.ButtonType.UNKNOWN },
-            ],
+            contentText,
+            footerText,
+            buttons,
             headerType: proto.ButtonsMessage.ButtonsMessageHeaderType.EMPTY,
             toJSON: function (): { [k: string]: any; } {
                 throw new Error("Function not implemented.");
