@@ -111,6 +111,12 @@ export class Commander {
             return
         }
 
+        const customCommand = group.groupCommands.find(c => conversation.startsWith(c.key))
+        if(customCommand){
+            this.botwa.sendMessage(jid, customCommand.value)
+            return
+        }
+        
         const command = this.commands.find(c => conversation.startsWith(c.key))
         if (!command) return
 
