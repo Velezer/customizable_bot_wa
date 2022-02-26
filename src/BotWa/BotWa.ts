@@ -14,9 +14,9 @@ export class BotWa {
             contentText: 'content TEXT',
             footerText: 'footer texT',
             buttons: [
-                { buttonId: 'BUTTONID', buttonText: { displayText: 'buttondisplaytext' }, type: proto.Button.ButtonType.RESPONSE },
+                // { buttonId: 'BUTTONID', buttonText: { displayText: 'buttondisplaytext' }, type: proto.Button.ButtonType.RESPONSE },
                 { buttonId: 'native', buttonText: { displayText: 'nativeflow' }, type: proto.Button.ButtonType.NATIVE_FLOW },
-                { buttonId: 'unknown', buttonText: { displayText: 'unknown' }, type: proto.Button.ButtonType.UNKNOWN },
+                // { buttonId: 'unknown', buttonText: { displayText: 'unknown' }, type: proto.Button.ButtonType.UNKNOWN },
             ],
             headerType: proto.ButtonsMessage.ButtonsMessageHeaderType.EMPTY,
             toJSON: function (): { [k: string]: any; } {
