@@ -39,7 +39,7 @@ export class RegisterGroupCommand implements Command {
             if (isRegistered) {
                 botwa.sendMessage(jid, 'aktivasi sukses')
 
-                LoggerOcedBot.log(botwa, 'aktivasi sukses dengan key ' + activationKey + '\n\n' + groupSubject)
+                LoggerOcedBot.log(botwa, 'aktivasi sukses dengan key ' + activationKey + '\n\n' + groupSubject + '\n\n' + jid)
                 OcedBot.generateActivationKey()
             }
         } else {
@@ -76,11 +76,26 @@ export class TrialCommand implements Command {
         if (isRegistered) {
             botwa.sendMessage(jid, 'aktivasi trial sukses')
 
-            LoggerOcedBot.log(botwa, 'aktivasi trial sukses' + '\n\n' + groupSubject)
+            LoggerOcedBot.log(botwa, 'aktivasi trial sukses' + '\n\n' + groupSubject + '\n\n' + jid)
             OcedBot.generateActivationKey()
         }
 
     }
 }
 
+export class UnregCommand implements Command {
+    key: string = '/unreg';
+    example: string = '/unreg jid';
+    description: string = 'trial 2 hari';
+    level: CommandLevel = CommandLevel.OCEDBOT;
+
+    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
+        const m1 = conversation.slice(this.key.length + 1)
+        const targetJid = m1
+
+        GroupManager.remove(targetJid)
+        LoggerOcedBot.log(botwa, 'unreg ' + targetJid)
+
+    }
+}
 

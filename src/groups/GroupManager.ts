@@ -20,6 +20,15 @@ export class GroupManager {
         return found
     }
 
+    static remove(jid: string) {
+        let groups = this.getRegisteredGroup()
+        const index = groups.findIndex(g => g.jid === jid)
+        if (index > -1) {
+            groups.splice(index, 1)
+            fs.writeFileSync(this.filename, JSON.stringify(groups))
+        }
+    }
+
 
     static register(newGroup: GroupChat, trial: boolean = false): boolean {
         newGroup.trial = trial

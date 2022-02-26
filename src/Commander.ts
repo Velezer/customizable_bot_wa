@@ -6,7 +6,7 @@ import { BotWa } from './BotWa/BotWa';
 import { Command } from './Command/Command';
 import { ActivateCommand } from './Command/commands';
 import { allCommands } from './Command/regular.command';
-import { RegisterGroupCommand, TrialCommand } from './Command/special.command';
+import { RegisterGroupCommand, TrialCommand, UnregCommand } from './Command/special.command';
 import { GroupChat } from './groups/GroupChat';
 import { GroupManager } from './groups/GroupManager';
 import { LoggerOcedBot } from './logger/Logger';
@@ -83,6 +83,12 @@ export class Commander {
             }
 
             const c = new RegisterGroupCommand()
+            const groupChat: GroupChat = new GroupChat(jid)
+            c.run(this.botwa, groupChat, conversation).catch(err => console.error(err))
+            return
+        }
+        if (conversation.startsWith('/unreg')) {
+            const c = new UnregCommand()
             const groupChat: GroupChat = new GroupChat(jid)
             c.run(this.botwa, groupChat, conversation).catch(err => console.error(err))
             return
