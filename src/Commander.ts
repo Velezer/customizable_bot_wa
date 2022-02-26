@@ -130,7 +130,7 @@ export class Commander {
 
         const hasCommand = group!.commandKeys.includes(command.key)
         if (!hasCommand) {
-            this.botwa.sendMessage(jid, 'silakan tambahkan command\n' + command.key)
+            this.botwa.sendMessage(jid, 'silakan aktifkan command\n' + command.key)
             return
         }
 

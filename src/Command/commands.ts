@@ -45,7 +45,7 @@ export class MenuCommand implements Command {
         if (groupChat.groupCommands.length > 0) {
             msg += '\n\n_Custom Menu_\n\n'
             groupChat.groupCommands.forEach(command => {
-                msg += `${command.key} \n${command.value}\n\n`
+                msg += `${command.key}\n\n`
             })
         }
 
@@ -302,7 +302,7 @@ export class RegisterGroupCommand implements Command {
 
 export class CustomMenuCommand implements Command {
     key: string = '/add-menu';
-    example: string = '/add-menu key data';
+    example: string = '/add-menu /nama-menu data';
     description: string = 'menambahkan menu';
     level: CommandLevel = CommandLevel.ADMIN;
 
@@ -330,6 +330,34 @@ export class CustomMenuCommand implements Command {
     }
 }
 
+export class RemoveCustomMenuCommand implements Command {
+    key: string = '/remove-menu';
+    example: string = '/remove-menu /nama-menu';
+    description: string = 'menghapus menu';
+    level: CommandLevel = CommandLevel.ADMIN;
+
+    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
+        let m1 = conversation.slice(this.key.length + 1)
+
+        const jid = groupChat.jid
+
+        if (!m1) {
+            botwa.sendMessage(jid, 'kasi nama menunya bos')
+            return
+        }
+
+        if (m1.startsWith('/')) {
+            m1 = '/' + m1
+        }
+
+        groupChat.removeGroupCommand(m1)
+        GroupManager.update(groupChat)
+        botwa.sendMessage(jid, 'menu dihapus')
+
+
+    }
+}
+
 export class ActivateCommand implements Command {
     key: string = '/activate';
     example: string = '/activate /command';
@@ -342,13 +370,36 @@ export class ActivateCommand implements Command {
         const jid = groupChat.jid
 
         if (!m1) {
-            botwa.sendMessage(jid, 'command apa yg mau ditambahin?')
+            botwa.sendMessage(jid, 'kasi nama command nya bos')
             return
         }
 
         groupChat.addCommandKey(m1)
         GroupManager.update(groupChat)
         botwa.sendMessage(jid, 'command ditambahkan')
+
+
+    }
+}
+export class DeactivateCommand implements Command {
+    key: string = '/deactivate';
+    example: string = '/deactivate /command';
+    description: string = 'menonaktifkan command';
+    level: CommandLevel = CommandLevel.ADMIN;
+
+    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
+        const m1 = conversation.slice(this.key.length + 1)
+
+        const jid = groupChat.jid
+
+        if (!m1) {
+            botwa.sendMessage(jid, 'kasi nama command nya bos')
+            return
+        }
+
+        groupChat.removeCommandkey(m1)
+        GroupManager.update(groupChat)
+        botwa.sendMessage(jid, 'command dinonaktifkan')
 
 
     }

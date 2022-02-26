@@ -1,6 +1,6 @@
 import { BotWa } from "../BotWa/BotWa"
 import { GroupChat } from "../groups/Group"
-import { CekCommand, CloseGroupChatCommand, CloseGroupSettingsCommand, CustomMenuCommand, DemoteCommand, GetGroupMetadataCommand, JoinGroupCommand, MenuCommand, OpenGroupChatCommand, OpenGroupSettingsCommand, PromoteCommand, RegisterGroupCommand, TagAllCommand } from "./commands"
+import { ActivateCommand, CekCommand, CloseGroupChatCommand, CloseGroupSettingsCommand, CustomMenuCommand, DeactivateCommand, DemoteCommand, GetGroupMetadataCommand, JoinGroupCommand, MenuCommand, OpenGroupChatCommand, OpenGroupSettingsCommand, PromoteCommand, RegisterGroupCommand, RemoveCustomMenuCommand, TagAllCommand } from "./commands"
 
 export enum CommandLevel {
     MEMBER,
@@ -31,7 +31,10 @@ export const allCommands = [
     new DemoteCommand(),
     new JoinGroupCommand(),
     new RegisterGroupCommand(),
-    new CustomMenuCommand()
+    new CustomMenuCommand(),
+    new RemoveCustomMenuCommand(),
+    new ActivateCommand(),
+    new DeactivateCommand()
 ]
 
 allCommands.push(new MenuCommand(allCommands))
