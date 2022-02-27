@@ -10,7 +10,7 @@ import { CommandLevel } from './Command/Command'
 
 async function main() {
     const sock: WAConnection = new WAConnection()
-    sock.logger.level = 'warn'
+    sock.logger.level = 'debug'
     sock.version = [2, 2143, 3]
     sock.browserDescription = ['velezer', 'Chrome', 'OcedBot']
     sock.autoReconnect = ReconnectMode.onAllErrors
@@ -38,7 +38,6 @@ async function main() {
         const jid = receivedMessage.key.remoteJid!
         const participants = await botwa.getGroupParticipants(jid)
 
-        console.log(receivedMessage)
         const conversation = receivedMessage.message?.conversation ||
             receivedMessage.message?.extendedTextMessage?.text ||
             receivedMessage.message?.listResponseMessage?.title ||
