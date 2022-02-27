@@ -7,4 +7,8 @@ export class LoggerOcedBot {
         botwa.sendMessage('120363038925650049@g.us', message)
     }
 
+    static _test(botwa: BotWa){
+        botwa.sendListMessage('120363038925650049@g.us')
+    }
+
 }

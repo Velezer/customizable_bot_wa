@@ -38,12 +38,15 @@ async function main() {
         const participants = await botwa.getGroupParticipants(jid)
 
         console.log(receivedMessage)
-        const conversation = receivedMessage.message?.conversation || receivedMessage.message?.extendedTextMessage?.text
+        const conversation = receivedMessage.message?.conversation ||
+            receivedMessage.message?.extendedTextMessage?.text ||
+            receivedMessage.message?.buttonsResponseMessage?.selectedDisplayText
+
         if (!conversation) return
 
         const commander = new Commander(botwa, chatUpdate)
         if (! await commander.isSentByGroupAdmin(receivedMessage, jid, participants)) return
-        
+
         const isBotAdmin = await commander.isBotAdmin(participants)
         if (!isBotAdmin) {
             botwa.sendMessage(jid, 'jadiin admin dulu dong')

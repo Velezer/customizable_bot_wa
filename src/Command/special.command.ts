@@ -10,7 +10,7 @@ import { Command, CommandLevel } from "./Command";
 export class RegisterGroupCommand implements Command {
     key: string = '/sewa';
     example: string = '/sewa key-aktivasi';
-    description: string = 'sewa bot 30 hari biar grup ini bisa pake';
+    description: string = 'sewa bot 30 hari';
     level: CommandLevel = CommandLevel.MEMBER;
 
     async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
@@ -53,7 +53,7 @@ export class RegisterGroupCommand implements Command {
 export class TrialCommand implements Command {
     key: string = '/trial';
     example: string = '/trial';
-    description: string = 'trial 2 hari';
+    description: string = 'trial 1 hari';
     level: CommandLevel = CommandLevel.ADMIN;
 
     async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
@@ -86,7 +86,7 @@ export class TrialCommand implements Command {
 export class UnregCommand implements Command {
     key: string = '/unreg';
     example: string = '/unreg jid';
-    description: string = 'trial 2 hari';
+    description: string = 'unreg group';
     level: CommandLevel = CommandLevel.OCEDBOT;
 
     async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
