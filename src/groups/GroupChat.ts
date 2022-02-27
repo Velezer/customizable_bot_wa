@@ -32,6 +32,12 @@ export class GroupChat {
         this.groupCommands.push(command)
 
     }
+    updateGroupCommand(key: string, value: string) {
+        const found = this.groupCommands.find(c => c.key === key)
+        if (found) {
+            found.value = value
+        }
+    }
 
     removeGroupCommand(key: string) {
         const index = this.groupCommands.findIndex(g => g.key === key)
@@ -62,7 +68,7 @@ export class GroupChat {
 
         return new Date() > expired30Days
     }
-    
+
     isTrialExpired(): boolean {
         const registeredTime = this.getRegisteredTime()
         const expired2Days = new Date(registeredTime)

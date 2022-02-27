@@ -74,7 +74,7 @@ function run() {
         main()
     } catch (err) {
         console.error(err)
-        main()
+        run()
     }
 }
 
