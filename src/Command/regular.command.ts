@@ -1,6 +1,6 @@
 import { CekCommand } from "./cek.command"
 import { TagAllCommand, GetGroupMetadataCommand, OpenGroupSettingsCommand, CloseGroupSettingsCommand, OpenGroupChatCommand, CloseGroupChatCommand, PromoteCommand, DemoteCommand, JoinGroupCommand, CustomMenuCommand, RemoveCustomMenuCommand, ActivateCommand, DeactivateCommand } from "./commands"
-import { MenuCommand } from "./menu.command"
+import { BotMenuCommand, GroupMenuCommand } from "./menu.command"
 
 
 export const allCommands = [
@@ -16,7 +16,8 @@ export const allCommands = [
     new CustomMenuCommand(),
     new RemoveCustomMenuCommand(),
     new ActivateCommand(),
-    new DeactivateCommand()
+    new DeactivateCommand(),
+    new GroupMenuCommand()
 ]
 
-allCommands.push(new MenuCommand(allCommands))
+allCommands.push(new BotMenuCommand(allCommands))

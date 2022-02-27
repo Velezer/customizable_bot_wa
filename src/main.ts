@@ -9,7 +9,7 @@ import { LoggerOcedBot } from './logger/Logger'
 
 async function main() {
     const sock: WAConnection = new WAConnection()
-    sock.logger.level = 'debug'
+    sock.logger.level = 'warn'
     sock.version = [2, 2143, 3]
     sock.browserDescription = ['velezer', 'Chrome', 'OcedBot']
     sock.autoReconnect = ReconnectMode.onAllErrors

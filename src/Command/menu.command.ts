@@ -4,9 +4,9 @@ import { GroupChat } from "../groups/GroupChat";
 import { Command, CommandLevel } from "./Command";
 
 
-export class MenuCommand implements Command {
-    key: string = '/menu';
-    description: string = 'nampilin menu';
+export class BotMenuCommand implements Command {
+    key: string = '/bot';
+    description: string = 'nampilin commands';
     example: string = this.key;
     level: CommandLevel = CommandLevel.ADMIN;
     allCommands: Command[];
@@ -15,14 +15,11 @@ export class MenuCommand implements Command {
         this.allCommands = allCommands
     }
 
-
     async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
         const sections: proto.ISection[] = []
 
-        const filteredCommands = this.allCommands.filter(c => groupChat.commandKeys.includes(c.key))
-
         const commandRows: proto.IRow[] = []
-
+        const filteredCommands = this.allCommands.filter(c => groupChat.commandKeys.includes(c.key))
         filteredCommands.forEach(c => {
             const row: proto.IRow = { rowId: c.key, title: c.example, description: c.description }
             commandRows.push(row)
@@ -33,6 +30,19 @@ export class MenuCommand implements Command {
         }
         sections.push(commandSection)
 
+        await botwa.sendListMessageProductList(groupChat.jid, sections);
+
+    }
+}
+
+export class GroupMenuCommand implements Command {
+    key: string = '/menu';
+    description: string = 'nampilin menu';
+    example: string = this.key;
+    level: CommandLevel = CommandLevel.MEMBER;
+
+    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
+        const sections: proto.ISection[] = []
 
         if (groupChat.groupCommands.length > 0) {
             const menuRows: proto.IRow[] = []
@@ -49,7 +59,7 @@ export class MenuCommand implements Command {
             sections.push(menuSection)
         }
 
-        await botwa.sendListMessage(groupChat.jid, sections);
 
+        await botwa.sendListMessageSingleSelect(groupChat.jid, sections);
     }
 }
