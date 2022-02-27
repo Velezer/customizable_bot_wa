@@ -1,3 +1,4 @@
+import { proto } from "@adiwajshing/baileys";
 import { BotWa } from "../BotWa/BotWa";
 import { GroupChat } from "../groups/GroupChat";
 import { Command, CommandLevel } from "./Command";
@@ -17,37 +18,40 @@ export class MenuCommand implements Command {
 
     async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
 
-        // let msg = ''
-        // msg += '_Main Menu_\n\n'
-        // this.allCommands.forEach(command => {
-        //     if (groupChat.commandKeys.includes(command.key)) {
-        //         msg += `${command.example} \n${command.description}\n\n`
-        //     }
-        // })
-
-        // if (groupChat.groupCommands.length > 0) {
-        //     msg += '\n\n_Custom Menu_\n\n'
-        //     groupChat.groupCommands.forEach(command => {
-        //         msg += `${command.key}\n\n`
-        //     })
-        // }
-        // msg = msg.slice(0, -2)
-
-        const commands: string[] = []
+        const commandRows: proto.IRow[] = []
         this.allCommands.forEach(command => {
             if (groupChat.commandKeys.includes(command.key)) {
-                commands.push(command.example)
+                const row: proto.IRow = { rowId: command.key, title: command.example, description: command.description }
+                commandRows.push(row)
             }
         })
-        await botwa.sendButtonMessage(groupChat.jid, 'COMMANDS', 'silakan dicoba', commands);
 
-        const menus: string[] = []
+        const menuRows: proto.IRow[] = []
         if (groupChat.groupCommands.length > 0) {
             groupChat.groupCommands.forEach(command => {
-                menus.push(command.key)
+                const row: proto.IRow = { rowId: command.key, title: command.key }
+                menuRows.push(row)
             })
         }
-        await botwa.sendButtonMessage(groupChat.jid, 'MENU', 'silakan dicoba', menus);
+
+        const commandSection: proto.Section = {
+            title: 'Commands',
+            rows: commandRows,
+            toJSON: function (): { [k: string]: any; } {
+                throw new Error("Function not implemented.");
+            }
+        }
+        const menuSection: proto.Section = {
+            title: 'Menu',
+            rows: menuRows,
+            toJSON: function (): { [k: string]: any; } {
+                throw new Error("Function not implemented.");
+            }
+        }
+
+        const sections: proto.Section[] = [commandSection, menuSection]
+
+        await botwa.sendListMessage(groupChat.jid, sections);
 
     }
 }

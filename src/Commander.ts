@@ -61,9 +61,9 @@ export class Commander {
     async runCommands(jid: string, conversation: string) {
         let group = this.groupChats.find(g => g.jid === jid)
 
-        if (conversation.startsWith('/test')) {
-            LoggerOcedBot._test(this.botwa)
-        }
+        // if (conversation.startsWith('/test')) {
+        //     LoggerOcedBot._test(this.botwa)
+        // }
 
         if (conversation.startsWith('/trial')) {
             if (group) {

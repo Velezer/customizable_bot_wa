@@ -9,26 +9,21 @@ export class BotWa {
     constructor(sock: WAConnection) {
         this.sock = sock
     }
-    async sendListMessage(to: string) {
+    async sendListMessage(to: string, sections: proto.Section[]) {
         const listMessage: proto.ListMessage = {
-            buttonText: 'buttontext',
-            title: "title",
-            description: "descriptin",
+            buttonText: 'Pencet BOS!',
+            title: "Menu",
+            description: "silakan dipilih...",
             listType: proto.ListMessage.ListMessageListType.SINGLE_SELECT,
-            sections: [
-                {
-                    rows: [
-                        { description: 'row1description', rowId: 'row1id', title: 'row1title' }
-                    ], title: 'title1'
-                },
-            ],
-            footerText: "footertext",
+            sections: sections,
+            footerText: "by oced-bot",
             toJSON: function (): { [k: string]: any; } {
                 throw new Error("Function not implemented.");
             }
         }
         return await this.sock.sendMessage(to, listMessage, MessageType.listMessage)
     }
+
     async sendButtonMessage(to: string, contentText: string, footerText: string, messsages: string[]) {
         const buttons: proto.IButton[] = []
         messsages.forEach(m => {
