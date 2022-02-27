@@ -33,20 +33,21 @@ export class MenuCommand implements Command {
         // }
         // msg = msg.slice(0, -2)
 
-        const messages: string[] = []
+        const commands: string[] = []
         this.allCommands.forEach(command => {
             if (groupChat.commandKeys.includes(command.key)) {
-                messages.push(command.example)
+                commands.push(command.example)
             }
         })
+        await botwa.sendButtonMessage(groupChat.jid, 'COMMANDS', 'silakan dicoba', commands);
 
+        const menus: string[] = []
         if (groupChat.groupCommands.length > 0) {
             groupChat.groupCommands.forEach(command => {
-                messages.push(command.key)
+                menus.push(command.key)
             })
         }
-
-        await botwa.sendButtonMessage(groupChat.jid, 'MENU', 'silakan dicoba', messages);
+        await botwa.sendButtonMessage(groupChat.jid, 'MENU', 'silakan dicoba', menus);
 
     }
 }

@@ -37,6 +37,7 @@ async function main() {
         const jid = receivedMessage.key.remoteJid!
         const participants = await botwa.getGroupParticipants(jid)
 
+        console.log(receivedMessage)
         const conversation = receivedMessage.message?.conversation || receivedMessage.message?.extendedTextMessage?.text
         if (!conversation) return
 
