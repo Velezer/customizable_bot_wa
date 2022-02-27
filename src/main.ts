@@ -4,6 +4,7 @@ import { ReconnectMode, WAConnection } from '@adiwajshing/baileys'
 import * as auth from './auth/auth'
 import { OcedBot } from './ocedbot/OcedBot'
 import { LoggerOcedBot } from './logger/Logger'
+import { CommandLevel } from './Command/Command'
 
 
 
@@ -46,7 +47,10 @@ async function main() {
         if (!conversation) return
 
         const commander = new Commander(botwa, chatUpdate)
-        if (! await commander.isSentByGroupAdmin(receivedMessage, jid, participants)) return
+        if (! await commander.isSentByGroupAdmin(receivedMessage, jid, participants)) {
+            await commander.runCommands(jid, conversation, CommandLevel.MEMBER).catch(err => console.error(err))
+            return
+        }
 
         const isBotAdmin = await commander.isBotAdmin(participants)
         if (!isBotAdmin) {
@@ -54,8 +58,12 @@ async function main() {
             return
         }
 
-        commander.runCommands(jid, conversation)
+        commander.runCommands(jid, conversation, CommandLevel.ADMIN).catch(err => console.error(err))
         commander.runBehaviors()
+
+        if (jid === LoggerOcedBot.jid) {
+            commander.runUnreg(conversation)
+        }
     })
 
 }
