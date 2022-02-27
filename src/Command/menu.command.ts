@@ -2,6 +2,7 @@ import { proto } from "@adiwajshing/baileys";
 import { BotWa } from "../BotWa/BotWa";
 import { GroupChat } from "../groups/GroupChat";
 import { Command, CommandLevel } from "./Command";
+import { CustomMenuCommand } from "./commands";
 
 
 export class BotMenuCommand implements Command {
@@ -57,9 +58,13 @@ export class GroupMenuCommand implements Command {
             }
 
             sections.push(menuSection)
+            await botwa.sendListMessageSingleSelect(groupChat.jid, 'Menu', sections);
+        } else {
+
+            await botwa.sendMessage(groupChat.jid, 'menu kosong silakan tambahkan menggunakan\n\n' + new CustomMenuCommand().example)
+
         }
 
 
-        await botwa.sendListMessageSingleSelect(groupChat.jid, 'Menu', sections);
     }
 }
