@@ -14,7 +14,7 @@ export class BotWa {
             buttonText: 'buttontext',
             title: "title",
             description: "descriptin",
-            listType: proto.ListMessage.ListMessageListType.PRODUCT_LIST,
+            listType: proto.ListMessage.ListMessageListType.SINGLE_SELECT,
             sections: [
                 {
                     rows: [
