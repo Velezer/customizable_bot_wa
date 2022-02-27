@@ -1,7 +1,7 @@
-import { GroupSettingChange, proto, WAChatUpdate, WAGroupParticipant } from '@adiwajshing/baileys';
+import { GroupSettingChange, proto, WAChatUpdate, WAGroupParticipant, WAParticipantAction } from '@adiwajshing/baileys';
 import { plainToClass } from 'class-transformer';
 import { Behavior } from './Behavior/Behavior';
-import { LeaveGroupParticipantBehavior, WelcomeGroupParticipantAddBehavior, WelcomeGroupParticipantInviteBehavior } from './Behavior/behaviors';
+import { DemoteParticipantBehavior, LeaveGroupParticipantBehavior, PromoteParticipantBehavior, WelcomeGroupParticipantAddBehavior } from './Behavior/behaviors';
 import { BotWa } from './BotWa/BotWa';
 import { Command, CommandLevel } from './Command/Command';
 import { ActivateCommand } from './Command/commands';
@@ -13,7 +13,6 @@ import { LoggerOcedBot } from './logger/Logger';
 import { OcedBot } from './ocedbot/OcedBot';
 
 export class Commander {
-    chatUpdate: WAChatUpdate;
     botwa: BotWa;
 
     groupChats: GroupChat[] = GroupManager.getRegisteredGroup()
@@ -21,15 +20,15 @@ export class Commander {
     behaviors: Behavior[];
 
 
-    constructor(botwa: BotWa, chatUpdate: WAChatUpdate) {
+    constructor(botwa: BotWa) {
         this.botwa = botwa
-        this.chatUpdate = chatUpdate
 
 
         this.behaviors = [
             new WelcomeGroupParticipantAddBehavior(),
-            new WelcomeGroupParticipantInviteBehavior(),
-            new LeaveGroupParticipantBehavior()
+            new LeaveGroupParticipantBehavior(),
+            new PromoteParticipantBehavior(),
+            new DemoteParticipantBehavior(),
         ]
 
     }
@@ -144,15 +143,10 @@ export class Commander {
 
 
 
-    runBehaviors() {
-        if (!this.chatUpdate.hasNewMessage) return
-
-        const receivedMessage = this.chatUpdate.messages?.all()[0]
-        const receivedStubType = receivedMessage?.messageStubType
-        const jid = receivedMessage?.key.remoteJid!
+    runBehaviors(action: WAParticipantAction, jid: string) {
 
         this.behaviors.forEach(async behavior => {
-            if (behavior.stubType === receivedStubType) {
+            if (behavior.action === action) {
                 behavior.run(this.botwa, jid)
             }
         })

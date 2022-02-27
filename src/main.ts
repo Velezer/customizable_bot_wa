@@ -21,6 +21,16 @@ async function main() {
 
     await sock.connect()
     auth.saveAuth('auth.json', sock.base64EncodedAuthInfo())
+    sock.on('group-participants-update', async (groupUpdate) => {
+        const jid = groupUpdate.jid
+        const action = groupUpdate.action
+
+        const botwa = new BotWa(sock)
+        const commander = new Commander(botwa)
+
+        commander.runBehaviors(action, jid)
+
+    })
 
     sock.on('chat-update', async (chatUpdate) => {
         if (!chatUpdate.hasNewMessage) return
@@ -47,7 +57,7 @@ async function main() {
 
         if (!conversation) return
 
-        const commander = new Commander(botwa, chatUpdate)
+        const commander = new Commander(botwa)
         if (! await commander.isSentByGroupAdmin(receivedMessage, jid, participants)) {
             await commander.runCommands(jid, conversation, CommandLevel.MEMBER).catch(err => console.error(err))
             return
@@ -60,7 +70,6 @@ async function main() {
         }
 
         commander.runCommands(jid, conversation, CommandLevel.ADMIN).catch(err => console.error(err))
-        commander.runBehaviors()
 
         if (jid === LoggerOcedBot.jid) {
             commander.runUnreg(conversation)
