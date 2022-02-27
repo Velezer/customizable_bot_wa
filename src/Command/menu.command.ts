@@ -26,30 +26,24 @@ export class MenuCommand implements Command {
             }
         })
 
-        // const menuRows: proto.IRow[] = []
-        // if (groupChat.groupCommands.length > 0) {
-        //     groupChat.groupCommands.forEach(command => {
-        //         const row: proto.IRow = { rowId: command.key, title: command.key }
-        //         menuRows.push(row)
-        //     })
-        // }
+        const menuRows: proto.IRow[] = []
+        if (groupChat.groupCommands.length > 0) {
+            groupChat.groupCommands.forEach(command => {
+                const row: proto.IRow = { rowId: command.key, title: command.key }
+                menuRows.push(row)
+            })
+        }
 
-        const commandSection: proto.Section = {
+        const commandSection: proto.ISection = {
             title: 'Commands',
             rows: commandRows,
-            toJSON: function (): { [k: string]: any; } {
-                throw new Error("Function not implemented.");
-            }
         }
-        // const menuSection: proto.Section = {
-        //     title: 'Menu',
-        //     rows: menuRows,
-        //     toJSON: function (): { [k: string]: any; } {
-        //         throw new Error("Function not implemented.");
-        //     }
-        // }
+        const menuSection: proto.ISection = {
+            title: 'Menu',
+            rows: menuRows,
+        }
 
-        const sections: proto.Section[] = [commandSection]
+        const sections: proto.ISection[] = [commandSection, menuSection]
 
         await botwa.sendListMessage(groupChat.jid, sections);
 
