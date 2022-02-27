@@ -24,10 +24,13 @@ async function main() {
     sock.on('group-participants-update', async (groupUpdate) => {
         const jid = groupUpdate.jid
         const action = groupUpdate.action
+        const participants = groupUpdate.participants
 
         const botwa = new BotWa(sock)
-        const commander = new Commander(botwa)
 
+        console.log(sock.contacts)
+
+        const commander = new Commander(botwa)
         commander.runBehaviors(action, jid)
 
     })
