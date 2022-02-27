@@ -9,10 +9,10 @@ export class BotWa {
     constructor(sock: WAConnection) {
         this.sock = sock
     }
-    async sendListMessageSingleSelect(to: string, sections: proto.ISection[]) {
+    async sendListMessageSingleSelect(to: string, title: string, sections: proto.ISection[]) {
         const listMessage: proto.ListMessage = {
             buttonText: 'Pencet BOS!',
-            title: "Menu",
+            title,
             description: "silakan dipilih...",
             listType: proto.ListMessage.ListMessageListType.SINGLE_SELECT,
             sections,

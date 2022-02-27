@@ -64,8 +64,8 @@ export class Commander {
         }
     }
 
-    async runTrial(){
-        
+    async runTrial() {
+
     }
 
     async runCommands(jid: string, conversation: string, level: CommandLevel) {
@@ -126,7 +126,7 @@ export class Commander {
             return
         }
 
-        const command = this.commands.find(c => (m0 === c.key && c.level === level))
+        const command = this.commands.find(c => (m0 === c.key && c.level === level)) || this.commands.find(c => (m0 === c.key && c.level === CommandLevel.MEMBER))
         if (!command) return
 
         const hasCommand = group!.commandKeys.includes(command.key)

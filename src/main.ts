@@ -28,6 +28,8 @@ async function main() {
         if (receivedMessage.key.fromMe === true) return
         if (!receivedMessage?.message) return
 
+        console.log(receivedMessage)
+
         const botwa = new BotWa(sock)
 
         if (receivedMessage.message?.conversation?.startsWith('/key')) {
@@ -68,11 +70,12 @@ async function main() {
 }
 
 function run() {
-    main()
-        .catch(err => {
-            console.error(err)
-            main()
-        })
+    try {
+        main()
+    } catch (err) {
+        console.error(err)
+        main()
+    }
 }
 
 

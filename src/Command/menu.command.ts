@@ -30,7 +30,7 @@ export class BotMenuCommand implements Command {
         }
         sections.push(commandSection)
 
-        await botwa.sendListMessageProductList(groupChat.jid, sections);
+        await botwa.sendListMessageSingleSelect(groupChat.jid, 'Commands', sections);
 
     }
 }
@@ -60,6 +60,6 @@ export class GroupMenuCommand implements Command {
         }
 
 
-        await botwa.sendListMessageSingleSelect(groupChat.jid, sections);
+        await botwa.sendListMessageSingleSelect(groupChat.jid, 'Menu', sections);
     }
 }
