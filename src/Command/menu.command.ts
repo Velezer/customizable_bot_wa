@@ -26,13 +26,13 @@ export class MenuCommand implements Command {
             }
         })
 
-        const menuRows: proto.IRow[] = []
-        if (groupChat.groupCommands.length > 0) {
-            groupChat.groupCommands.forEach(command => {
-                const row: proto.IRow = { rowId: command.key, title: command.key }
-                menuRows.push(row)
-            })
-        }
+        // const menuRows: proto.IRow[] = []
+        // if (groupChat.groupCommands.length > 0) {
+        //     groupChat.groupCommands.forEach(command => {
+        //         const row: proto.IRow = { rowId: command.key, title: command.key }
+        //         menuRows.push(row)
+        //     })
+        // }
 
         const commandSection: proto.Section = {
             title: 'Commands',
@@ -41,15 +41,15 @@ export class MenuCommand implements Command {
                 throw new Error("Function not implemented.");
             }
         }
-        const menuSection: proto.Section = {
-            title: 'Menu',
-            rows: menuRows,
-            toJSON: function (): { [k: string]: any; } {
-                throw new Error("Function not implemented.");
-            }
-        }
+        // const menuSection: proto.Section = {
+        //     title: 'Menu',
+        //     rows: menuRows,
+        //     toJSON: function (): { [k: string]: any; } {
+        //         throw new Error("Function not implemented.");
+        //     }
+        // }
 
-        const sections: proto.Section[] = [commandSection, menuSection]
+        const sections: proto.Section[] = [commandSection]
 
         await botwa.sendListMessage(groupChat.jid, sections);
 

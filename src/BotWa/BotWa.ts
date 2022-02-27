@@ -9,12 +9,12 @@ export class BotWa {
     constructor(sock: WAConnection) {
         this.sock = sock
     }
-    async sendListMessage(to: string, sections: proto.Section[]) {
+    async sendListMessage(to: string, sections: proto.ISection[]) {
         const listMessage: proto.ListMessage = {
             buttonText: 'Pencet BOS!',
             title: "Menu",
             description: "silakan dipilih...",
-            listType: proto.ListMessage.ListMessageListType.SINGLE_SELECT,
+            listType: proto.ListMessage.ListMessageListType.PRODUCT_LIST,
             sections: sections,
             footerText: "by oced-bot",
             toJSON: function (): { [k: string]: any; } {
