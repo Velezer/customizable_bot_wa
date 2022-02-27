@@ -14,8 +14,8 @@ export class BotWa {
             buttonText: 'Pencet BOS!',
             title: "Menu",
             description: "silakan dipilih...",
-            listType: proto.ListMessage.ListMessageListType.PRODUCT_LIST,
-            sections: sections,
+            listType: proto.ListMessage.ListMessageListType.SINGLE_SELECT,
+            sections,
             footerText: "by oced-bot",
             toJSON: function (): { [k: string]: any; } {
                 throw new Error("Function not implemented.");

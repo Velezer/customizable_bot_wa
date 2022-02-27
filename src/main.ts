@@ -40,6 +40,7 @@ async function main() {
         console.log(receivedMessage)
         const conversation = receivedMessage.message?.conversation ||
             receivedMessage.message?.extendedTextMessage?.text ||
+            receivedMessage.message?.listResponseMessage?.title ||
             receivedMessage.message?.buttonsResponseMessage?.selectedDisplayText
 
         if (!conversation) return

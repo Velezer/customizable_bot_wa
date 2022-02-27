@@ -17,33 +17,37 @@ export class MenuCommand implements Command {
 
 
     async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
+        const sections: proto.ISection[] = []
+
+        const filteredCommands = this.allCommands.filter(c => groupChat.commandKeys.includes(c.key))
 
         const commandRows: proto.IRow[] = []
-        this.allCommands.forEach(command => {
-            if (groupChat.commandKeys.includes(command.key)) {
-                const row: proto.IRow = { rowId: command.key, title: command.example, description: command.description }
-                commandRows.push(row)
-            }
+
+        filteredCommands.forEach(c => {
+            const row: proto.IRow = { rowId: c.key, title: c.example, description: c.description }
+            commandRows.push(row)
         })
-
-        const menuRows: proto.IRow[] = []
-        if (groupChat.groupCommands.length > 0) {
-            groupChat.groupCommands.forEach(command => {
-                const row: proto.IRow = { rowId: command.key, title: command.key }
-                menuRows.push(row)
-            })
-        }
-
         const commandSection: proto.ISection = {
             title: 'Commands',
             rows: commandRows,
         }
-        const menuSection: proto.ISection = {
-            title: 'Menu',
-            rows: menuRows,
-        }
+        sections.push(commandSection)
 
-        const sections: proto.ISection[] = [commandSection, menuSection]
+
+        if (groupChat.groupCommands.length > 0) {
+            const menuRows: proto.IRow[] = []
+            groupChat.groupCommands.forEach(command => {
+                const row: proto.IRow = { rowId: command.key, title: command.key }
+                menuRows.push(row)
+            })
+
+            const menuSection: proto.ISection = {
+                title: 'Menu',
+                rows: menuRows,
+            }
+
+            sections.push(menuSection)
+        }
 
         await botwa.sendListMessage(groupChat.jid, sections);
 
