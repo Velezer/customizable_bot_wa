@@ -6,37 +6,37 @@ import { AddCustomMenuCommand } from "./crud.menu.command";
 import { BotLevel } from "../groups/interface";
 
 
-export class BotMenuElegantCommand implements Command {
-    key: string = '/bot';
-    description: string = 'nampilin commands';
-    example: string = this.key;
-    level: CommandLevel = CommandLevel.ADMIN;
-    allCommands: Command[];
-    botLevel: BotLevel = BotLevel.ELEGANT
+// export class BotMenuElegantCommand implements Command {
+//     key: string = '/bot';
+//     description: string = 'nampilin commands';
+//     example: string = this.key;
+//     level: CommandLevel = CommandLevel.ADMIN;
+//     allCommands: Command[];
+//     botLevel: BotLevel = BotLevel.ELEGANT
 
-    constructor(allCommands: Command[]) {
-        this.allCommands = allCommands
-    }
+//     constructor(allCommands: Command[]) {
+//         this.allCommands = allCommands
+//     }
 
-    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
-        const sections: proto.ISection[] = []
+//     async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
+//         const sections: proto.ISection[] = []
 
-        const commandRows: proto.IRow[] = []
-        const filteredCommands = this.allCommands.filter(c => groupChat.commandKeys.includes(c.key))
-        filteredCommands.forEach(c => {
-            const row: proto.IRow = { rowId: c.key, title: c.example, description: c.description }
-            commandRows.push(row)
-        })
-        const commandSection: proto.ISection = {
-            title: 'Commands',
-            rows: commandRows,
-        }
-        sections.push(commandSection)
+//         const commandRows: proto.IRow[] = []
+//         const filteredCommands = this.allCommands.filter(c => groupChat.botLevel === c.botLevel || c.botLevel === BotLevel.BASIC)
+//         filteredCommands.forEach(c => {
+//             const row: proto.IRow = { rowId: c.key, title: c.example, description: c.description }
+//             commandRows.push(row)
+//         })
+//         const commandSection: proto.ISection = {
+//             title: 'Commands',
+//             rows: commandRows,
+//         }
+//         sections.push(commandSection)
 
-        await botwa.sendListMessageSingleSelect(groupChat.jid, 'Commands', sections);
+//         await botwa.sendListMessageSingleSelect(groupChat.jid, 'Commands', sections);
 
-    }
-}
+//     }
+// }
 
 export class GroupMenuElegantCommand implements Command {
     botLevel: BotLevel = BotLevel.ELEGANT

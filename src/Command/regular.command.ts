@@ -1,9 +1,9 @@
 import { CekCommand } from "./cek.command"
-import { TagAllCommand, GetGroupMetadataCommand, OpenGroupSettingsCommand, CloseGroupSettingsCommand, OpenGroupChatCommand, CloseGroupChatCommand, PromoteCommand, DemoteCommand, JoinGroupCommand, ActivateCommand, DeactivateCommand } from "./commands"
+import { TagAllCommand, GetGroupMetadataCommand, OpenGroupSettingsCommand, CloseGroupSettingsCommand, OpenGroupChatCommand, CloseGroupChatCommand, PromoteCommand, DemoteCommand, JoinGroupCommand } from "./commands"
 import { AddCustomMenuCommand, RemoveCustomMenuCommand, UpdateCustomMenuCommand } from "./crud.menu.command"
 import { Command } from "./interface"
-import { GroupMenuBasicCommand } from "./menu.basic.command"
-import { BotMenuElegantCommand, GroupMenuElegantCommand } from "./menu.elegant.command"
+import { BotMenuBasicCommand, GroupMenuBasicCommand } from "./menu.basic.command"
+import { GroupMenuElegantCommand } from "./menu.elegant.command"
 
 
 export const allCommands: Command[] = [
@@ -19,11 +19,11 @@ export const allCommands: Command[] = [
     new AddCustomMenuCommand(),
     new UpdateCustomMenuCommand(),
     new RemoveCustomMenuCommand(),
-    new ActivateCommand(),
-    new DeactivateCommand(),
+    // new ActivateCommand(),
+    // new DeactivateCommand(),
     new GroupMenuElegantCommand(),
     new GroupMenuBasicCommand()
 ]
 
-// allCommands.push(new BotMenuBasicCommand(allCommands))
-allCommands.push(new BotMenuElegantCommand(allCommands))
+allCommands.push(new BotMenuBasicCommand(allCommands))
+// allCommands.push(new BotMenuElegantCommand(allCommands))
