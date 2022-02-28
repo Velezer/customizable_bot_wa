@@ -69,8 +69,8 @@ export class Commander implements UpdateHandler<Command> {
             if (conversation.startsWith('/sewa')) {
                 if (group) {
                     group = plainToClass(GroupChat, group)
-                    if (!group.isExpired()) {
-                        this.botwa.sendMessage(jid, 'bot masih dalam masa sewa/trial')
+                    if (!group.isExpired() && !group.trial) {
+                        this.botwa.sendMessage(jid, 'bot masih dalam masa sewa')
                         return
                     }
                 }
