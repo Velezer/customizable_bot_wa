@@ -110,9 +110,9 @@ export class Commander implements UpdateHandler<Command> {
         }
 
         const m0 = conversation.split(' ')[0]
-        const customCommand = group?.groupCommands.find(c => m0 === c.key)
-        if (customCommand) {
-            this.botwa.sendMessage(jid, customCommand.value)
+        const groupMenu = group?.groupMenu.find(m => m0 === m.key)
+        if (groupMenu) {
+            this.botwa.sendMessage(jid, groupMenu.value)
             return
         }
 

@@ -1,6 +1,6 @@
 
 
-export interface GroupCommand {
+export interface GroupMenu {
 
 	key: string
 	value: string
