@@ -42,13 +42,10 @@ async function main() {
 
         const botwa = new BotWa(sock)
 
-        console.log('=============')
-        console.log(sock.contacts[0])
-        console.log('=============')
-        console.log('--------------')
-        console.log(participants)
-        console.log('--------------')
         const participantJid = participants[0]
+        console.log('--------------')
+        console.log(sock.contacts[participantJid])
+        console.log('--------------')
 
         const behaviorer = new Behaviorer(botwa)
         behaviorer.run(action, jid, participantJid)
