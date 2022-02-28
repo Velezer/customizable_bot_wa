@@ -11,7 +11,7 @@ import { Behaviorer } from './update-handler/Behaviorer'
 
 async function main() {
     const sock: WAConnection = new WAConnection()
-    sock.logger.level = 'trace'
+    sock.logger.level = 'debug' //''debug', 'fatal', 'error',  'trace'
     sock.version = [2, 2143, 3]
     sock.browserDescription = ['velezer', 'Chrome', 'OcedBot']
     sock.autoReconnect = ReconnectMode.onAllErrors
@@ -22,6 +22,12 @@ async function main() {
 
     await sock.connect()
     auth.saveAuth('auth.json', sock.base64EncodedAuthInfo())
+
+    sock.on('connection-phone-change', async (data) => {
+        console.log('connection change-==-=-=-=-=-=-=-')
+        console.log(data)
+        console.log('connection change-==-=-=-=-=-=-=-')
+    })
     sock.on('group-participants-update', async (groupUpdate) => {
         const jid = groupUpdate.jid
         const action = groupUpdate.action
@@ -29,7 +35,12 @@ async function main() {
 
         const botwa = new BotWa(sock)
 
+        console.log('=============')
         console.log(sock.contacts)
+        console.log('=============')
+        console.log('--------------')
+        console.log(participants)
+        console.log('--------------')
 
         const behaviorer = new Behaviorer(botwa)
         behaviorer.run(action, jid)
@@ -42,7 +53,7 @@ async function main() {
         if (receivedMessage.key.fromMe === true) return
         if (!receivedMessage?.message) return
 
-        console.log(receivedMessage)
+        // console.log(receivedMessage)
 
         const botwa = new BotWa(sock)
 
@@ -84,7 +95,7 @@ async function main() {
 
 function run() {
     try {
-        main()
+        main().catch(err => run())
     } catch (err) {
         console.log('------------------')
         console.log('LAPORAN CID! ERROR IKI')
