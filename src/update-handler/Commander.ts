@@ -1,7 +1,5 @@
 import { GroupSettingChange, proto, WAChatUpdate, WAGroupParticipant, WAParticipantAction } from '@adiwajshing/baileys';
 import { plainToClass } from 'class-transformer';
-import { Behavior } from '../Behavior/Behavior';
-import { DemoteParticipantBehavior, LeaveGroupParticipantBehavior, PromoteParticipantBehavior, WelcomeGroupParticipantAddBehavior } from '../Behavior/behaviors';
 import { BotWa } from '../BotWa/BotWa';
 import { Command, CommandLevel } from '../Command/Command';
 import { ActivateCommand } from '../Command/commands';
@@ -38,22 +36,22 @@ export class Commander implements UpdateHandler<Command> {
     }
 
     async isBotAdmin(participants: WAGroupParticipant[]) {
-        const userInfo = this.botwa.getUserInfo()
+        const userInfo = await this.botwa.getUserInfo()
 
         for (const p of participants) {
-            if (p.jid === (await userInfo).jid && p.isAdmin) return true
+            if (p.jid === userInfo.jid && p.isAdmin) return true
         }
         return false
     }
 
-    async runUnreg(conversation: string) {
+    async unreg(conversation: string) {
         if (conversation.startsWith('/unreg')) {
             const c = new UnregCommand()
             c.run(this.botwa, new GroupChat('unused'), conversation).catch(err => console.error(err))
         }
     }
 
-    async runCommands(jid: string, conversation: string, level: CommandLevel) {
+    async run(jid: string, conversation: string, level: CommandLevel) {
         let group = this.groupChats.find(g => g.jid === jid)
 
         if (level !== CommandLevel.MEMBER) {

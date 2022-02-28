@@ -5,4 +5,6 @@ export interface UpdateHandler<T> {
     botwa: BotWa
 
     handlers: T[]
+
+    run(...args: any): any
 }

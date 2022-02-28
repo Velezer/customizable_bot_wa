@@ -21,7 +21,7 @@ export class Behaviorer implements UpdateHandler<Behavior> {
 
 
 
-    runBehaviors(action: WAParticipantAction, jid: string) {
+    run(action: WAParticipantAction, jid: string) {
 
         this.handlers.forEach(async behavior => {
             if (behavior.action === action) {

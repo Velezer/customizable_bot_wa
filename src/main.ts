@@ -11,7 +11,7 @@ import { Behaviorer } from './update-handler/Behaviorer'
 
 async function main() {
     const sock: WAConnection = new WAConnection()
-    sock.logger.level = 'debug'
+    sock.logger.level = 'trace'
     sock.version = [2, 2143, 3]
     sock.browserDescription = ['velezer', 'Chrome', 'OcedBot']
     sock.autoReconnect = ReconnectMode.onAllErrors
@@ -32,7 +32,7 @@ async function main() {
         console.log(sock.contacts)
 
         const behaviorer = new Behaviorer(botwa)
-        behaviorer.runBehaviors(action, jid)
+        behaviorer.run(action, jid)
 
     })
 
@@ -63,7 +63,7 @@ async function main() {
 
         const commander = new Commander(botwa)
         if (! await commander.isSentByGroupAdmin(receivedMessage, participants)) {
-            await commander.runCommands(jid, conversation, CommandLevel.MEMBER).catch(err => console.error(err))
+            await commander.run(jid, conversation, CommandLevel.MEMBER).catch(err => console.error(err))
             return
         }
 
@@ -73,10 +73,10 @@ async function main() {
             return
         }
 
-        commander.runCommands(jid, conversation, CommandLevel.ADMIN).catch(err => console.error(err))
+        commander.run(jid, conversation, CommandLevel.ADMIN).catch(err => console.error(err))
 
         if (jid === LoggerOcedBot.jid) {
-            commander.runUnreg(conversation)
+            commander.unreg(conversation)
         }
     })
 
@@ -86,6 +86,9 @@ function run() {
     try {
         main()
     } catch (err) {
+        console.log('------------------')
+        console.log('LAPORAN CID! ERROR IKI')
+        console.log('------------------')
         console.error(err)
         run()
     }
