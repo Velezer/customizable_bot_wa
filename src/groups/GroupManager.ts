@@ -30,7 +30,7 @@ export class GroupManager {
     }
 
 
-    static register(newGroup: GroupChat, trial: boolean = false): boolean {
+    static register(newGroup: GroupChat, trial: boolean): boolean {
         newGroup.trial = trial
         let groups = this.getRegisteredGroup()
 

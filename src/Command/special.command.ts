@@ -28,7 +28,7 @@ export class RegisterGroupCommand implements Command {
             botwa.sendMessage(jid, 'sedang mengaktivasi...')
             let isRegistered = false
             try {
-                isRegistered = GroupManager.register(groupChat)
+                isRegistered = GroupManager.register(groupChat, false)
             } catch (err) {
                 console.error(err)
                 botwa.sendMessage(jid, 'aktivasi gagal, mohon hubungi \nwa.me/' + OcedBot.getPhoneNumber())
