@@ -36,6 +36,7 @@ export class GroupManager {
 
         let found = groups.find(g => g.jid === newGroup.jid)
         if (found) {
+            found.trial = trial
             found.registeredTime = new Date()
             groups.push(found)
         } else {
