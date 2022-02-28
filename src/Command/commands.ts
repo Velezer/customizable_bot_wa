@@ -1,10 +1,8 @@
 import { BotWa } from "../BotWa/BotWa";
 import { GroupManager } from "../groups/GroupManager";
 import { Command, CommandLevel } from "./Command";
-import { OcedBot } from "../ocedbot/OcedBot";
 import { GroupChat } from "../groups/GroupChat";
 import { LoggerOcedBot } from "../logger/Logger";
-import { plainToClass } from "class-transformer";
 
 
 
@@ -155,9 +153,7 @@ export class PromoteCommand implements Command {
         }
 
         botwa.promote(groupChat.jid, m1)
-            .then(() => {
-                botwa.sendMessage(groupChat.jid, m1 + ' dipromote')
-            }).catch(err => {
+            .catch(err => {
                 botwa.sendMessage(groupChat.jid, 'promote gagal')
             })
 
@@ -179,9 +175,7 @@ export class DemoteCommand implements Command {
             m1 = m1.slice(1)
         }
         botwa.demote(groupChat.jid, m1)
-            .then(() => {
-                botwa.sendMessage(groupChat.jid, m1 + ' didemote')
-            }).catch(err => {
+            .catch(err => {
                 botwa.sendMessage(groupChat.jid, 'demote gagal')
             })
 
