@@ -73,6 +73,9 @@ async function main() {
         }
 
         const jid = receivedMessage.key.remoteJid!
+        const isNotGroup = jid.split('@')[1] !== 'g.us'
+        if (isNotGroup) return
+
         const participants = await botwa.getGroupParticipants(jid)
 
         const conversation = receivedMessage.message?.conversation ||
