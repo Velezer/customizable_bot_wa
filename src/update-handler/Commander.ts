@@ -89,8 +89,15 @@ export class Commander implements UpdateHandler<Command> {
         }
 
         group = plainToClass(GroupChat, group)
+        if (group?.trial) {
+            if (group.isTrialExpired()) {
+                this.botwa.sendMessage(jid, 'trial sudah expired')
+                this.silakanSewa(jid)
+                return
+            }
+        }
         if (group?.isExpired()) {
-            this.botwa.sendMessage(jid, 'bot sudah expired')
+            this.botwa.sendMessage(jid, 'sewa sudah expired')
             this.silakanSewa(jid)
             return
         }
