@@ -1,39 +1,29 @@
 import { GroupSettingChange, proto, WAChatUpdate, WAGroupParticipant, WAParticipantAction } from '@adiwajshing/baileys';
 import { plainToClass } from 'class-transformer';
-import { Behavior } from './Behavior/Behavior';
-import { DemoteParticipantBehavior, LeaveGroupParticipantBehavior, PromoteParticipantBehavior, WelcomeGroupParticipantAddBehavior } from './Behavior/behaviors';
-import { BotWa } from './BotWa/BotWa';
-import { Command, CommandLevel } from './Command/Command';
-import { ActivateCommand } from './Command/commands';
-import { allCommands } from './Command/regular.command';
-import { RegisterGroupCommand, TrialCommand, UnregCommand } from './Command/special.command';
-import { GroupChat } from './groups/GroupChat';
-import { GroupManager } from './groups/GroupManager';
-import { LoggerOcedBot } from './logger/Logger';
-import { OcedBot } from './ocedbot/OcedBot';
+import { Behavior } from '../Behavior/Behavior';
+import { DemoteParticipantBehavior, LeaveGroupParticipantBehavior, PromoteParticipantBehavior, WelcomeGroupParticipantAddBehavior } from '../Behavior/behaviors';
+import { BotWa } from '../BotWa/BotWa';
+import { Command, CommandLevel } from '../Command/Command';
+import { ActivateCommand } from '../Command/commands';
+import { allCommands } from '../Command/regular.command';
+import { RegisterGroupCommand, TrialCommand, UnregCommand } from '../Command/special.command';
+import { GroupChat } from '../groups/GroupChat';
+import { GroupManager } from '../groups/GroupManager';
+import { LoggerOcedBot } from '../logger/Logger';
+import { OcedBot } from '../ocedbot/OcedBot';
+import { UpdateHandler } from './interface';
 
-export class Commander {
+export class Commander implements UpdateHandler<Command> {
     botwa: BotWa;
 
     groupChats: GroupChat[] = GroupManager.getRegisteredGroup()
-    commands: Command[] = allCommands
-    behaviors: Behavior[];
-
+    handlers: Command[] = allCommands
 
     constructor(botwa: BotWa) {
         this.botwa = botwa
-
-
-        this.behaviors = [
-            new WelcomeGroupParticipantAddBehavior(),
-            new LeaveGroupParticipantBehavior(),
-            new PromoteParticipantBehavior(),
-            new DemoteParticipantBehavior(),
-        ]
-
     }
 
-    async isSentByGroupAdmin(receivedMessage: proto.WebMessageInfo, jidGroup: string, participants: WAGroupParticipant[]) {
+    async isSentByGroupAdmin(receivedMessage: proto.WebMessageInfo, participants: WAGroupParticipant[]) {
         const sender = receivedMessage.participant
 
         for (const p of participants) {
@@ -61,10 +51,6 @@ export class Commander {
             const c = new UnregCommand()
             c.run(this.botwa, new GroupChat('unused'), conversation).catch(err => console.error(err))
         }
-    }
-
-    async runTrial() {
-
     }
 
     async runCommands(jid: string, conversation: string, level: CommandLevel) {
@@ -125,7 +111,7 @@ export class Commander {
             return
         }
 
-        const command = this.commands.find(c => (m0 === c.key && c.level === level)) || this.commands.find(c => (m0 === c.key && c.level === CommandLevel.MEMBER))
+        const command = this.handlers.find(c => (m0 === c.key && c.level === level)) || this.handlers.find(c => (m0 === c.key && c.level === CommandLevel.MEMBER))
         if (!command) return
 
         const hasCommand = group!.commandKeys.includes(command.key)
@@ -143,14 +129,7 @@ export class Commander {
 
 
 
-    runBehaviors(action: WAParticipantAction, jid: string) {
 
-        this.behaviors.forEach(async behavior => {
-            if (behavior.action === action) {
-                behavior.run(this.botwa, jid)
-            }
-        })
-    }
 }
 
 

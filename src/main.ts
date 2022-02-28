@@ -1,10 +1,11 @@
 import { BotWa } from './BotWa/BotWa'
-import { Commander } from './Commander'
+import { Commander } from './update-handler/Commander'
 import { ReconnectMode, WAConnection } from '@adiwajshing/baileys'
 import * as auth from './auth/auth'
 import { OcedBot } from './ocedbot/OcedBot'
 import { LoggerOcedBot } from './logger/Logger'
 import { CommandLevel } from './Command/Command'
+import { Behaviorer } from './update-handler/Behaviorer'
 
 
 
@@ -30,8 +31,8 @@ async function main() {
 
         console.log(sock.contacts)
 
-        const commander = new Commander(botwa)
-        commander.runBehaviors(action, jid)
+        const behaviorer = new Behaviorer(botwa)
+        behaviorer.runBehaviors(action, jid)
 
     })
 
@@ -61,7 +62,7 @@ async function main() {
         if (!conversation) return
 
         const commander = new Commander(botwa)
-        if (! await commander.isSentByGroupAdmin(receivedMessage, jid, participants)) {
+        if (! await commander.isSentByGroupAdmin(receivedMessage, participants)) {
             await commander.runCommands(jid, conversation, CommandLevel.MEMBER).catch(err => console.error(err))
             return
         }
