@@ -27,6 +27,9 @@ export class GroupManager {
             groups.splice(index, 1)
             fs.writeFileSync(this.filename, JSON.stringify(groups))
         }
+
+        if (this.getRegisteredGroup().find(g => g.jid === jid)) return false
+        else return true
     }
 
 

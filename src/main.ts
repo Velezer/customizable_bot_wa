@@ -4,7 +4,7 @@ import { ReconnectMode, WAConnection } from '@adiwajshing/baileys'
 import * as auth from './auth/auth'
 import { OcedBot } from './ocedbot/OcedBot'
 import { LoggerOcedBot } from './logger/Logger'
-import { CommandLevel } from './Command/Command'
+import { CommandLevel } from './Command/interface'
 import { Behaviorer } from './update-handler/Behaviorer'
 import { Activation } from './activation/activation'
 
@@ -66,8 +66,9 @@ async function main() {
         if (receivedMessage.message?.conversation?.startsWith('/key')) {
             let msg = ''
             Activation.getActivationKey().forEach(k => {
-                msg += k.botLevel + '\n\nsewa/ ' + k.key + '\n\n'
+                msg += k.botLevel + '\n/sewa ' + k.key + '\n\n'
             })
+            msg.slice(0, -2)
             LoggerOcedBot.log(botwa, msg)
             return
         }

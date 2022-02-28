@@ -1,5 +1,6 @@
 import { BotWa } from "../BotWa/BotWa"
 import { GroupChat } from "../groups/GroupChat"
+import { BotLevel } from "../groups/interface"
 
 export enum CommandLevel {
     MEMBER,
@@ -12,6 +13,7 @@ export interface Command {
     example: string
     description: string
     level: CommandLevel
+    botLevel: BotLevel
 
     run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void>
 }

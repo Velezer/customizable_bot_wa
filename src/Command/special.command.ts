@@ -5,11 +5,12 @@ import { GroupManager } from "../groups/GroupManager";
 import { BotLevel } from "../groups/interface";
 import { LoggerOcedBot } from "../logger/Logger";
 import { OcedBot } from "../ocedbot/OcedBot";
-import { Command, CommandLevel } from "./Command";
+import { Command, CommandLevel } from "./interface";
 
 
 
 export class RegisterGroupCommand implements Command {
+    botLevel: BotLevel = BotLevel.BASIC
     key: string = '/sewa';
     example: string = '/sewa key-aktivasi';
     description: string = 'sewa bot 30 hari';
@@ -44,7 +45,7 @@ export class RegisterGroupCommand implements Command {
             if (isRegistered) {
                 botwa.sendMessage(jid, 'aktivasi sukses bot ' + groupChat.botLevel)
 
-                LoggerOcedBot.log(botwa, 'aktivasi sukses dengan key \n\n' + activationKey + '\n\n' + groupSubject + '\n\n' + jid)
+                LoggerOcedBot.log(botwa, 'aktivasi sukses dengan key \n\n' + JSON.stringify(activationKey) + '\n\n' + groupSubject + '\n\n' + jid)
                 Activation.generateActivationKey()
             }
         } else {
@@ -56,6 +57,7 @@ export class RegisterGroupCommand implements Command {
 }
 
 export class TrialCommand implements Command {
+    botLevel: BotLevel = BotLevel.BASIC
     key: string = '/trial';
     example: string = '/trial';
     description: string = 'trial 1 hari';
@@ -89,6 +91,7 @@ export class TrialCommand implements Command {
 }
 
 export class UnregCommand implements Command {
+    botLevel: BotLevel = BotLevel.BASIC
     key: string = '/unreg';
     example: string = '/unreg jid';
     description: string = 'unreg group';
@@ -98,8 +101,11 @@ export class UnregCommand implements Command {
         const m1 = conversation.slice(this.key.length + 1)
         const targetJid = m1
 
-        GroupManager.remove(targetJid)
-        LoggerOcedBot.log(botwa, 'unreg ' + targetJid)
+        if (GroupManager.remove(targetJid)) {
+            LoggerOcedBot.log(botwa, 'unreg ' + targetJid)
+        } else {
+            LoggerOcedBot.log(botwa, 'unreg gagal')
+        }
 
     }
 }

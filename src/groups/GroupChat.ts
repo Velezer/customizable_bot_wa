@@ -1,4 +1,4 @@
-import { Command, CommandLevel } from "../Command/Command";
+import { Command, CommandLevel } from "../Command/interface";
 import { allCommands } from "../Command/regular.command";
 import { BotLevel, GroupMenu } from "./interface";
 

@@ -1,7 +1,7 @@
 import { GroupSettingChange, proto, WAChatUpdate, WAGroupParticipant, WAParticipantAction } from '@adiwajshing/baileys';
 import { plainToClass } from 'class-transformer';
 import { BotWa } from '../BotWa/BotWa';
-import { Command, CommandLevel } from '../Command/Command';
+import { Command, CommandLevel } from '../Command/interface';
 import { ActivateCommand } from '../Command/commands';
 import { allCommands } from '../Command/regular.command';
 import { RegisterGroupCommand, TrialCommand, UnregCommand } from '../Command/special.command';
@@ -10,6 +10,7 @@ import { GroupManager } from '../groups/GroupManager';
 import { LoggerOcedBot } from '../logger/Logger';
 import { OcedBot } from '../ocedbot/OcedBot';
 import { UpdateHandler } from './interface';
+import { BotLevel } from '../groups/interface';
 
 export class Commander implements UpdateHandler<Command> {
     botwa: BotWa;
@@ -116,7 +117,11 @@ export class Commander implements UpdateHandler<Command> {
             return
         }
 
-        const command = this.handlers.find(c => (m0 === c.key && c.level === level)) || this.handlers.find(c => (m0 === c.key && c.level === CommandLevel.MEMBER))
+        const command = this.handlers.find(c => (m0 === c.key && c.level === level && c.botLevel === group?.botLevel)) ||
+            this.handlers.find(c => (m0 === c.key && c.level === level && c.botLevel === BotLevel.BASIC)) ||
+            this.handlers.find(c => (m0 === c.key && c.level === CommandLevel.MEMBER && c.botLevel === group?.botLevel)) ||
+            this.handlers.find(c => (m0 === c.key && c.level === CommandLevel.MEMBER && c.botLevel === BotLevel.BASIC))
+
         if (!command) return
 
         const hasCommand = group!.commandKeys.includes(command.key)

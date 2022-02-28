@@ -1,13 +1,15 @@
 import { BotWa } from "../BotWa/BotWa";
 import { GroupChat } from "../groups/GroupChat";
 import { GroupManager } from "../groups/GroupManager";
-import { Command, CommandLevel } from "./Command";
+import { BotLevel } from "../groups/interface";
+import { Command, CommandLevel } from "./interface";
 
 
 
 
 
 export class AddCustomMenuCommand implements Command {
+    botLevel: BotLevel = BotLevel.BASIC
     key: string = '/add-menu';
     example: string = '/add-menu /nama-menu data';
     description: string = 'menambahkan menu';
@@ -39,6 +41,7 @@ export class AddCustomMenuCommand implements Command {
 
 
 export class UpdateCustomMenuCommand implements Command {
+    botLevel: BotLevel = BotLevel.BASIC
     key: string = '/update-menu';
     example: string = '/update-menu /nama-menu data';
     description: string = 'mengupdate menu';
@@ -68,6 +71,7 @@ export class UpdateCustomMenuCommand implements Command {
     }
 }
 export class RemoveCustomMenuCommand implements Command {
+    botLevel: BotLevel = BotLevel.BASIC
     key: string = '/remove-menu';
     example: string = '/remove-menu /nama-menu';
     description: string = 'menghapus menu';

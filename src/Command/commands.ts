@@ -1,8 +1,9 @@
 import { BotWa } from "../BotWa/BotWa";
 import { GroupManager } from "../groups/GroupManager";
-import { Command, CommandLevel } from "./Command";
+import { Command, CommandLevel } from "./interface";
 import { GroupChat } from "../groups/GroupChat";
 import { LoggerOcedBot } from "../logger/Logger";
+import { BotLevel } from "../groups/interface";
 
 
 
@@ -10,6 +11,7 @@ import { LoggerOcedBot } from "../logger/Logger";
 
 
 export class TagAllCommand implements Command {
+    botLevel: BotLevel = BotLevel.BASIC
     key: string = '/tag-all';
     description: string = 'ngetag seluruh grup';
     example: string = this.key + ' pesan';
@@ -29,6 +31,7 @@ export class TagAllCommand implements Command {
 }
 
 export class GetGroupMetadataCommand implements Command {
+    botLevel: BotLevel = BotLevel.BASIC
     key: string = '/group-data';
     example: string = this.key;
     description: string = 'data grup';
@@ -59,6 +62,7 @@ export class GetGroupMetadataCommand implements Command {
 
 }
 export class GetGroupParticipantsCommand implements Command {
+    botLevel: BotLevel = BotLevel.BASIC
     key: string = '/group-member';
     description: string = 'list member grup';
     example: string = this.key;
@@ -83,6 +87,7 @@ export class GetGroupParticipantsCommand implements Command {
 }
 
 export class OpenGroupSettingsCommand implements Command {
+    botLevel: BotLevel = BotLevel.BASIC
     key: string = '/open-setting';
     example: string = this.key;
     description: string = 'open setting grup';
@@ -97,6 +102,7 @@ export class OpenGroupSettingsCommand implements Command {
 
 }
 export class CloseGroupSettingsCommand implements Command {
+    botLevel: BotLevel = BotLevel.BASIC
     key: string = '/close-setting';
     example: string = this.key;
     description: string = 'close setting grup';
@@ -111,6 +117,7 @@ export class CloseGroupSettingsCommand implements Command {
 
 }
 export class OpenGroupChatCommand implements Command {
+    botLevel: BotLevel = BotLevel.BASIC
     key: string = '/open-chat';
     description: string = 'open grup chat';
     example: string = this.key;
@@ -125,6 +132,7 @@ export class OpenGroupChatCommand implements Command {
 
 }
 export class CloseGroupChatCommand implements Command {
+    botLevel: BotLevel = BotLevel.BASIC
     key: string = '/close-chat';
     example: string = this.key;
     description: string = 'close grup chat';
@@ -139,6 +147,7 @@ export class CloseGroupChatCommand implements Command {
 
 }
 export class PromoteCommand implements Command {
+    botLevel: BotLevel = BotLevel.BASIC
     key: string = '/promote';
     example: string = this.key + ' 0000000000';
     description: string = 'promote member grup';
@@ -162,6 +171,7 @@ export class PromoteCommand implements Command {
 }
 
 export class DemoteCommand implements Command {
+    botLevel: BotLevel = BotLevel.BASIC
     key: string = '/demote';
     example: string = this.key + ' 0000000000';
     description: string = 'demote member grup';
@@ -186,6 +196,7 @@ export class DemoteCommand implements Command {
 
 
 export class JoinGroupCommand implements Command {
+    botLevel: BotLevel = BotLevel.BASIC
     key: string = '/join';
     example: string = '/join link';
     description: string = '/join grup pake link';
@@ -211,6 +222,7 @@ export class JoinGroupCommand implements Command {
 
 
 export class ActivateCommand implements Command {
+    botLevel: BotLevel = BotLevel.BASIC
     key: string = '/activate';
     example: string = '/activate /command';
     description: string = 'mengaktifkan command';
@@ -234,6 +246,7 @@ export class ActivateCommand implements Command {
     }
 }
 export class DeactivateCommand implements Command {
+    botLevel: BotLevel = BotLevel.BASIC
     key: string = '/deactivate';
     example: string = '/deactivate /command';
     description: string = 'menonaktifkan command';

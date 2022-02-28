@@ -1,16 +1,18 @@
 import { proto } from "@adiwajshing/baileys";
 import { BotWa } from "../BotWa/BotWa";
 import { GroupChat } from "../groups/GroupChat";
-import { Command, CommandLevel } from "./Command";
+import { Command, CommandLevel } from "./interface";
 import { AddCustomMenuCommand } from "./crud.menu.command";
+import { BotLevel } from "../groups/interface";
 
 
-export class BotMenuCommand implements Command {
+export class BotMenuElegantCommand implements Command {
     key: string = '/bot';
     description: string = 'nampilin commands';
     example: string = this.key;
     level: CommandLevel = CommandLevel.ADMIN;
     allCommands: Command[];
+    botLevel: BotLevel = BotLevel.ELEGANT
 
     constructor(allCommands: Command[]) {
         this.allCommands = allCommands
@@ -36,7 +38,8 @@ export class BotMenuCommand implements Command {
     }
 }
 
-export class GroupMenuCommand implements Command {
+export class GroupMenuElegantCommand implements Command {
+    botLevel: BotLevel = BotLevel.ELEGANT
     key: string = '/menu';
     description: string = 'nampilin menu';
     example: string = this.key;
