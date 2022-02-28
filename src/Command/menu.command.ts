@@ -45,10 +45,10 @@ export class GroupMenuCommand implements Command {
     async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
         const sections: proto.ISection[] = []
 
-        if (groupChat.groupCommands.length > 0) {
+        if (groupChat.groupMenu.length > 0) {
             const menuRows: proto.IRow[] = []
-            groupChat.groupCommands.forEach(command => {
-                const row: proto.IRow = { rowId: command.key, title: command.key }
+            groupChat.groupMenu.forEach(m => {
+                const row: proto.IRow = { rowId: m.key, title: m.key }
                 menuRows.push(row)
             })
 

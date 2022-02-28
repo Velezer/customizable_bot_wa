@@ -6,6 +6,7 @@ import { OcedBot } from './ocedbot/OcedBot'
 import { LoggerOcedBot } from './logger/Logger'
 import { CommandLevel } from './Command/Command'
 import { Behaviorer } from './update-handler/Behaviorer'
+import { Activation } from './activation/activation'
 
 
 
@@ -63,7 +64,11 @@ async function main() {
         const botwa = new BotWa(sock)
 
         if (receivedMessage.message?.conversation?.startsWith('/key')) {
-            LoggerOcedBot.log(botwa, '/sewa ' + OcedBot.getActivationKey())
+            let msg = ''
+            Activation.getActivationKey().forEach(k => {
+                msg += k.botLevel + '\n\nsewa/ ' + k.key + '\n\n'
+            })
+            LoggerOcedBot.log(botwa, msg)
             return
         }
 

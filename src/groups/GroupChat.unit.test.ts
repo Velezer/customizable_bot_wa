@@ -1,4 +1,5 @@
 import { GroupChat } from "./GroupChat"
+import { BotLevel } from "./interface";
 
 function addDays(date: Date, days: number) {
     var result = new Date(date);

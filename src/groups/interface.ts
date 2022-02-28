@@ -6,3 +6,8 @@ export interface GroupMenu {
 	value: string
 
 }
+
+export enum BotLevel {
+	BASIC = 'basic',
+	ELEGANT = 'elegant'
+}

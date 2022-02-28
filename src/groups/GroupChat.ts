@@ -1,6 +1,6 @@
 import { Command, CommandLevel } from "../Command/Command";
 import { allCommands } from "../Command/regular.command";
-import { GroupMenu } from "./interface";
+import { BotLevel, GroupMenu } from "./interface";
 
 function fillCommandkeys(): string[] {
     let result: string[] = []
@@ -20,6 +20,7 @@ export class GroupChat {
     registeredTime: Date
     groupMenu: GroupMenu[] = []
     trial: boolean = false
+    botLevel: BotLevel = BotLevel.BASIC
 
     constructor(jidGroup: string) {
         this.jid = jidGroup

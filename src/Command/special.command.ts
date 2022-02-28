@@ -1,6 +1,8 @@
+import { Activation } from "../activation/activation";
 import { BotWa } from "../BotWa/BotWa";
 import { GroupChat } from "../groups/GroupChat";
 import { GroupManager } from "../groups/GroupManager";
+import { BotLevel } from "../groups/interface";
 import { LoggerOcedBot } from "../logger/Logger";
 import { OcedBot } from "../ocedbot/OcedBot";
 import { Command, CommandLevel } from "./Command";
@@ -23,11 +25,14 @@ export class RegisterGroupCommand implements Command {
             return
         }
 
-        const activationKey = OcedBot.getActivationKey()
-        if (m1 === activationKey) {
+        const activationKeys = Activation.getActivationKey()
+        const activationKey = activationKeys.find(k => k.key === m1)
+
+        if (activationKey) {
             botwa.sendMessage(jid, 'sedang mengaktivasi...')
             let isRegistered = false
             try {
+                groupChat.botLevel = activationKey.botLevel
                 isRegistered = GroupManager.register(groupChat, false)
             } catch (err) {
                 console.error(err)
@@ -37,10 +42,10 @@ export class RegisterGroupCommand implements Command {
             }
 
             if (isRegistered) {
-                botwa.sendMessage(jid, 'aktivasi sukses')
+                botwa.sendMessage(jid, 'aktivasi sukses bot ' + groupChat.botLevel)
 
-                LoggerOcedBot.log(botwa, 'aktivasi sukses dengan key ' + activationKey + '\n\n' + groupSubject + '\n\n' + jid)
-                OcedBot.generateActivationKey()
+                LoggerOcedBot.log(botwa, 'aktivasi sukses dengan key \n\n' + activationKey + '\n\n' + groupSubject + '\n\n' + jid)
+                Activation.generateActivationKey()
             }
         } else {
             botwa.sendMessage(jid, 'aktivasi gagal, mohon periksa key-aktivasi anda')
@@ -65,6 +70,7 @@ export class TrialCommand implements Command {
         botwa.sendMessage(jid, 'sedang mengaktivasi trial...')
         let isRegistered = false
         try {
+            groupChat.botLevel = BotLevel.ELEGANT
             isRegistered = GroupManager.register(groupChat, true);
         } catch (err) {
             console.error(err)
@@ -74,10 +80,9 @@ export class TrialCommand implements Command {
         }
 
         if (isRegistered) {
-            botwa.sendMessage(jid, 'aktivasi trial sukses')
+            botwa.sendMessage(jid, 'aktivasi trial sukses bot ' + groupChat.botLevel)
 
             LoggerOcedBot.log(botwa, 'aktivasi trial sukses' + '\n\n' + groupSubject + '\n\n' + jid)
-            OcedBot.generateActivationKey()
         }
 
     }
