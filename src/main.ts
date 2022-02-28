@@ -28,6 +28,13 @@ async function main() {
         console.log(data)
         console.log('connection change-==-=-=-=-=-=-=-')
     })
+
+    sock.on('close', async (data) => {
+        console.log('close close close-==-=-=-=-=-=-=-')
+        console.log(data)
+        console.log('close close close-==-=-=-=-=-=-=-')
+
+    })
     sock.on('group-participants-update', async (groupUpdate) => {
         const jid = groupUpdate.jid
         const action = groupUpdate.action
@@ -36,14 +43,15 @@ async function main() {
         const botwa = new BotWa(sock)
 
         console.log('=============')
-        console.log(sock.contacts)
+        console.log(sock.contacts[0])
         console.log('=============')
         console.log('--------------')
         console.log(participants)
         console.log('--------------')
+        const participantJid = participants[0]
 
         const behaviorer = new Behaviorer(botwa)
-        behaviorer.run(action, jid)
+        behaviorer.run(action, jid, participantJid)
 
     })
 

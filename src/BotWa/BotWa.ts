@@ -1,4 +1,4 @@
-import { GroupSettingChange, MessageType, proto, WAConnection } from "@adiwajshing/baileys";
+import { GroupSettingChange, MessageOptions, MessageType, proto, WAConnection } from "@adiwajshing/baileys";
 
 
 
@@ -61,8 +61,11 @@ export class BotWa {
         return this.sock.user
     }
 
-    async sendMessage(to: string, message: string) {
-        return await this.sock.sendMessage(to, message, MessageType.text)
+    async sendMessage(to: string, message: string, options?: MessageOptions) {
+        return await this.sock.sendMessage(to, message, MessageType.text, options)
+    }
+    async sendMentioned(to: string, message: string, mentionedJid: string[]) {
+        return await this.sock.sendMessage(to, message, MessageType.text, { contextInfo: { mentionedJid } })
     }
 
     async sendMentionedAll(to: string, m1: string) {
