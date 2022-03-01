@@ -21,6 +21,9 @@ export class LoggerOcedBot {
     return data
 }
 
-
+    static findMessageKey(message:string): proto.IMessageKey{
+    const data = this.readSavedReceivedMessage()
+    data.find(d=>d.message === message)
+}
 
 }
