@@ -20,25 +20,42 @@ export class BotMenuBasicCommand implements Command {
     }
 
     async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
-        const sections: proto.ISection[] = []
 
-        const commandRows: proto.IRow[] = []
-        const filteredCommands = this.allCommands.filter(c => c.botLevel <= groupChat.botLevel)
+        if (groupChat.botLevel === BotLevel.ELEGANT) {
+            const sections: proto.ISection[] = []
 
-        filteredCommands.forEach(c => {
-            const row: proto.IRow = { rowId: c.key, title: c.example, description: c.description }
-            commandRows.push(row)
-        })
+            const commandRows: proto.IRow[] = []
+            const filteredCommands = this.allCommands.filter(c => c.botLevel <= groupChat.botLevel)
 
-        const setRows = new Set(commandRows)
+            const setKeys = new Set(filteredCommands.map(c => c.key))
+            setKeys.forEach(key => {
+                const c = filteredCommands.find(c => c.key === key)!
+                const row: proto.IRow = { rowId: key, title: c.example, description: c.description }
+                commandRows.push(row)
+            })
 
-        const commandSection: proto.ISection = {
-            title: 'Commands',
-            rows: [...setRows],
+
+            const commandSection: proto.ISection = {
+                title: 'Commands',
+                rows: commandRows,
+            }
+            sections.push(commandSection)
+
+            await botwa.sendListMessageSingleSelect(groupChat.jid, 'Commands', sections);
+
+        } else if (groupChat.botLevel === BotLevel.BASIC) {
+            let msg = ''
+
+            msg += '_Commands_\n\n'
+            const filteredCommands = this.allCommands.filter(c => c.botLevel <= groupChat.botLevel)
+            const setKeys = new Set(filteredCommands.map(c => c.key))
+            setKeys.forEach(key => {
+                const c = filteredCommands.find(c => c.key === key)!
+                msg += `${c.example}\n${c.description}\n\n`
+            })
+            msg = msg.slice(0, -2)
+            await botwa.sendMessage(groupChat.jid, msg);
         }
-        sections.push(commandSection)
-
-        await botwa.sendListMessageSingleSelect(groupChat.jid, 'Commands', sections);
 
     }
 }
