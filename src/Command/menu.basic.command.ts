@@ -24,13 +24,17 @@ export class BotMenuBasicCommand implements Command {
 
         const commandRows: proto.IRow[] = []
         const filteredCommands = this.allCommands.filter(c => c.botLevel <= groupChat.botLevel)
+
         filteredCommands.forEach(c => {
             const row: proto.IRow = { rowId: c.key, title: c.example, description: c.description }
             commandRows.push(row)
         })
+
+        const setRows = new Set(commandRows)
+
         const commandSection: proto.ISection = {
             title: 'Commands',
-            rows: commandRows,
+            rows: [...setRows],
         }
         sections.push(commandSection)
 
@@ -51,7 +55,7 @@ export class GroupMenuBasicCommand implements Command {
         if (groupChat.groupMenu.length > 0) {
             let msg = ''
 
-            msg += '\n\n_Menu_\n\n'
+            msg += '_Menu_\n\n'
             groupChat.groupMenu.forEach(m => {
                 msg += `${m.key}\n\n`
             })

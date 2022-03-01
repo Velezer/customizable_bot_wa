@@ -34,6 +34,9 @@ async function main() {
         console.log('close close close-==-=-=-=-=-=-=-')
         console.log(data)
         console.log('close close close-==-=-=-=-=-=-=-')
+        if (data.isReconnecting === false) {
+            main()
+        }
 
     })
     sock.on('group-participants-update', async (groupUpdate) => {
@@ -64,12 +67,10 @@ async function main() {
         const botwa = new BotWa(sock)
 
         if (receivedMessage.message?.conversation?.startsWith('/key')) {
-            let msg = ''
             Activation.getActivationKey().forEach(k => {
-                msg += k.botLevel + '\n/sewa ' + k.key + '\n\n'
+                LoggerOcedBot.log(botwa, k.botLevel)
+                LoggerOcedBot.log(botwa, '/sewa ' + k.key)
             })
-            msg.slice(0, -2)
-            LoggerOcedBot.log(botwa, msg)
             return
         }
 
@@ -107,17 +108,7 @@ async function main() {
 
 }
 
-function run() {
-    try {
-        main().catch(err => run())
-    } catch (err) {
-        console.log('------------------')
-        console.log('LAPORAN CID! ERROR IKI')
-        console.log('------------------')
-        console.error(err)
-        run()
-    }
-}
 
 
-run()
+
+main()

@@ -103,12 +103,6 @@ export class Commander implements UpdateHandler<Command> {
         }
 
 
-        // if (conversation.startsWith('/activate')) {
-        //     const command = new ActivateCommand()
-        //     command.run(this.botwa, group, conversation)
-        //     return
-        // }
-
         const m0 = conversation.split(' ')[0]
         const groupMenu = group?.groupMenu.find(m => m0 === m.key)
         if (groupMenu) {
@@ -116,11 +110,7 @@ export class Commander implements UpdateHandler<Command> {
             return
         }
 
-        // const command = this.handlers.find(c => (m0 === c.key && c.level === level && c.botLevel === group?.botLevel)) ||
-        //     this.handlers.find(c => (m0 === c.key && c.level === level && c.botLevel === BotLevel.BASIC)) ||
-        //     this.handlers.find(c => (m0 === c.key && c.level === CommandLevel.MEMBER && c.botLevel === group?.botLevel)) ||
-        //     this.handlers.find(c => (m0 === c.key && c.level === CommandLevel.MEMBER && c.botLevel === BotLevel.BASIC))
-        // if (!command) return
+
         const commands = this.handlers.filter(c => (m0 === c.key))
             .filter(c => c.level === level || c.level === CommandLevel.MEMBER)
             .filter(c => c.botLevel === group?.botLevel || c.botLevel === BotLevel.BASIC)
