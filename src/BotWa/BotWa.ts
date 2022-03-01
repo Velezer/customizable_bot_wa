@@ -11,6 +11,14 @@ export class BotWa {
         this.sock = sock
     }
 
+    async deleteMessage(msgKey: proto.IMessageKey) {
+        return this.sock.deleteMessage(msgKey)
+    }
+
+    async kick(groupJid: string, participantJid: string) {
+        return this.sock.groupRemove(groupJid, [participantJid])
+    }
+
     async sendImage(to: string, img: any, mentionedJid: string[]) {
         return await this.sock.sendMessage(to, img, MessageType.image, { contextInfo: { mentionedJid } })
     }

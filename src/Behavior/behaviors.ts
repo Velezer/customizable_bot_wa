@@ -25,10 +25,12 @@ export class LeaveGroupParticipantBehavior implements Behavior {
 export class PromoteParticipantBehavior implements Behavior {
     action: WAParticipantAction = 'promote'
 
-    async run(botwa: BotWa, to: string, participantJid: string, img: any): Promise<void> {
+    async run(botwa: BotWa, to: string, participantJid: string): Promise<void> {
         const number = participantJid.split('@')[0]
+        const ppImg = await botwa.getProfilePictureBuffer(participantJid)
+        
+        await botwa.sendImage(to, ppImg, [participantJid])
         await botwa.sendMentioned(to, 'promote @' + number, [participantJid])
-        await botwa.sendImage(to, img, [participantJid])
     }
 
 }

@@ -51,7 +51,7 @@ export class Commander implements UpdateHandler<Command> {
         }
     }
 
-    async run(jid: string, conversation: string, level: CommandLevel) {
+    async run(jid: string, conversation: string, level: CommandLevel, msgKey: proto.IMessageKey) {
         let group = this.groupChats.find(g => g.jid === jid)
 
         if (level !== CommandLevel.MEMBER) {
@@ -119,7 +119,7 @@ export class Commander implements UpdateHandler<Command> {
         const command = commands[0]
 
 
-        command.run(this.botwa, group!, conversation).catch(err => {
+        command.run(this.botwa, group!, conversation, msgKey).catch(err => {
             console.error(err)
             LoggerOcedBot.log(this.botwa, err)
         })

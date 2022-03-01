@@ -1,3 +1,4 @@
+import { proto } from "@adiwajshing/baileys"
 import { BotWa } from "../BotWa/BotWa"
 import { GroupChat } from "../groups/GroupChat"
 import { BotLevel } from "../groups/interface"
@@ -15,6 +16,6 @@ export interface Command {
     level: CommandLevel
     botLevel: BotLevel
 
-    run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void>
+    run(botwa: BotWa, groupChat: GroupChat, conversation: string, msgKey?: proto.IMessageKey): Promise<void>
 }
 

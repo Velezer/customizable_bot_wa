@@ -4,6 +4,7 @@ import { Command, CommandLevel } from "./interface";
 import { GroupChat } from "../groups/GroupChat";
 import { LoggerOcedBot } from "../logger/Logger";
 import { BotLevel } from "../groups/interface";
+import { proto } from "@adiwajshing/baileys";
 
 
 
@@ -192,6 +193,39 @@ export class DemoteCommand implements Command {
     }
 
 }
+export class DeleteBotTypeCommand implements Command {
+    botLevel: BotLevel = BotLevel.BASIC
+    key: string = '/delete';
+    example: string = this.key;
+    description: string = 'delete kalo bot nya typo';
+    level: CommandLevel = CommandLevel.ADMIN;
+
+    async run(botwa: BotWa, groupChat: GroupChat, conversation: string, msgKey: proto.IMessageKey): Promise<void> {
+        botwa.deleteMessage(msgKey)
+    }
+
+}
+export class KickCommand implements Command {
+    botLevel: BotLevel = BotLevel.BASIC
+    key: string = '/kick';
+    example: string = this.key + '00000000';
+    description: string = 'kick beban grup';
+    level: CommandLevel = CommandLevel.ADMIN;
+
+    async run(botwa: BotWa, groupChat: GroupChat, conversation: string, msgKey: proto.IMessageKey): Promise<void> {
+        let m1 = conversation.slice(this.key.length + 1)
+
+        if (m1.startsWith('@')) {
+            m1 = m1.slice(1)
+        }
+        botwa.kick(groupChat.jid, m1)
+            .catch(err => {
+                botwa.sendMessage(groupChat.jid, 'kick gagal')
+            })
+
+    }
+
+}
 
 
 
@@ -218,55 +252,4 @@ export class JoinGroupCommand implements Command {
 }
 
 
-
-
-
-// export class ActivateCommand implements Command {
-//     botLevel: BotLevel = BotLevel.BASIC
-//     key: string = '/activate';
-//     example: string = '/activate /command';
-//     description: string = 'mengaktifkan command';
-//     level: CommandLevel = CommandLevel.ADMIN;
-
-//     async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
-//         const m1 = conversation.slice(this.key.length + 1)
-
-//         const jid = groupChat.jid
-
-//         if (!m1) {
-//             botwa.sendMessage(jid, 'kasi nama command nya bos')
-//             return
-//         }
-
-//         groupChat.addCommandKey(m1)
-//         GroupManager.update(groupChat)
-//         botwa.sendMessage(jid, 'command ditambahkan')
-
-
-//     }
-// }
-// export class DeactivateCommand implements Command {
-//     botLevel: BotLevel = BotLevel.BASIC
-//     key: string = '/deactivate';
-//     example: string = '/deactivate /command';
-//     description: string = 'menonaktifkan command';
-//     level: CommandLevel = CommandLevel.ADMIN;
-
-//     async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
-//         const m1 = conversation.slice(this.key.length + 1)
-
-//         const jid = groupChat.jid
-
-//         if (!m1) {
-//             botwa.sendMessage(jid, 'kasi nama command nya bos')
-//             return
-//         }
-
-//         groupChat.removeCommandkey(m1)
-//         GroupManager.update(groupChat)
-//         botwa.sendMessage(jid, 'command dinonaktifkan')
-
-
-//     }
-// }
 

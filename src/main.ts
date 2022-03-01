@@ -1,6 +1,6 @@
 import { BotWa } from './BotWa/BotWa'
 import { Commander } from './update-handler/Commander'
-import { ReconnectMode, WAConnection } from '@adiwajshing/baileys'
+import { proto, ReconnectMode, WAConnection } from '@adiwajshing/baileys'
 import { LoggerOcedBot } from './logger/Logger'
 import { CommandLevel } from './Command/interface'
 import { Behaviorer } from './update-handler/Behaviorer'
@@ -46,13 +46,10 @@ async function main() {
         const botwa = new BotWa(sock)
 
         const participantJid = participants[0]
-        console.log('--------------')
-        console.log(sock.contacts[participantJid])
-        console.log('--------------')
-        const ppImg = await botwa.getProfilePictureBuffer(participantJid)
+
 
         const behaviorer = new Behaviorer(botwa)
-        behaviorer.run(action, groupJid, participantJid, ppImg)
+        behaviorer.run(action, groupJid, participantJid)
 
     })
 
@@ -62,7 +59,7 @@ async function main() {
         if (receivedMessage.key.fromMe === true) return
         if (!receivedMessage?.message) return
 
-        // console.log(receivedMessage)
+        console.log(receivedMessage.message.extendedTextMessage?.contextInfo?.quotedMessage)
 
         const botwa = new BotWa(sock)
 
@@ -89,7 +86,7 @@ async function main() {
 
         const commander = new Commander(botwa)
         if (! await commander.isSentByGroupAdmin(receivedMessage, participants)) {
-            await commander.run(jid, conversation, CommandLevel.MEMBER).catch(err => console.error(err))
+            await commander.run(jid, conversation, CommandLevel.MEMBER, receivedMessage.key).catch(err => console.error(err))
             return
         }
 
@@ -99,7 +96,7 @@ async function main() {
             return
         }
 
-        commander.run(jid, conversation, CommandLevel.ADMIN).catch(err => console.error(err))
+        commander.run(jid, conversation, CommandLevel.ADMIN, receivedMessage.key).catch(err => console.error(err))
 
         if (jid === LoggerOcedBot.jid) {
             commander.unreg(conversation)

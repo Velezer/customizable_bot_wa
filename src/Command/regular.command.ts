@@ -1,5 +1,5 @@
 import { CekCommand } from "./cek.command"
-import { TagAllCommand, GetGroupMetadataCommand, OpenGroupSettingsCommand, CloseGroupSettingsCommand, OpenGroupChatCommand, CloseGroupChatCommand, PromoteCommand, DemoteCommand, JoinGroupCommand } from "./commands"
+import { TagAllCommand, GetGroupMetadataCommand, OpenGroupSettingsCommand, CloseGroupSettingsCommand, OpenGroupChatCommand, CloseGroupChatCommand, PromoteCommand, DemoteCommand, JoinGroupCommand, DeleteBotTypeCommand, KickCommand } from "./commands"
 import { AddCustomMenuCommand, RemoveCustomMenuCommand, UpdateCustomMenuCommand } from "./crud.menu.command"
 import { Command } from "./interface"
 import { BotMenuBasicCommand, GroupMenuBasicCommand } from "./menu.basic.command"
@@ -9,6 +9,8 @@ import { GroupMenuElegantCommand } from "./menu.elegant.command"
 export const allCommands: Command[] = [
     new CekCommand(),
     new TagAllCommand(),
+    new DeleteBotTypeCommand(),
+    new KickCommand(),
     new GetGroupMetadataCommand(),
     new OpenGroupSettingsCommand(),
     new CloseGroupSettingsCommand(),
@@ -19,8 +21,6 @@ export const allCommands: Command[] = [
     new AddCustomMenuCommand(),
     new UpdateCustomMenuCommand(),
     new RemoveCustomMenuCommand(),
-    // new ActivateCommand(),
-    // new DeactivateCommand(),
     new GroupMenuElegantCommand(),
     new GroupMenuBasicCommand()
 ]
