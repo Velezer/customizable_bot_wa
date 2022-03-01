@@ -56,10 +56,10 @@ async function main() {
     sock.on('chat-update', async (chatUpdate) => {
         if (!chatUpdate.hasNewMessage) return
         const receivedMessage = chatUpdate.messages?.all()[0]!
+        console.log(receivedMessage)
         if (receivedMessage.key.fromMe === true) return
         if (!receivedMessage?.message) return
 
-        console.log(receivedMessage.message.extendedTextMessage?.contextInfo?.quotedMessage)
 
         const botwa = new BotWa(sock)
 
