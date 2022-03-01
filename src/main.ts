@@ -1,12 +1,11 @@
 import { BotWa } from './BotWa/BotWa'
 import { Commander } from './update-handler/Commander'
 import { ReconnectMode, WAConnection } from '@adiwajshing/baileys'
-import * as auth from './auth/auth'
-import { OcedBot } from './ocedbot/OcedBot'
 import { LoggerOcedBot } from './logger/Logger'
 import { CommandLevel } from './Command/interface'
 import { Behaviorer } from './update-handler/Behaviorer'
 import { Activation } from './activation/activation'
+import { Helper } from './helper/file'
 
 
 
@@ -17,12 +16,12 @@ async function main() {
     sock.browserDescription = ['velezer', 'Chrome', 'OcedBot']
     sock.autoReconnect = ReconnectMode.onAllErrors
 
-    if (auth.isExist('auth.json')) {
+    if (Helper.isExist('auth.json')) {
         sock.loadAuthInfo('auth.json')
     }
 
     await sock.connect()
-    auth.saveAuth('auth.json', sock.base64EncodedAuthInfo())
+    Helper.saveJSON('auth.json', sock.base64EncodedAuthInfo())
 
     sock.on('connection-phone-change', async (data) => {
         console.log('connection change-==-=-=-=-=-=-=-')

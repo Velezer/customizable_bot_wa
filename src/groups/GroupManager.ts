@@ -1,4 +1,4 @@
-import fs from 'fs'
+import { Helper } from '../helper/file'
 import { GroupChat } from './GroupChat'
 
 
@@ -6,9 +6,13 @@ export class GroupManager {
 
     static filename: string = 'groups.json'
 
+    private static writeFile(data: GroupChat[]) {
+        Helper.saveJSON(this.filename, data)
+    }
+
     static getRegisteredGroup(): GroupChat[] {
-        if (!fs.existsSync(this.filename)) return []
-        const groupsString = fs.readFileSync(this.filename, { encoding: 'utf8' })
+        if (!Helper.isExist(this.filename)) return []
+        const groupsString = Helper.readFile(this.filename)
         if (!groupsString || groupsString === '') return []
         const groups = JSON.parse(groupsString) as GroupChat[]
         return groups
@@ -25,7 +29,7 @@ export class GroupManager {
         const index = groups.findIndex(g => g.jid === jid)
         if (index > -1) {
             groups.splice(index, 1)
-            fs.writeFileSync(this.filename, JSON.stringify(groups))
+            this.writeFile(groups)
         }
 
         if (this.getRegisteredGroup().find(g => g.jid === jid)) return false
@@ -46,7 +50,7 @@ export class GroupManager {
             groups.push(newGroup)
         }
 
-        fs.writeFileSync(this.filename, JSON.stringify(groups))
+        this.writeFile(groups)
 
         groups = this.getRegisteredGroup()
         found = groups.find(g => g.jid === newGroup.jid)
@@ -63,7 +67,7 @@ export class GroupManager {
         let index = groups.findIndex(g => g.jid === group.jid)
         if (index > -1) {
             groups[index] = group
-            fs.writeFileSync(this.filename, JSON.stringify(groups))
+            this.writeFile(groups)
         }
     }
 }
