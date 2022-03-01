@@ -16,6 +16,6 @@ export interface Command {
     level: CommandLevel
     botLevel: BotLevel
 
-    run(botwa: BotWa, groupChat: GroupChat, conversation: string, msgKey?: proto.IMessageKey): Promise<void>
+    run(botwa: BotWa, groupChat: GroupChat, conversation: string, quotedMessage?: proto.IMessage): Promise<void>
 }
 

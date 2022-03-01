@@ -5,6 +5,7 @@ import { GroupChat } from "../groups/GroupChat";
 import { LoggerOcedBot } from "../logger/Logger";
 import { BotLevel } from "../groups/interface";
 import { proto } from "@adiwajshing/baileys";
+import { OcedBot } from "../ocedbot/OcedBot";
 
 
 
@@ -193,15 +194,20 @@ export class DemoteCommand implements Command {
     }
 
 }
-export class DeleteBotTypeCommand implements Command {
+export class DeleteBotTypoCommand implements Command {
     botLevel: BotLevel = BotLevel.BASIC
     key: string = '/delete';
     example: string = this.key;
     description: string = 'delete kalo bot nya typo';
     level: CommandLevel = CommandLevel.ADMIN;
 
-    async run(botwa: BotWa, groupChat: GroupChat, conversation: string, msgKey: proto.IMessageKey): Promise<void> {
-        botwa.deleteMessage(msgKey)
+    async run(botwa: BotWa, groupChat: GroupChat, conversation: string, quotedMessage: proto.IMessage): Promise<void> {
+        const quotedMessageString = quotedMessage.conversation || quotedMessage.extendedTextMessage?.text
+        const msgKey = OcedBot.findMessageKey(quotedMessageString!)
+        botwa.deleteMessage(msgKey!)
+            .catch(err => {
+                LoggerOcedBot.log(botwa, JSON.stringify(err))
+            })
     }
 
 }
@@ -212,7 +218,7 @@ export class KickCommand implements Command {
     description: string = 'kick beban grup';
     level: CommandLevel = CommandLevel.ADMIN;
 
-    async run(botwa: BotWa, groupChat: GroupChat, conversation: string, msgKey: proto.IMessageKey): Promise<void> {
+    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
         let m1 = conversation.slice(this.key.length + 1)
 
         if (m1.startsWith('@')) {

@@ -6,6 +6,7 @@ import { CommandLevel } from './Command/interface'
 import { Behaviorer } from './update-handler/Behaviorer'
 import { Activation } from './activation/activation'
 import { Helper } from './helper/file'
+import { OcedBot } from './ocedbot/OcedBot'
 
 
 
@@ -23,16 +24,9 @@ async function main() {
     await sock.connect()
     Helper.saveJSON('auth.json', sock.base64EncodedAuthInfo())
 
-    sock.on('connection-phone-change', async (data) => {
-        console.log('connection change-==-=-=-=-=-=-=-')
-        console.log(data)
-        console.log('connection change-==-=-=-=-=-=-=-')
-    })
 
     sock.on('close', async (data) => {
-        console.log('close close close-==-=-=-=-=-=-=-')
         console.log(data)
-        console.log('close close close-==-=-=-=-=-=-=-')
         if (data.isReconnecting === false) {
             main()
         }
@@ -57,7 +51,10 @@ async function main() {
         if (!chatUpdate.hasNewMessage) return
         const receivedMessage = chatUpdate.messages?.all()[0]!
         console.log(receivedMessage)
-        if (receivedMessage.key.fromMe === true) return
+        if (receivedMessage.key.fromMe === true) {
+            OcedBot.saveReceivedMessage(receivedMessage)
+            return
+        }
         if (!receivedMessage?.message) return
 
 
@@ -77,6 +74,7 @@ async function main() {
 
         const participants = await botwa.getGroupParticipants(jid)
 
+        const quotedMessage = receivedMessage.message?.extendedTextMessage?.contextInfo?.quotedMessage
         const conversation = receivedMessage.message?.conversation ||
             receivedMessage.message?.extendedTextMessage?.text ||
             receivedMessage.message?.listResponseMessage?.title ||
@@ -86,7 +84,7 @@ async function main() {
 
         const commander = new Commander(botwa)
         if (! await commander.isSentByGroupAdmin(receivedMessage, participants)) {
-            await commander.run(jid, conversation, CommandLevel.MEMBER, receivedMessage.key).catch(err => console.error(err))
+            await commander.run(jid, conversation, CommandLevel.MEMBER, quotedMessage!).catch(err => console.error(err))
             return
         }
 
@@ -96,7 +94,7 @@ async function main() {
             return
         }
 
-        commander.run(jid, conversation, CommandLevel.ADMIN, receivedMessage.key).catch(err => console.error(err))
+        commander.run(jid, conversation, CommandLevel.ADMIN, quotedMessage!).catch(err => console.error(err))
 
         if (jid === LoggerOcedBot.jid) {
             commander.unreg(conversation)

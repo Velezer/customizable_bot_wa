@@ -14,5 +14,8 @@ export class Helper {
     static readFile(file: string) {
         return fs.readFileSync(file, { encoding: 'utf8' })
     }
+    static readJSON(file: string) {
+        return JSON.parse(this.readFile(file))
+    }
 
 }

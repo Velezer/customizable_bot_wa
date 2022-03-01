@@ -5,6 +5,7 @@ baileys_store_multi.json
 activation.key
 oced.bot
 groups.json
+received.json
 
 # Logs
 logs
