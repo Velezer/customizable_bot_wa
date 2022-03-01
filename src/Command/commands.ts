@@ -208,7 +208,7 @@ export class DeleteBotTypeCommand implements Command {
 export class KickCommand implements Command {
     botLevel: BotLevel = BotLevel.BASIC
     key: string = '/kick';
-    example: string = this.key + '00000000';
+    example: string = this.key + ' 00000000';
     description: string = 'kick beban grup';
     level: CommandLevel = CommandLevel.ADMIN;
 

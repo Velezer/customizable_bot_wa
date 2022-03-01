@@ -15,8 +15,8 @@ export class BotWa {
         return this.sock.deleteMessage(msgKey)
     }
 
-    async kick(groupJid: string, participantJid: string) {
-        return this.sock.groupRemove(groupJid, [participantJid])
+    async kick(groupJid: string, phoneNumber: string) {
+        return this.sock.groupRemove(groupJid, [phoneNumber + '@s.whatsapp.net'])
     }
 
     async sendImage(to: string, img: any, mentionedJid: string[]) {
