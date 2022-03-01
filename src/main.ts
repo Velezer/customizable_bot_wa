@@ -39,7 +39,7 @@ async function main() {
 
     })
     sock.on('group-participants-update', async (groupUpdate) => {
-        const jid = groupUpdate.jid
+        const groupJid = groupUpdate.jid
         const action = groupUpdate.action
         const participants = groupUpdate.participants
 
@@ -49,9 +49,10 @@ async function main() {
         console.log('--------------')
         console.log(sock.contacts[participantJid])
         console.log('--------------')
+        const ppImg = await botwa.getProfilePictureBuffer(participantJid)
 
         const behaviorer = new Behaviorer(botwa)
-        behaviorer.run(action, jid, participantJid)
+        behaviorer.run(action, groupJid, participantJid, ppImg)
 
     })
 

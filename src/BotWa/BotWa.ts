@@ -1,4 +1,5 @@
 import { GroupSettingChange, MessageOptions, MessageType, proto, WAConnection } from "@adiwajshing/baileys";
+import axios from "axios";
 
 
 
@@ -8,6 +9,27 @@ export class BotWa {
 
     constructor(sock: WAConnection) {
         this.sock = sock
+    }
+
+    async sendImage(to: string, img: any, mentionedJid: string[]) {
+        return await this.sock.sendMessage(to, img, MessageType.image, { contextInfo: { mentionedJid } })
+    }
+
+    async getProfilePictureURL(participantJid: string) {
+        return this.sock.getProfilePicture(participantJid)
+    }
+    async getProfilePictureBuffer(participantJid: string) {
+        const url = await this.getProfilePictureURL(participantJid)
+        const res = await axios({
+            method: "get",
+            url,
+            headers: {
+                'DNT': 1,
+                'Upgrade-Insecure-Request': 1
+            },
+            responseType: 'arraybuffer'
+        })
+        return res.data
     }
     async sendListMessageSingleSelect(to: string, title: string, sections: proto.ISection[]) {
         const listMessage: proto.ListMessage = {

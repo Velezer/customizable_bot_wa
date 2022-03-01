@@ -21,11 +21,11 @@ export class Behaviorer implements UpdateHandler<Behavior> {
 
 
 
-    run(action: WAParticipantAction, groupJid: string, participantJid:string) {
+    run(action: WAParticipantAction, groupJid: string, participantJid: string, img: any) {
 
         this.handlers.forEach(async behavior => {
             if (behavior.action === action) {
-                behavior.run(this.botwa, groupJid,participantJid)
+                behavior.run(this.botwa, groupJid, participantJid, img)
             }
         })
     }
