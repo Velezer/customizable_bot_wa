@@ -44,7 +44,7 @@ export class OcedBot {
     }
 
     static deleteReceivedMessage(msgKey: proto.IMessageKey) {
-        const data = this.readSavedReceivedMessage()
+        const data = this.readSavedReceivedMessage().reverse()
         const found = data.findIndex(d => d.key === msgKey)
         if (found) {
             data.splice(found, 1)
