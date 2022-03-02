@@ -24,7 +24,7 @@ export class OcedBot {
             return
         }
         const data = this.readSavedReceivedMessage()
-        data.unshift(receivedMessage)
+        data.push(receivedMessage)
         Helper.saveJSON(this.receivedMessageFile, receivedMessage)
     }
 
