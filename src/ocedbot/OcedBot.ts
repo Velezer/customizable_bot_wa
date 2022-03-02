@@ -25,7 +25,7 @@ export class OcedBot {
         }
         let data = this.readSavedReceivedMessage()
         data.push(receivedMessage)
-        Helper.saveJSON(this.receivedMessageFile, receivedMessage)
+        Helper.saveJSON(this.receivedMessageFile, data)
     }
 
     static readSavedReceivedMessage(): proto.WebMessageInfo[] {
@@ -41,5 +41,14 @@ export class OcedBot {
         const found = data.find(d => d.message?.extendedTextMessage?.text === quotedMessageString)
 
         return found?.key
+    }
+
+    static deleteReceivedMessage(msgKey: proto.IMessageKey) {
+        const data = this.readSavedReceivedMessage()
+        const found = data.findIndex(d => d.key === msgKey)
+        if (found) {
+            data.splice(found, 1)
+            Helper.saveJSON(this.receivedMessageFile, data)
+        }
     }
 }
