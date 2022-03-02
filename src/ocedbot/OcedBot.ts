@@ -24,8 +24,7 @@ export class OcedBot {
             return
         }
         let data = this.readSavedReceivedMessage()
-
-        data.unshift(receivedMessage)
+        data.push(receivedMessage)
         Helper.saveJSON(this.receivedMessageFile, receivedMessage)
     }
 
@@ -38,7 +37,7 @@ export class OcedBot {
     }
 
     static findMessageKey(quotedMessageString: string): proto.IMessageKey | undefined {
-        const data = this.readSavedReceivedMessage()
+        const data = this.readSavedReceivedMessage().reverse()
         const found = data.find(d => d.message?.extendedTextMessage?.text === quotedMessageString)
 
         return found?.key
