@@ -50,7 +50,7 @@ async function main() {
     sock.on('chat-update', async (chatUpdate) => {
         if (!chatUpdate.hasNewMessage) return
         const receivedMessage = chatUpdate.messages?.all()[0]!
-        console.log(receivedMessage)
+        // console.log(receivedMessage)
         if (receivedMessage.key.fromMe === true) {
             OcedBot.saveReceivedMessage(receivedMessage)
             return

@@ -20,7 +20,7 @@ export class OcedBot {
 
     static saveReceivedMessage(receivedMessage: proto.WebMessageInfo) {
         if (!Helper.isExist(this.receivedMessageFile)) {
-            Helper.saveJSON(this.receivedMessageFile, [])
+            Helper.saveJSON(this.receivedMessageFile, [receivedMessage])
             return
         }
         let data = this.readSavedReceivedMessage()
