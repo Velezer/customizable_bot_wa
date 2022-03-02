@@ -1,38 +1,54 @@
-import fs from 'fs'
+import { proto } from '@adiwajshing/baileys';
+import { Helper } from '../helper/file';
 
-function getRandomString(length:number) {
-    var randomChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    var result = '';
-    for ( var i = 0; i < length; i++ ) {
-        result += randomChars.charAt(Math.floor(Math.random() * randomChars.length));
-    }
-    return result;
-}
+
 
 export class OcedBot {
-    static activationKeyFile: string = 'activation.key'
-
-
-
-    static getActivationKey(): string {
-        if (!fs.existsSync(this.activationKeyFile)) {
-            this.generateActivationKey()
-        }
-        const activationKey = fs.readFileSync(this.activationKeyFile, { encoding: 'utf-8' })
-        return activationKey
-    }
-
-    static generateActivationKey() {
-        fs.writeFileSync(this.activationKeyFile, getRandomString(15))
-    }
+    private static ocedBotFile: string = 'oced.bot'
+    private static receivedMessageFile: string = 'received.json'
 
 
     static getPhoneNumber() {
-        const file = 'oced.bot'
-        if (!fs.existsSync(file)) {
+        const file = this.ocedBotFile
+        if (!Helper.isExist(file)) {
             throw new Error(file + " 404 alias ga ada");
         }
 
-        return fs.readFileSync(file)
+        return Helper.readFile(file)
+    }
+
+
+    static saveReceivedMessage(receivedMessage: proto.WebMessageInfo) {
+        if (!Helper.isExist(this.receivedMessageFile)) {
+            Helper.saveJSON(this.receivedMessageFile, [receivedMessage])
+            return
+        }
+        let data = this.readSavedReceivedMessage()
+        data.push(receivedMessage)
+        Helper.saveJSON(this.receivedMessageFile, data)
+    }
+
+    static readSavedReceivedMessage(): proto.WebMessageInfo[] {
+        let data = Helper.readJSON(this.receivedMessageFile)
+        if (!Array.isArray(data)) {
+            data = []
+        }
+        return data
+    }
+
+    static findMessageKey(quotedMessageString: string): proto.IMessageKey | undefined {
+        const data = this.readSavedReceivedMessage().reverse()
+        const found = data.find(d => d.message?.extendedTextMessage?.text === quotedMessageString)
+
+        return found?.key
+    }
+
+    static deleteReceivedMessage(quotedMessageString: string) {
+        const data = this.readSavedReceivedMessage().reverse()
+        const found = data.findIndex(d => d.message?.extendedTextMessage?.text === quotedMessageString)
+        if (found) {
+            data.splice(found, 1)
+            Helper.saveJSON(this.receivedMessageFile, data)
+        }
     }
 }

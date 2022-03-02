@@ -1,28 +1,45 @@
+import { WAParticipantAction } from "@adiwajshing/baileys";
 import { BotWa } from "../BotWa/BotWa";
 import { Behavior, StubType, StubTypeEnum } from "./Behavior";
 
 
-export class WelcomeGroupParticipantAddBehavior extends Behavior {
-    stubType: StubType = StubTypeEnum.GROUP_PARTICIPANT_ADD;
+export class WelcomeGroupParticipantAddBehavior implements Behavior {
+    action: WAParticipantAction = 'add'
 
-    async run(botwa: BotWa, to: string): Promise<void> {
-        await botwa.sendMessage(to, 'welcome participant')
+    async run(botwa: BotWa, to: string, participantJid: string): Promise<void> {
+        const number = participantJid.split('@')[0]
+        await botwa.sendMentioned(to, 'welcome participant @' + number, [participantJid])
     }
 }
 
-export class WelcomeGroupParticipantInviteBehavior extends Behavior {
-    stubType: StubType = StubTypeEnum.GROUP_PARTICIPANT_INVITE;
 
-    async run(botwa: BotWa, to: string): Promise<void> {
-        await botwa.sendMessage(to, 'welcome participant dapet link grup dari mana?')
+export class LeaveGroupParticipantBehavior implements Behavior {
+    action: WAParticipantAction = 'remove'
+
+    async run(botwa: BotWa, to: string, participantJid: string): Promise<void> {
+        const number = participantJid.split('@')[0]
+        await botwa.sendMentioned(to, 'beban sana wus wus! @' + number, [participantJid])
     }
 
 }
-export class LeaveGroupParticipantBehavior extends Behavior {
-    stubType: StubType = StubTypeEnum.GROUP_PARTICIPANT_LEAVE;
+export class PromoteParticipantBehavior implements Behavior {
+    action: WAParticipantAction = 'promote'
 
-    async run(botwa: BotWa, to: string): Promise<void> {
-        await botwa.sendMessage(to, 'beban sana wus wus!')
+    async run(botwa: BotWa, to: string, participantJid: string): Promise<void> {
+        const number = participantJid.split('@')[0]
+        const ppImg = await botwa.getProfilePictureBuffer(participantJid)
+        
+        await botwa.sendImage(to, ppImg, [participantJid])
+        await botwa.sendMentioned(to, 'promote @' + number, [participantJid])
+    }
+
+}
+export class DemoteParticipantBehavior implements Behavior {
+    action: WAParticipantAction = 'demote'
+
+    async run(botwa: BotWa, to: string, participantJid: string): Promise<void> {
+        const number = participantJid.split('@')[0]
+        await botwa.sendMentioned(to, 'demote @' + number, [participantJid])
     }
 
 }

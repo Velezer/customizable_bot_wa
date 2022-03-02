@@ -1,62 +1,19 @@
 import { BotWa } from "../BotWa/BotWa";
 import { GroupManager } from "../groups/GroupManager";
-import { Command, CommandLevel } from "./Command";
-import { OcedBot } from "../ocedbot/OcedBot";
-import { GroupChat } from "../groups/Group";
+import { Command, CommandLevel } from "./interface";
+import { GroupChat } from "../groups/GroupChat";
 import { LoggerOcedBot } from "../logger/Logger";
-import { plainToClass } from "class-transformer";
+import { BotLevel } from "../groups/interface";
+import { proto } from "@adiwajshing/baileys";
+import { OcedBot } from "../ocedbot/OcedBot";
 
 
-export class CekCommand implements Command {
-    key: string = '/cek';
-    example: string = this.key;
-    description: string = 'cek masa aktif';
-    level: CommandLevel = CommandLevel.MEMBER;
-
-    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
-        groupChat = plainToClass(GroupChat, groupChat)
-        await botwa.sendMessage(groupChat.jid, 'sewa pada\n' + groupChat.registeredAt() + '\n\nexpired pada\n' + groupChat.expiredAt());
-
-    }
-}
-
-export class MenuCommand implements Command {
-    key: string = '/menu';
-    description: string = 'nampilin menu';
-    example: string = this.key;
-    level: CommandLevel = CommandLevel.ADMIN;
-    allCommands: Command[];
-
-    constructor(allCommands: Command[]) {
-        this.allCommands = allCommands
-    }
 
 
-    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
 
-        let msg = ''
-        msg += '_Main Menu_\n\n'
-        this.allCommands.forEach(command => {
-            if (groupChat.commandKeys.includes(command.key)) {
-                msg += `${command.example} \n${command.description}\n\n`
-            }
-        })
-
-        if (groupChat.groupCommands.length > 0) {
-            msg += '\n\n_Custom Menu_\n\n'
-            groupChat.groupCommands.forEach(command => {
-                msg += `${command.key}\n\n`
-            })
-        }
-
-
-        msg = msg.slice(0, -2)
-        await botwa.sendMessage(groupChat.jid, msg);
-
-    }
-}
 
 export class TagAllCommand implements Command {
+    botLevel: BotLevel = BotLevel.BASIC
     key: string = '/tag-all';
     description: string = 'ngetag seluruh grup';
     example: string = this.key + ' pesan';
@@ -76,6 +33,7 @@ export class TagAllCommand implements Command {
 }
 
 export class GetGroupMetadataCommand implements Command {
+    botLevel: BotLevel = BotLevel.BASIC
     key: string = '/group-data';
     example: string = this.key;
     description: string = 'data grup';
@@ -106,6 +64,7 @@ export class GetGroupMetadataCommand implements Command {
 
 }
 export class GetGroupParticipantsCommand implements Command {
+    botLevel: BotLevel = BotLevel.BASIC
     key: string = '/group-member';
     description: string = 'list member grup';
     example: string = this.key;
@@ -130,6 +89,7 @@ export class GetGroupParticipantsCommand implements Command {
 }
 
 export class OpenGroupSettingsCommand implements Command {
+    botLevel: BotLevel = BotLevel.BASIC
     key: string = '/open-setting';
     example: string = this.key;
     description: string = 'open setting grup';
@@ -144,6 +104,7 @@ export class OpenGroupSettingsCommand implements Command {
 
 }
 export class CloseGroupSettingsCommand implements Command {
+    botLevel: BotLevel = BotLevel.BASIC
     key: string = '/close-setting';
     example: string = this.key;
     description: string = 'close setting grup';
@@ -158,6 +119,7 @@ export class CloseGroupSettingsCommand implements Command {
 
 }
 export class OpenGroupChatCommand implements Command {
+    botLevel: BotLevel = BotLevel.BASIC
     key: string = '/open-chat';
     description: string = 'open grup chat';
     example: string = this.key;
@@ -172,6 +134,7 @@ export class OpenGroupChatCommand implements Command {
 
 }
 export class CloseGroupChatCommand implements Command {
+    botLevel: BotLevel = BotLevel.BASIC
     key: string = '/close-chat';
     example: string = this.key;
     description: string = 'close grup chat';
@@ -186,6 +149,7 @@ export class CloseGroupChatCommand implements Command {
 
 }
 export class PromoteCommand implements Command {
+    botLevel: BotLevel = BotLevel.BASIC
     key: string = '/promote';
     example: string = this.key + ' 0000000000';
     description: string = 'promote member grup';
@@ -200,9 +164,7 @@ export class PromoteCommand implements Command {
         }
 
         botwa.promote(groupChat.jid, m1)
-            .then(() => {
-                botwa.sendMessage(groupChat.jid, m1 + ' dipromote')
-            }).catch(err => {
+            .catch(err => {
                 botwa.sendMessage(groupChat.jid, 'promote gagal')
             })
 
@@ -211,6 +173,7 @@ export class PromoteCommand implements Command {
 }
 
 export class DemoteCommand implements Command {
+    botLevel: BotLevel = BotLevel.BASIC
     key: string = '/demote';
     example: string = this.key + ' 0000000000';
     description: string = 'demote member grup';
@@ -224,10 +187,49 @@ export class DemoteCommand implements Command {
             m1 = m1.slice(1)
         }
         botwa.demote(groupChat.jid, m1)
-            .then(() => {
-                botwa.sendMessage(groupChat.jid, m1 + ' didemote')
-            }).catch(err => {
+            .catch(err => {
                 botwa.sendMessage(groupChat.jid, 'demote gagal')
+            })
+
+    }
+
+}
+export class DeleteBotTypoCommand implements Command {
+    botLevel: BotLevel = BotLevel.BASIC
+    key: string = '/delete';
+    example: string = this.key;
+    description: string = 'delete kalo bot nya typo';
+    level: CommandLevel = CommandLevel.ADMIN;
+
+    async run(botwa: BotWa, groupChat: GroupChat, conversation: string, quotedMessage: proto.IMessage): Promise<void> {
+        const quotedMessageString = quotedMessage.extendedTextMessage?.text
+        const msgKey = OcedBot.findMessageKey(quotedMessageString!)
+        botwa.deleteMessage(msgKey!)
+            .then(()=>{
+                OcedBot.deleteReceivedMessage(quotedMessageString!)
+            })
+            .catch(err => {
+                botwa.sendMessage(groupChat.jid, 'delete gagal')
+            })
+    }
+
+}
+export class KickCommand implements Command {
+    botLevel: BotLevel = BotLevel.BASIC
+    key: string = '/kick';
+    example: string = this.key + ' 00000000';
+    description: string = 'kick beban grup';
+    level: CommandLevel = CommandLevel.ADMIN;
+
+    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
+        let m1 = conversation.slice(this.key.length + 1)
+
+        if (m1.startsWith('@')) {
+            m1 = m1.slice(1)
+        }
+        botwa.kick(groupChat.jid, m1)
+            .catch(err => {
+                botwa.sendMessage(groupChat.jid, 'kick gagal')
             })
 
     }
@@ -237,6 +239,7 @@ export class DemoteCommand implements Command {
 
 
 export class JoinGroupCommand implements Command {
+    botLevel: BotLevel = BotLevel.BASIC
     key: string = '/join';
     example: string = '/join link';
     description: string = '/join grup pake link';
@@ -257,151 +260,5 @@ export class JoinGroupCommand implements Command {
     }
 }
 
-export class RegisterGroupCommand implements Command {
-    key: string = '/sewa';
-    example: string = '/sewa key-aktivasi';
-    description: string = 'sewa bot 30 hari biar grup ini bisa pake';
-    level: CommandLevel = CommandLevel.MEMBER;
-
-    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
-        const m1 = conversation.slice(this.key.length + 1)
-        const jid = groupChat.jid
-        const groupSubject = await botwa.getGroupSubject(groupChat.jid)
-
-        if (!m1) {
-            botwa.sendMessage(jid, 'silakan hubungi \nwa.me/' + OcedBot.getPhoneNumber() + ' untuk mendapatkan key-aktivasi')
-            return
-        }
-
-        const activationKey = OcedBot.getActivationKey()
-        if (m1 === activationKey) {
-            botwa.sendMessage(jid, 'sedang mengaktivasi...')
-            let isRegistered = false
-            try {
-                isRegistered = GroupManager.register(groupChat)
-            } catch (err) {
-                console.error(err)
-                botwa.sendMessage(jid, 'aktivasi gagal, mohon hubungi \nwa.me/' + OcedBot.getPhoneNumber())
-                LoggerOcedBot.log(botwa, 'aktivasi gagal dengan key ' + activationKey + '\n\n' + groupSubject)
-                return
-            }
-
-            if (isRegistered) {
-                botwa.sendMessage(jid, 'aktivasi sukses')
-
-                LoggerOcedBot.log(botwa, 'aktivasi sukses dengan key ' + activationKey + '\n\n' + groupSubject)
-                OcedBot.generateActivationKey()
-            }
-        } else {
-            botwa.sendMessage(jid, 'aktivasi gagal, mohon periksa key-aktivasi anda')
-            LoggerOcedBot.log(botwa, 'upaya aktivasi gagal, diperkirakan ada kesalahan key' + '\n\n' + groupSubject)
-        }
-
-    }
-}
-
-export class CustomMenuCommand implements Command {
-    key: string = '/add-menu';
-    example: string = '/add-menu /nama-menu data';
-    description: string = 'menambahkan menu';
-    level: CommandLevel = CommandLevel.ADMIN;
-
-    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
-        const m12 = conversation.slice(this.key.length + 1)
-        let m1 = m12.split(' ')[0]
-        const m2 = m12.slice(m1.length + 1)
-
-        const jid = groupChat.jid
-
-        if (!m1) {
-            botwa.sendMessage(jid, 'silakan tambahkan data terlebih dahulu')
-            return
-        }
-
-        if (!m1.startsWith('/')) {
-            m1 = '/' + m1
-        }
-
-        groupChat.addGroupCommand(m1, m2)
-        GroupManager.update(groupChat)
-        botwa.sendMessage(jid, 'menu ditambahkan')
 
 
-    }
-}
-
-export class RemoveCustomMenuCommand implements Command {
-    key: string = '/remove-menu';
-    example: string = '/remove-menu /nama-menu';
-    description: string = 'menghapus menu';
-    level: CommandLevel = CommandLevel.ADMIN;
-
-    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
-        let m1 = conversation.slice(this.key.length + 1)
-
-        const jid = groupChat.jid
-
-        if (!m1) {
-            botwa.sendMessage(jid, 'kasi nama menunya bos')
-            return
-        }
-
-        if (!m1.startsWith('/')) {
-            groupChat.removeGroupCommand(m1)
-            m1 = '/' + m1
-        }
-
-        groupChat.removeGroupCommand(m1)
-        GroupManager.update(groupChat)
-        botwa.sendMessage(jid, 'menu dihapus')
-
-
-    }
-}
-
-export class ActivateCommand implements Command {
-    key: string = '/activate';
-    example: string = '/activate /command';
-    description: string = 'mengaktifkan command';
-    level: CommandLevel = CommandLevel.ADMIN;
-
-    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
-        const m1 = conversation.slice(this.key.length + 1)
-
-        const jid = groupChat.jid
-
-        if (!m1) {
-            botwa.sendMessage(jid, 'kasi nama command nya bos')
-            return
-        }
-
-        groupChat.addCommandKey(m1)
-        GroupManager.update(groupChat)
-        botwa.sendMessage(jid, 'command ditambahkan')
-
-
-    }
-}
-export class DeactivateCommand implements Command {
-    key: string = '/deactivate';
-    example: string = '/deactivate /command';
-    description: string = 'menonaktifkan command';
-    level: CommandLevel = CommandLevel.ADMIN;
-
-    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
-        const m1 = conversation.slice(this.key.length + 1)
-
-        const jid = groupChat.jid
-
-        if (!m1) {
-            botwa.sendMessage(jid, 'kasi nama command nya bos')
-            return
-        }
-
-        groupChat.removeCommandkey(m1)
-        GroupManager.update(groupChat)
-        botwa.sendMessage(jid, 'command dinonaktifkan')
-
-
-    }
-}
