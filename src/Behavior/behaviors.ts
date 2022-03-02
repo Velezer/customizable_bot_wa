@@ -27,8 +27,8 @@ export class PromoteParticipantBehavior implements Behavior {
 
     async run(botwa: BotWa, to: string, participantJid: string): Promise<void> {
         const number = participantJid.split('@')[0]
-        const ppImg = await botwa.getProfilePictureBuffer(participantJid).then(async () => {
-            await botwa.sendImage(to, ppImg, [participantJid])
+        const ppImg = await botwa.getProfilePictureBuffer(participantJid).then(async (img) => {
+            await botwa.sendImage(to, img, [participantJid])
         })
 
         await botwa.sendMentioned(to, 'promote @' + number, [participantJid])
