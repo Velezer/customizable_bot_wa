@@ -203,10 +203,10 @@ export class DeleteBotTypoCommand implements Command {
 
     async run(botwa: BotWa, groupChat: GroupChat, conversation: string, quotedMessage: proto.IMessage): Promise<void> {
         const quotedMessageString = quotedMessage.extendedTextMessage?.text
-        const msgKey = OcedBot.findMessageKey(quotedMessageString!)
+        const msgKey = OcedBot.findMessageKey(quotedMessageString!, groupChat.jid)
         botwa.deleteMessage(msgKey!)
             .then(()=>{
-                OcedBot.deleteReceivedMessage(quotedMessageString!)
+                OcedBot.deleteReceivedMessage(msgKey!)
             })
             .catch(err => {
                 botwa.sendMessage(groupChat.jid, 'delete gagal')

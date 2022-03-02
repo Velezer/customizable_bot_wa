@@ -36,16 +36,16 @@ export class OcedBot {
         return data
     }
 
-    static findMessageKey(quotedMessageString: string): proto.IMessageKey | undefined {
+    static findMessageKey(quotedMessageString: string, groupJid:string): proto.IMessageKey | undefined {
         const data = this.readSavedReceivedMessage().reverse()
-        const found = data.find(d => d.message?.extendedTextMessage?.text === quotedMessageString)
+        const found = data.find(d => d.message?.extendedTextMessage?.text === quotedMessageString && d.key.remoteJid === groupJid)
 
         return found?.key
     }
 
-    static deleteReceivedMessage(quotedMessageString: string) {
+    static deleteReceivedMessage(msgKey: proto.IMessageKey) {
         const data = this.readSavedReceivedMessage().reverse()
-        const found = data.findIndex(d => d.message?.extendedTextMessage?.text === quotedMessageString)
+        const found = data.findIndex(d => d.key === msgKey)
         if (found) {
             data.splice(found, 1)
             Helper.saveJSON(this.receivedMessageFile, data)
