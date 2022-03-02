@@ -1,5 +1,6 @@
 import { WAParticipantAction } from "@adiwajshing/baileys";
 import { BotWa } from "../BotWa/BotWa";
+import { LoggerOcedBot } from "../logger/Logger";
 import { Behavior, StubType, StubTypeEnum } from "./Behavior";
 
 
@@ -27,9 +28,16 @@ export class PromoteParticipantBehavior implements Behavior {
 
     async run(botwa: BotWa, to: string, participantJid: string): Promise<void> {
         const number = participantJid.split('@')[0]
-        const ppImg = await botwa.getProfilePictureBuffer(participantJid).then(async (img) => {
-            await botwa.sendImage(to, img, [participantJid])
-        })
+        try {
+            await botwa.getProfilePictureBuffer(participantJid)
+                .then(async (img) => {
+                    await botwa.sendImage(to, img, [participantJid])
+                })
+        } catch (err) {
+            console.log('gagal ambil pp')
+            console.log(err)
+        }
+
 
         await botwa.sendMentioned(to, 'promote @' + number, [participantJid])
     }
