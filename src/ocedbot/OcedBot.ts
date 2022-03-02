@@ -24,13 +24,16 @@ export class OcedBot {
             return
         }
         let data = this.readSavedReceivedMessage()
-        if(!data) data = []
+
         data.unshift(receivedMessage)
         Helper.saveJSON(this.receivedMessageFile, receivedMessage)
     }
 
     static readSavedReceivedMessage(): proto.WebMessageInfo[] {
-        const data = Helper.readJSON(this.receivedMessageFile)
+        let data = Helper.readJSON(this.receivedMessageFile)
+        if (!Array.isArray(data)) {
+            data = []
+        }
         return data
     }
 
