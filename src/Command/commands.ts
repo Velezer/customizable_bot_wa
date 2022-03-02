@@ -206,7 +206,7 @@ export class DeleteBotTypoCommand implements Command {
         const msgKey = OcedBot.findMessageKey(quotedMessageString!)
         botwa.deleteMessage(msgKey!)
             .then(()=>{
-                OcedBot.deleteReceivedMessage(msgKey!)
+                OcedBot.deleteReceivedMessage(quotedMessageString!)
             })
             .catch(err => {
                 botwa.sendMessage(groupChat.jid, 'delete gagal')
