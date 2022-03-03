@@ -14,15 +14,17 @@ export class WelcomeGroupParticipantAddBehavior implements Behavior {
         try {
             const ppImg = await botwa.getProfilePictureBuffer(participantJid)
 
-            const card = new Card('./src/images/OcedBot-welcome.jpg', ppImg)
-            const cardBuffer = await card.make()
+            const card = new Card('./src/images/OcedBot-welcome.jpg')
+            const cardBuffer = await card.make(ppImg)
             const preparedImageMessage = await botwa.prepareImageMessage(cardBuffer)
 
             await botwa.sendButtonMessage(to, text, preparedImageMessage.message?.imageMessage!, ['/menu'], [participantJid])
 
         } catch (err) {
             console.log(err)
-            await botwa.sendMentioned(to, text, [participantJid])
+            const defaultCard = await new Card('./src/images/OcedBot-welcome-1.jpg').getBuffer()
+            const preparedImageMessage = await botwa.prepareImageMessage(defaultCard)
+            await botwa.sendButtonMessage(to, text, preparedImageMessage.message?.imageMessage!, ['/menu'], [participantJid])
         }
     }
 }
@@ -40,15 +42,17 @@ export class LeaveGroupParticipantBehavior implements Behavior {
         try {
             const ppImg = await botwa.getProfilePictureBuffer(participantJid)
 
-            const card = new Card('./src/images/OcedBot-leave.jpg', ppImg)
-            const cardBuffer = await card.make()
+            const card = new Card('./src/images/OcedBot-leave.jpg')
+            const cardBuffer = await card.make(ppImg)
             const preparedImageMessage = await botwa.prepareImageMessage(cardBuffer)
 
             await botwa.sendButtonMessage(to, text, preparedImageMessage.message?.imageMessage!, ['Yay beban berkurang!!'], [participantJid])
 
         } catch (err) {
             console.log(err)
-            await botwa.sendMentioned(to, text, [participantJid])
+            const defaultCard = await new Card('./src/images/OcedBot-leave-1.jpg').getBuffer()
+            const preparedImageMessage = await botwa.prepareImageMessage(defaultCard)
+            await botwa.sendButtonMessage(to, text, preparedImageMessage.message?.imageMessage!, ['Yay beban berkurang!!'], [participantJid])
         }
     }
 
