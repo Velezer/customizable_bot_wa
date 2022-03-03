@@ -32,6 +32,7 @@ export class LeaveGroupParticipantBehavior implements Behavior {
     action: WAParticipantAction = 'remove'
 
     async run(botwa: BotWa, to: string, participantJid: string): Promise<void> {
+        console.log(participantJid)
         const number = participantJid.split('@')[0]
 
         const text = 'beban sana wus wus! @' + number
