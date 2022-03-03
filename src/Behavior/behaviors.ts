@@ -44,7 +44,7 @@ export class LeaveGroupParticipantBehavior implements Behavior {
             const cardBuffer = await card.make()
             const preparedImageMessage = await botwa.prepareImageMessage(cardBuffer)
 
-            await botwa.sendButtonMessage(to, text, preparedImageMessage.message?.imageMessage!, [], [participantJid])
+            await botwa.sendButtonMessage(to, text, preparedImageMessage.message?.imageMessage!, ['Yay beban berkurang'], [participantJid])
 
         } catch (err) {
             console.log(err)

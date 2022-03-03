@@ -14,7 +14,7 @@ export class Card {
         const background = await Jimp.read(this._backgroundPath)
         const watermark = await Jimp.read(this._watermarkPath)
         watermark.circle().resize(1200, Jimp.AUTO)
-        background.composite(watermark, 2000, 150, {
+        background.composite(watermark, 2000, 100, {
             mode: Jimp.BLEND_SOURCE_OVER,
             opacityDest: 1,
             opacitySource: 1
