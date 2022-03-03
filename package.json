@@ -19,6 +19,7 @@
   "dependencies": {
     "@adiwajshing/baileys": "^3.5.3",
     "axios": "^0.26.0",
-    "class-transformer": "^0.5.1"
+    "class-transformer": "^0.5.1",
+    "jimp": "^0.16.1"
   }
 }

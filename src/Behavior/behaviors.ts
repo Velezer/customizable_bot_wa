@@ -1,7 +1,7 @@
 import { WAParticipantAction } from "@adiwajshing/baileys";
 import { BotWa } from "../BotWa/BotWa";
-import { LoggerOcedBot } from "../logger/Logger";
-import { Behavior, StubType, StubTypeEnum } from "./Behavior";
+import { Card } from "../images/card";
+import { Behavior } from "./Behavior";
 
 
 export class WelcomeGroupParticipantAddBehavior implements Behavior {
@@ -29,10 +29,13 @@ export class PromoteParticipantBehavior implements Behavior {
     async run(botwa: BotWa, to: string, participantJid: string): Promise<void> {
         const number = participantJid.split('@')[0]
         try {
-            await botwa.getProfilePictureBuffer(participantJid)
-                .then(async (img) => {
-                    await botwa.sendImage(to, img, [participantJid])
-                })
+            const ppImg = await botwa.getProfilePictureBuffer(participantJid)
+            console.log(ppImg)
+
+            const card = new Card('./src/images/OcedBot-welcome.jpg', ppImg)
+            const cardBuffer = await card.make()
+            await botwa.sendImage(to, cardBuffer, [participantJid])
+
         } catch (err) {
             console.log('gagal ambil pp')
             console.log(err)
@@ -48,6 +51,20 @@ export class DemoteParticipantBehavior implements Behavior {
 
     async run(botwa: BotWa, to: string, participantJid: string): Promise<void> {
         const number = participantJid.split('@')[0]
+
+
+        try {
+            const ppImg = await botwa.getProfilePictureBuffer(participantJid)
+            console.log(ppImg)
+
+            const card = new Card('./src/images/OcedBot-welcome.jpg', ppImg)
+            const cardBuffer = await card.make()
+            await botwa.sendImage(to, cardBuffer, [participantJid])
+        } catch (err) {
+            console.log('gagal ambil pp')
+            console.log(err)
+        }
+
         await botwa.sendMentioned(to, 'demote @' + number, [participantJid])
     }
 
