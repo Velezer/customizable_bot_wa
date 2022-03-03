@@ -83,7 +83,7 @@ export class BotWa {
             contentText,
             footerText: '',
             buttons,
-            headerType: proto.ButtonsMessage.ButtonsMessageHeaderType.EMPTY,
+            headerType: proto.ButtonsMessage.ButtonsMessageHeaderType.IMAGE,
             toJSON: function (): { [k: string]: any; } {
                 throw new Error("Function not implemented.");
             }
