@@ -33,10 +33,10 @@ export class PromoteParticipantBehavior implements Behavior {
 
             const card = new Card('./src/images/OcedBot-welcome.jpg', ppImg)
             const cardBuffer = await card.make()
-            const imageMessage = (await botwa.prepareImageMessage(cardBuffer)).message?.imageMessage
+            const preparedImageMessage = await botwa.prepareImageMessage(cardBuffer)
 
             const text = 'promote @' + number
-            await botwa.sendButtonMessage(to, text, imageMessage!, ['/menu'], [participantJid])
+            await botwa.sendButtonMessage(to, text, preparedImageMessage.message?.imageMessage!, ['/menu'], [participantJid])
 
         } catch (err) {
             console.log('gagal ambil pp')
@@ -60,7 +60,7 @@ export class DemoteParticipantBehavior implements Behavior {
             const cardBuffer = await card.make()
             const imageMessage = (await botwa.prepareImageMessage(cardBuffer)).message?.imageMessage
 
-            const text = 'promote @' + number
+            const text = 'demote @' + number
             await botwa.sendButtonMessage(to, text, imageMessage!, ['/menu'], [participantJid])
         } catch (err) {
             console.log('gagal ambil pp')
