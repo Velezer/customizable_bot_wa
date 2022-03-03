@@ -10,6 +10,9 @@ export class BotWa {
     constructor(sock: WAConnection) {
         this.sock = sock
     }
+    async prepareImageMessage(imgBuffer: Buffer) {
+        return this.sock.prepareMessage('id', imgBuffer, MessageType.image)
+    }
 
     async deleteMessage(msgKey: proto.IMessageKey) {
         return this.sock.deleteMessage(msgKey)
@@ -68,7 +71,7 @@ export class BotWa {
         return await this.sock.sendMessage(to, listMessage, MessageType.listMessage)
     }
 
-    async sendButtonMessage(to: string, contentText: string, footerText: string, messsages: string[]) {
+    async sendButtonMessage(to: string, contentText: string, imageMessage: proto.IImageMessage, messsages: string[] = [], mentionedJid: string[]) {
         const buttons: proto.IButton[] = []
         messsages.forEach(m => {
             buttons.push(
@@ -76,15 +79,16 @@ export class BotWa {
             )
         })
         const buttonsMessage: proto.ButtonsMessage = {
+            imageMessage,
             contentText,
-            footerText,
+            footerText: '',
             buttons,
             headerType: proto.ButtonsMessage.ButtonsMessageHeaderType.EMPTY,
             toJSON: function (): { [k: string]: any; } {
                 throw new Error("Function not implemented.");
             }
         }
-        this.sock.sendMessage(to, buttonsMessage, MessageType.buttonsMessage)
+        this.sock.sendMessage(to, buttonsMessage, MessageType.buttonsMessage, { contextInfo: { mentionedJid } })
     }
 
     async getUserInfo() {

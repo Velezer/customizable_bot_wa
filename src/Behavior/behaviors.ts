@@ -30,17 +30,17 @@ export class PromoteParticipantBehavior implements Behavior {
         const number = participantJid.split('@')[0]
         try {
             const ppImg = await botwa.getProfilePictureBuffer(participantJid)
-            console.log(ppImg)
 
             const card = new Card('./src/images/OcedBot-welcome.jpg', ppImg)
             const cardBuffer = await card.make()
-            await botwa.sendImage(to, cardBuffer, [participantJid])
+            const imageMessage = (await botwa.prepareImageMessage(cardBuffer)).message?.imageMessage
+
+            const text = 'promote @' + number
+            await botwa.sendButtonMessage(to, text, imageMessage!, ['/menu'], [participantJid])
 
         } catch (err) {
             console.log('gagal ambil pp')
-            console.log(err)
         }
-
 
         await botwa.sendMentioned(to, 'promote @' + number, [participantJid])
     }
@@ -55,14 +55,15 @@ export class DemoteParticipantBehavior implements Behavior {
 
         try {
             const ppImg = await botwa.getProfilePictureBuffer(participantJid)
-            console.log(ppImg)
 
-            const card = new Card('./src/images/OcedBot-welcome.jpg', ppImg)
+            const card = new Card('./src/images/OcedBot-leave.jpg', ppImg)
             const cardBuffer = await card.make()
-            await botwa.sendImage(to, cardBuffer, [participantJid])
+            const imageMessage = (await botwa.prepareImageMessage(cardBuffer)).message?.imageMessage
+
+            const text = 'promote @' + number
+            await botwa.sendButtonMessage(to, text, imageMessage!, ['/menu'], [participantJid])
         } catch (err) {
             console.log('gagal ambil pp')
-            console.log(err)
         }
 
         await botwa.sendMentioned(to, 'demote @' + number, [participantJid])
