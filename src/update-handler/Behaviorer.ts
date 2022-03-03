@@ -25,7 +25,11 @@ export class Behaviorer implements UpdateHandler<Behavior> {
 
         this.handlers.forEach(async behavior => {
             if (behavior.action === action) {
-                behavior.run(this.botwa, groupJid, participantJid)
+                try {
+                    behavior.run(this.botwa, groupJid, participantJid)
+                } catch (err) {
+                    console.log(err)
+                }
             }
         })
     }

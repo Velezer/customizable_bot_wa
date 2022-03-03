@@ -41,9 +41,9 @@ export class LeaveGroupParticipantBehavior implements Behavior {
 
             const card = new Card('./src/images/OcedBot-leave.jpg', ppImg)
             const cardBuffer = await card.make()
-            const imageMessage = (await botwa.prepareImageMessage(cardBuffer)).message?.imageMessage
+            const preparedImageMessage = await botwa.prepareImageMessage(cardBuffer)
 
-            await botwa.sendButtonMessage(to, text, imageMessage!, [], [participantJid])
+            await botwa.sendButtonMessage(to, text, preparedImageMessage.message?.imageMessage!, [], [participantJid])
 
         } catch (err) {
             console.log(err)
