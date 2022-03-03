@@ -36,13 +36,13 @@ export class PromoteParticipantBehavior implements Behavior {
             const preparedImageMessage = await botwa.prepareImageMessage(cardBuffer)
 
             const text = 'promote @' + number
-            return await botwa.sendButtonMessage(to, text, preparedImageMessage.message?.imageMessage!, ['/menu'], [participantJid])
+            await botwa.sendButtonMessage(to, text, preparedImageMessage.message?.imageMessage!, ['/menu'], [participantJid])
 
         } catch (err) {
-            console.log('gagal ambil pp')
+            console.log(err)
+            await botwa.sendMentioned(to, 'promote @' + number, [participantJid])
         }
 
-        await botwa.sendMentioned(to, 'promote @' + number, [participantJid])
     }
 
 }
@@ -61,13 +61,13 @@ export class DemoteParticipantBehavior implements Behavior {
             const imageMessage = (await botwa.prepareImageMessage(cardBuffer)).message?.imageMessage
 
             const text = 'demote @' + number
-            return await botwa.sendButtonMessage(to, text, imageMessage!, ['/menu'], [participantJid])
-            
+            await botwa.sendButtonMessage(to, text, imageMessage!, ['/menu'], [participantJid])
+
         } catch (err) {
-            console.log('gagal ambil pp')
+            console.log(err)
+            botwa.sendMentioned(to, 'demote @' + number, [participantJid])
         }
 
-        await botwa.sendMentioned(to, 'demote @' + number, [participantJid])
     }
 
 }

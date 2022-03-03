@@ -88,7 +88,7 @@ export class BotWa {
                 throw new Error("Function not implemented.");
             }
         }
-        this.sock.sendMessage(to, buttonsMessage, MessageType.buttonsMessage, { contextInfo: { mentionedJid } })
+        this.sock.sendMessage(to, buttonsMessage, MessageType.buttonsMessage, { contextInfo: { mentionedJid }, thumbnail: Buffer.alloc(0).toString() })
     }
 
     async getUserInfo() {
