@@ -1,5 +1,5 @@
 import { proto } from '@adiwajshing/baileys';
-import { Helper } from '../helper/file';
+import { Helper } from './helper/file';
 
 
 

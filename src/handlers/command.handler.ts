@@ -7,8 +7,8 @@ import { UnregCommand, TrialCommand, RegisterGroupCommand } from "../commands/sp
 import { GroupChat } from "../groups/group.chat";
 import { GroupManager } from "../groups/group.manager";
 import { BotLevel } from "../groups/interface";
-import { LoggerOcedBot } from "../logger/logger";
-import { OcedBot } from "../ocedbot/ocedbot";
+import { LoggerOcedBot } from "../logger";
+import { OcedBot } from "../ocedbot";
 import { Handler } from "./interface";
 
 
