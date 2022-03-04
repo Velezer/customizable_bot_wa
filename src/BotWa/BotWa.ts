@@ -1,4 +1,4 @@
-import { GroupSettingChange, MessageOptions, MessageType, proto, WAConnection } from "@adiwajshing/baileys";
+import { GroupSettingChange, MessageOptions, MessageType, proto, WAConnection, WAMediaUpload } from "@adiwajshing/baileys";
 import axios from "axios";
 
 
@@ -8,6 +8,10 @@ export class BotWa {
 
     constructor(sock: WAConnection) {
         this.sock = sock
+    }
+
+    async sendSticker(to: string, sticker: Buffer) {
+        return this.sock.sendMessage(to, sticker, MessageType.sticker)
     }
     async prepareImageMessage(imgBuffer: Buffer) {
         return this.sock.prepareMessage('id', imgBuffer, MessageType.image)
