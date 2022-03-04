@@ -1,5 +1,5 @@
 import { proto } from "@adiwajshing/baileys";
-import { BotWa } from "../botwa/botwa";
+import { BotWa } from "../BotWa/BotWa";
 import { GroupChat } from "../groups/group.chat";
 import { Command, CommandLevel } from "./interface";
 import { AddCustomMenuCommand } from "./crud.menu.command";

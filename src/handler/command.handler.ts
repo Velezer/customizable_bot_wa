@@ -1,9 +1,9 @@
 import { GroupSettingChange, proto, WAChatUpdate, WAGroupParticipant, WAParticipantAction } from '@adiwajshing/baileys';
 import { plainToClass } from 'class-transformer';
-import { BotWa } from '../botwa/botwa';
-import { Command, CommandLevel } from '../command/interface';
-import { allCommands } from '../command/regular.command';
-import { RegisterGroupCommand, TrialCommand, UnregCommand } from '../command/special.command';
+import { BotWa } from '../BotWa/BotWa';
+import { Command, CommandLevel } from '../Command/interface';
+import { allCommands } from '../Command/regular.command';
+import { RegisterGroupCommand, TrialCommand, UnregCommand } from '../Command/special.command';
 import { GroupChat } from '../groups/group.chat';
 import { GroupManager } from '../groups/group.manager';
 import { LoggerOcedBot } from '../logger/logger';

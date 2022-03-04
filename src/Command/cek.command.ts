@@ -1,5 +1,5 @@
 import { plainToClass } from "class-transformer";
-import { BotWa } from "../botwa/botwa";
+import { BotWa } from "../BotWa/BotWa";
 import { GroupChat } from "../groups/group.chat";
 import { BotLevel } from "../groups/interface";
 import { Command, CommandLevel } from "./interface";

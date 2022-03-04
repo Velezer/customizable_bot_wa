@@ -1,5 +1,5 @@
 import { Activation } from "../activation/activation";
-import { BotWa } from "../botwa/botwa";
+import { BotWa } from "../BotWa/BotWa";
 import { GroupChat } from "../groups/group.chat";
 import { GroupManager } from "../groups/group.manager";
 import { BotLevel } from "../groups/interface";

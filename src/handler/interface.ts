@@ -1,4 +1,4 @@
-import { BotWa } from "../botwa/botwa";
+import { BotWa } from "../BotWa/BotWa";
 
 
 export interface Handler<T> {
