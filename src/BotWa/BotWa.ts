@@ -25,7 +25,7 @@ export class BotWa {
         return this.sock.groupRemove(groupJid, [phoneNumber + '@s.whatsapp.net'])
     }
 
-    async sendImage(to: string, img: any, mentionedJid: string[]) {
+    async sendImage(to: string, img: Buffer, mentionedJid?: string[]) {
         return await this.sock.sendMessage(to, img, MessageType.image, { contextInfo: { mentionedJid } })
     }
 

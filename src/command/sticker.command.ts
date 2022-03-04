@@ -14,11 +14,12 @@ export class StickerCommand implements Command {
     async run(botwa: BotWa, groupChat: GroupChat, conversation: string, quotedMessage: proto.IMessage): Promise<void> {
         const jid = groupChat.jid
 
-        console.log(quotedMessage)
-
-
+        quotedMessage.stickerMessage
+        console.log(quotedMessage.imageMessage?.jpegThumbnail)
+        const buffer = quotedMessage.imageMessage?.jpegThumbnail as Buffer
         // botwa.sendSticker(jid,)
-        botwa.sendMessage(jid, JSON.stringify(quotedMessage))
+        await botwa.sendImage(jid, buffer)
+        await botwa.sendSticker(jid, buffer)
 
     }
 }
