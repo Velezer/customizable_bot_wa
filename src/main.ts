@@ -1,12 +1,12 @@
 import { BotWa } from './botwa'
 import { ReconnectMode, WAConnection } from '@adiwajshing/baileys'
-import { CommandLevel } from './command/interface'
 import { Activation } from './activation/activation'
 import { Helper } from './helper/file'
 import { BehaviorHandler } from './handlers/behavior.handler'
 import { CommandHandler } from './handlers/command.handler'
 import { LoggerOcedBot } from './logger/logger'
 import { OcedBot } from './ocedbot/ocedbot'
+import { CommandLevel } from './commands/interface'
 
 
 
