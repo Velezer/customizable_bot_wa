@@ -1,5 +1,5 @@
 import { proto, WAParticipantAction } from "@adiwajshing/baileys"
-import { BotWa } from "../BotWa/BotWa"
+import { BotWa } from "../botwa/botwa"
 
 
 export const StubTypeEnum = proto.WebMessageInfo.WebMessageInfoStubType;

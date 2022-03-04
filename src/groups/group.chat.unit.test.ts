@@ -1,11 +1,4 @@
-import { GroupChat } from "./GroupChat"
-import { BotLevel } from "./interface";
-
-function addDays(date: Date, days: number) {
-    var result = new Date(date);
-    result.setDate(result.getDate() + days);
-    return result;
-}
+import { GroupChat } from "./group.chat"
 
 describe('GroupChat', () => {
     let group: GroupChat

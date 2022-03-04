@@ -1,4 +1,4 @@
-import { BotWa } from "../BotWa/BotWa";
+import { BotWa } from "../botwa/botwa";
 
 
 export class LoggerOcedBot {

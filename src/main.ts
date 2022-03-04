@@ -1,12 +1,12 @@
-import { BotWa } from './BotWa/BotWa'
-import { Commander } from './update-handler/Commander'
-import { proto, ReconnectMode, WAConnection } from '@adiwajshing/baileys'
-import { LoggerOcedBot } from './logger/Logger'
-import { CommandLevel } from './Command/interface'
-import { Behaviorer } from './update-handler/Behaviorer'
+import { BotWa } from './botwa/botwa'
+import { ReconnectMode, WAConnection } from '@adiwajshing/baileys'
+import { LoggerOcedBot } from './logger/logger'
+import { CommandLevel } from './command/interface'
 import { Activation } from './activation/activation'
 import { Helper } from './helper/file'
-import { OcedBot } from './ocedbot/OcedBot'
+import { OcedBot } from './ocedbot/ocedbot'
+import { BehaviorHandler } from './handler/behavior.handler'
+import { CommandHandler } from './handler/command.handler'
 
 
 
@@ -42,7 +42,7 @@ async function main() {
         const participantJid = participants[0]
 
 
-        const behaviorer = new Behaviorer(botwa)
+        const behaviorer = new BehaviorHandler(botwa)
         behaviorer.run(action, groupJid, participantJid)
 
     })
@@ -82,7 +82,7 @@ async function main() {
 
         if (!conversation) return
 
-        const commander = new Commander(botwa)
+        const commander = new CommandHandler(botwa)
         if (! await commander.isSentByGroupAdmin(receivedMessage, participants)) {
             await commander.run(jid, conversation, CommandLevel.MEMBER, quotedMessage!).catch(err => console.error(err))
             return

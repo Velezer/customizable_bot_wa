@@ -5,7 +5,6 @@ import axios from "axios";
 
 export class BotWa {
     sock: WAConnection;
-    allowedJidGroup: string[] = [];
 
     constructor(sock: WAConnection) {
         this.sock = sock

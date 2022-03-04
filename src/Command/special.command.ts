@@ -1,10 +1,10 @@
 import { Activation } from "../activation/activation";
-import { BotWa } from "../BotWa/BotWa";
-import { GroupChat } from "../groups/GroupChat";
-import { GroupManager } from "../groups/GroupManager";
+import { BotWa } from "../botwa/botwa";
+import { GroupChat } from "../groups/group.chat";
+import { GroupManager } from "../groups/group.manager";
 import { BotLevel } from "../groups/interface";
-import { LoggerOcedBot } from "../logger/Logger";
-import { OcedBot } from "../ocedbot/OcedBot";
+import { LoggerOcedBot } from "../logger/logger";
+import { OcedBot } from "../ocedbot/ocedbot";
 import { Command, CommandLevel } from "./interface";
 
 

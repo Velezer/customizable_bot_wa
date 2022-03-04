@@ -1,22 +1,10 @@
-import { Command, CommandLevel } from "../Command/interface";
-import { allCommands } from "../Command/regular.command";
 import { BotLevel, GroupMenu } from "./interface";
 
-// function fillCommandkeys(): string[] {
-//     let result: string[] = []
-//     for (const c of allCommands) {
-//         if (c.level === CommandLevel.ADMIN || c.level === CommandLevel.MEMBER) {
-//             result.push(c.key)
-//         }
 
-//     }
-//     return result
-// }
 
 
 export class GroupChat {
     jid: string
-    // commandKeys: string[]
     registeredTime: Date
     groupMenu: GroupMenu[] = []
     trial: boolean = false
@@ -24,7 +12,6 @@ export class GroupChat {
 
     constructor(jidGroup: string) {
         this.jid = jidGroup
-        // this.commandKeys = fillCommandkeys()
         this.registeredTime = new Date()
     }
 
@@ -46,17 +33,6 @@ export class GroupChat {
             this.groupMenu.splice(index, 1)
         }
     }
-
-    // addCommandKey(commandKey: string) {
-    //     this.commandKeys.push(commandKey)
-    // }
-
-    // removeCommandkey(commandKey: string) {
-    //     const index = this.commandKeys.indexOf(commandKey)
-    //     if (index > -1) {
-    //         this.commandKeys.splice(index, 1)
-    //     }
-    // }
 
     getRegisteredTime() {
         return this.registeredTime = new Date(this.registeredTime)

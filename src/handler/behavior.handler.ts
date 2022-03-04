@@ -1,12 +1,12 @@
 import { WAParticipantAction } from "@adiwajshing/baileys"
-import { Behavior } from "../Behavior/Behavior"
-import { WelcomeGroupParticipantAddBehavior, LeaveGroupParticipantBehavior, PromoteParticipantBehavior, DemoteParticipantBehavior } from "../Behavior/behaviors"
-import { BotWa } from "../BotWa/BotWa";
-import { UpdateHandler } from "./interface";
+import { Behavior } from "../behavior/interface"
+import { WelcomeGroupParticipantAddBehavior, LeaveGroupParticipantBehavior, PromoteParticipantBehavior, DemoteParticipantBehavior } from "../behavior/behaviors"
+import { BotWa } from "../botwa/botwa";
+import { Handler } from "./interface";
 
 
 
-export class Behaviorer implements UpdateHandler<Behavior> {
+export class BehaviorHandler implements Handler<Behavior> {
     botwa: BotWa;
     handlers: Behavior[] = [
         new WelcomeGroupParticipantAddBehavior(),
