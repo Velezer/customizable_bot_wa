@@ -4,6 +4,7 @@ import { AddCustomMenuCommand, RemoveCustomMenuCommand, UpdateCustomMenuCommand 
 import { Command } from "./interface"
 import { BotMenuBasicCommand, GroupMenuBasicCommand } from "./menu.basic.command"
 import { GroupMenuElegantCommand } from "./menu.elegant.command"
+import { StickerCommand } from "./sticker.command"
 
 
 export const allCommands: Command[] = [
@@ -11,6 +12,7 @@ export const allCommands: Command[] = [
     new TagAllCommand(),
     new DeleteBotTypoCommand(),
     new KickCommand(),
+    new StickerCommand(),
     new GetGroupMetadataCommand(),
     new OpenGroupSettingsCommand(),
     new CloseGroupSettingsCommand(),
