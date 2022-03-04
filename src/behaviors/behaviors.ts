@@ -1,5 +1,5 @@
 import { WAParticipantAction } from "@adiwajshing/baileys";
-import { BotWa } from "../BotWa/BotWa";
+import { BotWa } from "../botwa";
 import { Card } from "../images/card";
 import { Behavior } from "./interface";
 

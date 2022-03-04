@@ -1,7 +1,7 @@
 import { WAParticipantAction } from "@adiwajshing/baileys"
-import { Behavior } from "../Behavior/interface"
-import { WelcomeGroupParticipantAddBehavior, LeaveGroupParticipantBehavior, PromoteParticipantBehavior, DemoteParticipantBehavior } from "../Behavior/behaviors"
-import { BotWa } from "../BotWa/BotWa";
+import { Behavior } from "../behavior/interface"
+import { WelcomeGroupParticipantAddBehavior, LeaveGroupParticipantBehavior, PromoteParticipantBehavior, DemoteParticipantBehavior } from "../behavior/behaviors"
+import { BotWa } from "../botwa";
 import { Handler } from "./interface";
 
 
