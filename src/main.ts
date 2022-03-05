@@ -83,10 +83,14 @@ async function main() {
             return
         }
 
-        const isBotAdmin = await commander.isBotAdmin(participants)
-        if (!isBotAdmin) return
+        // const isBotAdmin = await commander.isBotAdmin(participants)
+        // if (!isBotAdmin) return
 
-        commander.run(jid, conversation, CommandLevel.ADMIN, quotedMessage!).catch(err => console.error(err))
+        try {
+            commander.run(jid, conversation, CommandLevel.ADMIN, quotedMessage!).catch(err => console.error(err))
+        } catch (err) {
+            console.log(err)
+        }
 
         if (jid === LoggerOcedBot.jid) {
             commander.unreg(conversation)
