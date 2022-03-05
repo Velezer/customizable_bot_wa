@@ -15,6 +15,9 @@ export class DeleteBotTypoCommand implements Command {
     level: CommandLevel = CommandLevel.ADMIN;
 
     async run(botwa: BotWa, groupChat: GroupChat, conversation: string, quotedMessage: proto.IMessage): Promise<void> {
+        console.log('=================')
+        console.log(quotedMessage)
+        console.log('=================')
         const quotedMessageString = quotedMessage.extendedTextMessage?.text
         try {
             await botwa.sock.findMessage(groupChat.jid, 20, (m) => {
