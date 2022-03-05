@@ -6,6 +6,7 @@ activation.key
 oced.bot
 groups.json
 received.json
+*.jpeg
 
 # Logs
 logs

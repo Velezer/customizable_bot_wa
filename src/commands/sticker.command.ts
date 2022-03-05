@@ -14,31 +14,24 @@ export class StickerCommand implements Command {
     level: CommandLevel = CommandLevel.ADMIN;
 
     async run(botwa: BotWa, groupChat: GroupChat, conversation: string, quotedMessage: proto.IMessage, receivedMessage: proto.WebMessageInfo): Promise<void> {
-        if (quotedMessage) return console.log('quotedMessage not supported')
-        if (receivedMessage.message?.imageMessage) {
-            console.log('/sticker invoked')
-            console.log(receivedMessage)
-            const jid = groupChat.jid
-            const jpegFile = './images/media.jpeg'
-            const webpFile = './images/media1.webp'
-
-            console.log('------------------')
-            
-            // const buffer: Buffer = await botwa.getBufferFromUrl(receivedMessage.message?.imageMessage?.url!)
-            // fs.writeFileSync(jpegFile, buffer)
-            const media = await botwa.sock.downloadAndSaveMediaMessage(receivedMessage, jpegFile, false)
-            console.log(media)
+        const jid = groupChat.jid
+        let jpegFile = './src/images/media.jpeg'
+        const webpFile = './src/images/media1.webp'
+        if (quotedMessage) {
+            const m = await botwa.sock.loadMessage(jid, receivedMessage.message?.extendedTextMessage?.contextInfo?.stanzaId!!)
+            jpegFile = await botwa.sock.downloadAndSaveMediaMessage(m, jpegFile, false)
+        } else if (receivedMessage.message?.imageMessage) {
+            jpegFile = await botwa.sock.downloadAndSaveMediaMessage(receivedMessage, jpegFile, false)
         }
 
 
-        // console.log(fs.readFileSync(jpegFile))
-        // exec(`ffmpeg -i ${media} -vcodec libwebp -filter:v fps=fps=20 -lossless 1 -loop 0 -preset default -an -vsync 0 -s 512:512 ${webpFile}`, async (err) => {
-        //     console.log('exec sticker')
-        //     if (err) return console.log(err)
-        //     // await botwa.sendSticker(jid, fs.readFileSync(webpFile))
-        //     // fs.unlinkSync(jpegFile)
-        //     // fs.unlinkSync(webpFile)
-        // })
+        exec(`ffmpeg -i ${jpegFile} -vcodec libwebp -filter:v fps=fps=20 -lossless 1 -loop 0 -preset default -an -vsync 0 -s 512:512 ${webpFile}`, async (err) => {
+            console.log('exec sticker')
+            if (err) return console.log(err)
+            await botwa.sendSticker(jid, fs.readFileSync(webpFile))
+            fs.unlinkSync(jpegFile)
+            fs.unlinkSync(webpFile)
+        })
 
     }
 }
