@@ -84,10 +84,7 @@ async function main() {
         }
 
         const isBotAdmin = await commander.isBotAdmin(participants)
-        if (!isBotAdmin) {
-            botwa.sendMessage(jid, 'jadiin admin dulu dong')
-            return
-        }
+        if (!isBotAdmin) return
 
         commander.run(jid, conversation, CommandLevel.ADMIN, quotedMessage!).catch(err => console.error(err))
 
