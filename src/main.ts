@@ -5,7 +5,6 @@ import { Helper } from './helper/file'
 import { BehaviorHandler } from './handlers/behavior.handler'
 import { CommandHandler } from './handlers/command.handler'
 import { LoggerOcedBot } from './logger'
-import { OcedBot } from './ocedbot'
 import { CommandLevel } from './commands/interface'
 
 
@@ -51,11 +50,7 @@ async function main() {
         if (!chatUpdate.hasNewMessage) return
         const receivedMessage = chatUpdate.messages?.all()[0]!
         // console.log(receivedMessage)
-        if (receivedMessage.key.fromMe === true) {
-            OcedBot.saveReceivedMessage(receivedMessage)
-            return
-        }
-        if (!receivedMessage?.message) return
+        if (receivedMessage.key.fromMe === true || !receivedMessage?.message) return
 
 
         const botwa = new BotWa(sock)
