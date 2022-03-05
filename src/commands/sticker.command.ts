@@ -14,18 +14,19 @@ export class StickerCommand implements Command {
     level: CommandLevel = CommandLevel.ADMIN;
 
     async run(botwa: BotWa, groupChat: GroupChat, conversation: string, quotedMessage: proto.IMessage, receivedMessage: proto.WebMessageInfo): Promise<void> {
-        if(quotedMessage) return console.log('quotedMessage not supported')
+        if (quotedMessage) return console.log('quotedMessage not supported')
         console.log('/sticker invoked')
         const jid = groupChat.jid
-        const jpegFile = './storage/media.jpeg'
-        const webpFile = './storage/media1.webp'
+        const jpegFile = './images/media'
+        const webpFile = './images/media1.webp'
+        fs.writeFileSync(jpegFile + '.jpeg', '')
         const media = await botwa.sock.downloadAndSaveMediaMessage(receivedMessage, jpegFile)
         console.log(media)
         exec(`ffmpeg -i ${jpegFile} -vcodec libwebp -filter:v fps=fps=20 -lossless 1 -loop 0 -preset default -an -vsync 0 -s 512:512 ${webpFile}`, async (err) => {
-            fs.unlinkSync(jpegFile)
             console.log('exec sticker')
             if (err) return console.log(err)
             await botwa.sendSticker(jid, fs.readFileSync(webpFile))
+            fs.unlinkSync(jpegFile)
             fs.unlinkSync(webpFile)
         })
 
