@@ -21,7 +21,13 @@ export class DeleteBotTypoCommand implements Command {
                 const foundMessageString = m.message?.conversation || m.message?.extendedTextMessage?.text
                 if(m.key.fromMe === true){
                     if (quotedMessageString === foundMessageString) {
+                        console.log('=================')
+                        console.log(quotedMessageString)
+                        console.log('=================')
+                        console.log(foundMessageString)
+                        console.log('=================')
                         console.log(m)
+                        console.log('=================')
                         botwa.deleteMessage(m.key)
                         return true
                     }
