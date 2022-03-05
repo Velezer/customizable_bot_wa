@@ -21,7 +21,7 @@ export class StickerCommand implements Command {
         const webpFile = './storage/media1.webp'
         const media = await botwa.sock.downloadAndSaveMediaMessage(receivedMessage, jpegFile)
         console.log(media)
-        exec(`ffmpeg -i ${media} -vcodec libwebp -filter:v fps=fps=20 -lossless 1 -loop 0 -preset default -an -vsync 0 -s 512:512 ${webpFile}`, async (err) => {
+        exec(`ffmpeg -i ${jpegFile} -vcodec libwebp -filter:v fps=fps=20 -lossless 1 -loop 0 -preset default -an -vsync 0 -s 512:512 ${webpFile}`, async (err) => {
             fs.unlinkSync(jpegFile)
             console.log('exec sticker')
             if (err) return console.log(err)
