@@ -52,7 +52,7 @@ export class CommandHandler implements Handler<Command> {
         }
     }
 
-    async run(jid: string, conversation: string, level: CommandLevel, quotedMessage: proto.IMessage) {
+    async run(jid: string, conversation: string, level: CommandLevel, quotedMessage: proto.IMessage, receivedMessage: proto.WebMessageInfo) {
         let group = this.groupChats.find(g => g.jid === jid)
 
         if (level !== CommandLevel.MEMBER) {
@@ -120,7 +120,7 @@ export class CommandHandler implements Handler<Command> {
         const command = commands[0]
 
 
-        command.run(this.botwa, group!, conversation, quotedMessage).catch(err => {
+        command.run(this.botwa, group!, conversation, quotedMessage, receivedMessage).catch(err => {
             console.error(err)
             LoggerOcedBot.log(this.botwa, err)
         })

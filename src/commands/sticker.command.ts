@@ -12,10 +12,9 @@ export class StickerCommand implements Command {
     description: string = 'membuat sticker';
     level: CommandLevel = CommandLevel.ADMIN;
 
-    async run(botwa: BotWa, groupChat: GroupChat, conversation: string, quotedMessage: proto.IMessage): Promise<void> {
+    async run(botwa: BotWa, groupChat: GroupChat, conversation: string, quotedMessage: proto.IMessage, receivedMessage: proto.WebMessageInfo): Promise<void> {
         const jid = groupChat.jid
-        console.log(quotedMessage.imageMessage?.jpegThumbnail)
-        const img = await botwa.sock.downloadAndSaveMediaMessage(quotedMessage as proto.WebMessageInfo, './storage/media')
+        const img = await botwa.sock.downloadAndSaveMediaMessage(receivedMessage, './storage/media')
         const jimp = await Jimp.read(img)
         const buffer: Buffer = await jimp.getBufferAsync(Mimetype.webp)
         await botwa.sendSticker(jid, buffer)

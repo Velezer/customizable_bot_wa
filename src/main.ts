@@ -79,15 +79,13 @@ async function main() {
 
         const commander = new CommandHandler(botwa)
         if (! await commander.isSentByGroupAdmin(receivedMessage, participants)) {
-            await commander.run(jid, conversation, CommandLevel.MEMBER, quotedMessage!).catch(err => console.error(err))
+            await commander.run(jid, conversation, CommandLevel.MEMBER, quotedMessage!, receivedMessage).catch(err => console.error(err))
             return
         }
 
-        // const isBotAdmin = await commander.isBotAdmin(participants)
-        // if (!isBotAdmin) return
 
         try {
-            commander.run(jid, conversation, CommandLevel.ADMIN, quotedMessage!).catch(err => console.error(err))
+            commander.run(jid, conversation, CommandLevel.ADMIN, quotedMessage!, receivedMessage).catch(err => console.error(err))
         } catch (err) {
             console.log(err)
         }
