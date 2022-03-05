@@ -7,7 +7,6 @@ import { UnregCommand, TrialCommand, RegisterGroupCommand } from "../commands/sp
 import { GroupChat } from "../groups/group.chat";
 import { GroupManager } from "../groups/group.manager";
 import { BotLevel } from "../groups/interface";
-import { LoggerOcedBot } from "../logger";
 import { OcedBot } from "../ocedbot";
 import { Handler } from "./interface";
 
@@ -122,7 +121,6 @@ export class CommandHandler implements Handler<Command> {
 
         command.run(this.botwa, group!, conversation, quotedMessage, receivedMessage).catch(err => {
             console.error(err)
-            LoggerOcedBot.log(this.botwa, err)
         })
 
     }

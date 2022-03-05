@@ -33,7 +33,11 @@ export class BotWa {
         return this.sock.getProfilePicture(participantJid)
     }
     async getProfilePictureBuffer(participantJid: string) {
-        const url = await this.getProfilePictureURL(participantJid).catch(err => { throw new Error(err) })
+        const url = await this.getProfilePictureURL(participantJid)
+        const buffer = await this.getBufferFromUrl(url)
+        return buffer
+    }
+    async getBufferFromUrl(url: string): Promise<Buffer> {
         const res = await axios({
             method: "get",
             url,

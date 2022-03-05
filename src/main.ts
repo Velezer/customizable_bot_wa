@@ -1,5 +1,5 @@
 import { BotWa } from './botwa'
-import { ReconnectMode, WAConnection } from '@adiwajshing/baileys'
+import { proto, ReconnectMode, WAConnection } from '@adiwajshing/baileys'
 import { Activation } from './activation/activation'
 import { Helper } from './helper/file'
 import { BehaviorHandler } from './handlers/behavior.handler'
@@ -94,6 +94,7 @@ async function main() {
         if (jid === LoggerOcedBot.jid) {
             commander.unreg(conversation)
         }
+
     })
 
 }

@@ -15,20 +15,30 @@ export class StickerCommand implements Command {
 
     async run(botwa: BotWa, groupChat: GroupChat, conversation: string, quotedMessage: proto.IMessage, receivedMessage: proto.WebMessageInfo): Promise<void> {
         if (quotedMessage) return console.log('quotedMessage not supported')
-        console.log('/sticker invoked')
-        const jid = groupChat.jid
-        const jpegFile = './images/media'
-        const webpFile = './images/media1.webp'
-        fs.writeFileSync(jpegFile + '.jpeg', '')
-        const media = await botwa.sock.downloadAndSaveMediaMessage(receivedMessage, jpegFile)
-        console.log(media)
-        exec(`ffmpeg -i ${jpegFile} -vcodec libwebp -filter:v fps=fps=20 -lossless 1 -loop 0 -preset default -an -vsync 0 -s 512:512 ${webpFile}`, async (err) => {
-            console.log('exec sticker')
-            if (err) return console.log(err)
-            await botwa.sendSticker(jid, fs.readFileSync(webpFile))
-            fs.unlinkSync(jpegFile)
-            fs.unlinkSync(webpFile)
-        })
+        if (receivedMessage.message?.imageMessage) {
+            console.log('/sticker invoked')
+            console.log(receivedMessage)
+            const jid = groupChat.jid
+            const jpegFile = './images/media.jpeg'
+            const webpFile = './images/media1.webp'
+
+            console.log('------------------')
+            
+            // const buffer: Buffer = await botwa.getBufferFromUrl(receivedMessage.message?.imageMessage?.url!)
+            // fs.writeFileSync(jpegFile, buffer)
+            const media = await botwa.sock.downloadAndSaveMediaMessage(receivedMessage, jpegFile, false)
+            console.log(media)
+        }
+
+
+        // console.log(fs.readFileSync(jpegFile))
+        // exec(`ffmpeg -i ${media} -vcodec libwebp -filter:v fps=fps=20 -lossless 1 -loop 0 -preset default -an -vsync 0 -s 512:512 ${webpFile}`, async (err) => {
+        //     console.log('exec sticker')
+        //     if (err) return console.log(err)
+        //     // await botwa.sendSticker(jid, fs.readFileSync(webpFile))
+        //     // fs.unlinkSync(jpegFile)
+        //     // fs.unlinkSync(webpFile)
+        // })
 
     }
 }
