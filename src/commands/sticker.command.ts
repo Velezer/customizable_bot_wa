@@ -1,4 +1,5 @@
-import { proto } from "@adiwajshing/baileys";
+import { Mimetype, proto } from "@adiwajshing/baileys";
+import Jimp from "jimp/*";
 import { BotWa } from "../botwa";
 import { GroupChat } from "../groups/group.chat";
 import { BotLevel } from "../groups/interface";
@@ -13,12 +14,10 @@ export class StickerCommand implements Command {
 
     async run(botwa: BotWa, groupChat: GroupChat, conversation: string, quotedMessage: proto.IMessage): Promise<void> {
         const jid = groupChat.jid
-
-        quotedMessage.stickerMessage
         console.log(quotedMessage.imageMessage?.jpegThumbnail)
-        const buffer = quotedMessage.imageMessage?.jpegThumbnail as Buffer
-        // botwa.sendSticker(jid,)
-        await botwa.sendImage(jid, buffer)
+        const img = await botwa.sock.downloadAndSaveMediaMessage(quotedMessage as proto.WebMessageInfo, './storage/media')
+        const jimp = await Jimp.read(img)
+        const buffer: Buffer = await jimp.getBufferAsync(Mimetype.webp)
         await botwa.sendSticker(jid, buffer)
 
     }
