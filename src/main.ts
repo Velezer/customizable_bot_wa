@@ -1,12 +1,11 @@
-import { BotWa } from './BotWa/BotWa'
-import { Commander } from './update-handler/Commander'
-import { proto, ReconnectMode, WAConnection } from '@adiwajshing/baileys'
-import { LoggerOcedBot } from './logger/Logger'
-import { CommandLevel } from './Command/interface'
-import { Behaviorer } from './update-handler/Behaviorer'
+import { BotWa } from './botwa'
+import { ReconnectMode, WAConnection } from '@adiwajshing/baileys'
 import { Activation } from './activation/activation'
 import { Helper } from './helper/file'
-import { OcedBot } from './ocedbot/OcedBot'
+import { BehaviorHandler } from './handlers/behavior.handler'
+import { CommandHandler } from './handlers/command.handler'
+import { LoggerOcedBot } from './logger'
+import { CommandLevel } from './commands/interface'
 
 
 
@@ -42,7 +41,7 @@ async function main() {
         const participantJid = participants[0]
 
 
-        const behaviorer = new Behaviorer(botwa)
+        const behaviorer = new BehaviorHandler(botwa)
         behaviorer.run(action, groupJid, participantJid)
 
     })
@@ -51,11 +50,7 @@ async function main() {
         if (!chatUpdate.hasNewMessage) return
         const receivedMessage = chatUpdate.messages?.all()[0]!
         // console.log(receivedMessage)
-        if (receivedMessage.key.fromMe === true) {
-            OcedBot.saveReceivedMessage(receivedMessage)
-            return
-        }
-        if (!receivedMessage?.message) return
+        if (receivedMessage.key.fromMe === true || !receivedMessage?.message) return
 
 
         const botwa = new BotWa(sock)
@@ -82,7 +77,7 @@ async function main() {
 
         if (!conversation) return
 
-        const commander = new Commander(botwa)
+        const commander = new CommandHandler(botwa)
         if (! await commander.isSentByGroupAdmin(receivedMessage, participants)) {
             await commander.run(jid, conversation, CommandLevel.MEMBER, quotedMessage!).catch(err => console.error(err))
             return

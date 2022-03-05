@@ -1,17 +1,18 @@
-import { GroupSettingChange, proto, WAChatUpdate, WAGroupParticipant, WAParticipantAction } from '@adiwajshing/baileys';
-import { plainToClass } from 'class-transformer';
-import { BotWa } from '../BotWa/BotWa';
-import { Command, CommandLevel } from '../Command/interface';
-import { allCommands } from '../Command/regular.command';
-import { RegisterGroupCommand, TrialCommand, UnregCommand } from '../Command/special.command';
-import { GroupChat } from '../groups/GroupChat';
-import { GroupManager } from '../groups/GroupManager';
-import { LoggerOcedBot } from '../logger/Logger';
-import { OcedBot } from '../ocedbot/OcedBot';
-import { UpdateHandler } from './interface';
-import { BotLevel } from '../groups/interface';
+import { proto, WAGroupParticipant } from "@adiwajshing/baileys";
+import { plainToClass } from "class-transformer";
+import { BotWa } from "../botwa";
+import { Command, CommandLevel } from "../commands/interface";
+import { allCommands } from "../commands/regular.command";
+import { UnregCommand, TrialCommand, RegisterGroupCommand } from "../commands/special.command";
+import { GroupChat } from "../groups/group.chat";
+import { GroupManager } from "../groups/group.manager";
+import { BotLevel } from "../groups/interface";
+import { LoggerOcedBot } from "../logger";
+import { OcedBot } from "../ocedbot";
+import { Handler } from "./interface";
 
-export class Commander implements UpdateHandler<Command> {
+
+export class CommandHandler implements Handler<Command> {
     botwa: BotWa;
 
     groupChats: GroupChat[] = GroupManager.getRegisteredGroup()

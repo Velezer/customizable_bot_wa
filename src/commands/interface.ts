@@ -1,6 +1,6 @@
 import { proto } from "@adiwajshing/baileys"
-import { BotWa } from "../BotWa/BotWa"
-import { GroupChat } from "../groups/GroupChat"
+import { BotWa } from "../botwa"
+import { GroupChat } from "../groups/group.chat"
 import { BotLevel } from "../groups/interface"
 
 export enum CommandLevel {

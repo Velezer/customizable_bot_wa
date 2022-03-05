@@ -1,5 +1,5 @@
 import { Helper } from '../helper/file'
-import { GroupChat } from './GroupChat'
+import { GroupChat } from './group.chat'
 
 
 export class GroupManager {

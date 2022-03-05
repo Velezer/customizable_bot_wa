@@ -1,14 +1,17 @@
-import { GroupSettingChange, MessageOptions, MessageType, proto, WAConnection } from "@adiwajshing/baileys";
+import { GroupSettingChange, MessageOptions, MessageType, proto, WAConnection, WAMediaUpload } from "@adiwajshing/baileys";
 import axios from "axios";
 
 
 
 export class BotWa {
     sock: WAConnection;
-    allowedJidGroup: string[] = [];
 
     constructor(sock: WAConnection) {
         this.sock = sock
+    }
+
+    async sendSticker(to: string, sticker: Buffer) {
+        return this.sock.sendMessage(to, sticker, MessageType.sticker)
     }
     async prepareImageMessage(imgBuffer: Buffer) {
         return this.sock.prepareMessage('id', imgBuffer, MessageType.image)
@@ -22,7 +25,7 @@ export class BotWa {
         return this.sock.groupRemove(groupJid, [phoneNumber + '@s.whatsapp.net'])
     }
 
-    async sendImage(to: string, img: any, mentionedJid: string[]) {
+    async sendImage(to: string, img: Buffer, mentionedJid?: string[]) {
         return await this.sock.sendMessage(to, img, MessageType.image, { contextInfo: { mentionedJid } })
     }
 

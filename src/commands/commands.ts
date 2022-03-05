@@ -1,14 +1,8 @@
-import { BotWa } from "../BotWa/BotWa";
-import { GroupManager } from "../groups/GroupManager";
-import { Command, CommandLevel } from "./interface";
-import { GroupChat } from "../groups/GroupChat";
-import { LoggerOcedBot } from "../logger/Logger";
+import { BotWa } from "../botwa";
+import { GroupChat } from "../groups/group.chat";
+import { LoggerOcedBot } from "../logger";
 import { BotLevel } from "../groups/interface";
-import { proto } from "@adiwajshing/baileys";
-import { OcedBot } from "../ocedbot/OcedBot";
-
-
-
+import { Command, CommandLevel } from "./interface";
 
 
 
@@ -194,26 +188,7 @@ export class DemoteCommand implements Command {
     }
 
 }
-export class DeleteBotTypoCommand implements Command {
-    botLevel: BotLevel = BotLevel.BASIC
-    key: string = '/delete';
-    example: string = this.key;
-    description: string = 'delete kalo bot nya typo';
-    level: CommandLevel = CommandLevel.ADMIN;
 
-    async run(botwa: BotWa, groupChat: GroupChat, conversation: string, quotedMessage: proto.IMessage): Promise<void> {
-        const quotedMessageString = quotedMessage.extendedTextMessage?.text
-        const msgKey = OcedBot.findMessageKey(quotedMessageString!, groupChat.jid)
-        botwa.deleteMessage(msgKey!)
-            .then(()=>{
-                OcedBot.deleteReceivedMessage(msgKey!)
-            })
-            .catch(err => {
-                botwa.sendMessage(groupChat.jid, 'delete gagal')
-            })
-    }
-
-}
 export class KickCommand implements Command {
     botLevel: BotLevel = BotLevel.BASIC
     key: string = '/kick';

@@ -1,7 +1,7 @@
 import { WAParticipantAction } from "@adiwajshing/baileys";
-import { BotWa } from "../BotWa/BotWa";
+import { BotWa } from "../botwa";
 import { Card } from "../images/card";
-import { Behavior } from "./Behavior";
+import { Behavior } from "./interface";
 
 
 export class WelcomeGroupParticipantAddBehavior implements Behavior {
