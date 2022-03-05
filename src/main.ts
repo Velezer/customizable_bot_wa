@@ -73,7 +73,8 @@ async function main() {
         const conversation = receivedMessage.message?.conversation ||
             receivedMessage.message?.extendedTextMessage?.text ||
             receivedMessage.message?.listResponseMessage?.title ||
-            receivedMessage.message?.buttonsResponseMessage?.selectedDisplayText
+            receivedMessage.message?.buttonsResponseMessage?.selectedDisplayText ||
+            receivedMessage.message.imageMessage?.caption
 
         if (!conversation) return
 
