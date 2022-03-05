@@ -17,13 +17,16 @@ export class DeleteBotTypoCommand implements Command {
     async run(botwa: BotWa, groupChat: GroupChat, conversation: string, quotedMessage: proto.IMessage): Promise<void> {
         const quotedMessageString = quotedMessage.extendedTextMessage?.text
         try {
-            await botwa.sock.findMessage(groupChat.jid, 10, (m) => {
+            await botwa.sock.findMessage(groupChat.jid, 20, (m) => {
                 const foundMessageString = m.message?.conversation || m.message?.extendedTextMessage?.text
-                if (quotedMessageString === foundMessageString) {
-                    console.log(m)
-                    botwa.deleteMessage(m.key)
-                    return true
+                if(m.key.fromMe === true){
+                    if (quotedMessageString === foundMessageString) {
+                        console.log(m)
+                        botwa.deleteMessage(m.key)
+                        return true
+                    }
                 }
+                
                 return false
             })
         } catch (err) {
