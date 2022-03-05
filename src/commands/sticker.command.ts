@@ -1,5 +1,5 @@
 import { Mimetype, proto } from "@adiwajshing/baileys";
-import Jimp from "jimp/*";
+import Jimp from "jimp";
 import { BotWa } from "../botwa";
 import { GroupChat } from "../groups/group.chat";
 import { BotLevel } from "../groups/interface";
