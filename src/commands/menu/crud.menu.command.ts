@@ -1,8 +1,8 @@
-import { BotWa } from "../botwa";
-import { GroupChat } from "../groups/group.chat";
-import { GroupManager } from "../groups/group.manager";
-import { BotLevel } from "../groups/interface";
-import { Command, CommandLevel } from "./interface";
+import { BotWa } from "../../botwa";
+import { GroupChat } from "../../groups/group.chat";
+import { GroupManager } from "../../groups/group.manager";
+import { BotLevel } from "../../groups/interface";
+import { Command, CommandLevel } from "../interface";
 
 
 

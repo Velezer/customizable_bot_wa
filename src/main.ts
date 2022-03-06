@@ -1,5 +1,5 @@
 import { BotWa } from './botwa'
-import { ReconnectMode, WAConnection } from '@adiwajshing/baileys'
+import { proto, ReconnectMode, WAConnection } from '@adiwajshing/baileys'
 import { Activation } from './activation/activation'
 import { Helper } from './helper/file'
 import { BehaviorHandler } from './handlers/behavior.handler'
@@ -73,27 +73,28 @@ async function main() {
         const conversation = receivedMessage.message?.conversation ||
             receivedMessage.message?.extendedTextMessage?.text ||
             receivedMessage.message?.listResponseMessage?.title ||
-            receivedMessage.message?.buttonsResponseMessage?.selectedDisplayText
+            receivedMessage.message?.buttonsResponseMessage?.selectedDisplayText ||
+            receivedMessage.message.imageMessage?.caption
 
         if (!conversation) return
 
         const commander = new CommandHandler(botwa)
         if (! await commander.isSentByGroupAdmin(receivedMessage, participants)) {
-            await commander.run(jid, conversation, CommandLevel.MEMBER, quotedMessage!).catch(err => console.error(err))
+            await commander.run(jid, conversation, CommandLevel.MEMBER, quotedMessage!, receivedMessage).catch(err => console.error(err))
             return
         }
 
-        const isBotAdmin = await commander.isBotAdmin(participants)
-        if (!isBotAdmin) {
-            botwa.sendMessage(jid, 'jadiin admin dulu dong')
-            return
-        }
 
-        commander.run(jid, conversation, CommandLevel.ADMIN, quotedMessage!).catch(err => console.error(err))
+        try {
+            commander.run(jid, conversation, CommandLevel.ADMIN, quotedMessage!, receivedMessage).catch(err => console.error(err))
+        } catch (err) {
+            console.log(err)
+        }
 
         if (jid === LoggerOcedBot.jid) {
             commander.unreg(conversation)
         }
+
     })
 
 }
