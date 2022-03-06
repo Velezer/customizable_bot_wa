@@ -3,6 +3,7 @@ import { GroupChat } from "../groups/group.chat";
 import { LoggerOcedBot } from "../logger";
 import { BotLevel } from "../groups/interface";
 import { Command, CommandLevel } from "./interface";
+import { proto } from "@adiwajshing/baileys";
 
 
 
@@ -189,27 +190,6 @@ export class DemoteCommand implements Command {
 
 }
 
-export class KickCommand implements Command {
-    botLevel: BotLevel = BotLevel.BASIC
-    key: string = '/kick';
-    example: string = this.key + ' 00000000';
-    description: string = 'kick beban grup';
-    level: CommandLevel = CommandLevel.ADMIN;
-
-    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
-        let m1 = conversation.slice(this.key.length + 1)
-
-        if (m1.startsWith('@')) {
-            m1 = m1.slice(1)
-        }
-        botwa.kick(groupChat.jid, m1)
-            .catch(err => {
-                botwa.sendMessage(groupChat.jid, 'kick gagal')
-            })
-
-    }
-
-}
 
 
 

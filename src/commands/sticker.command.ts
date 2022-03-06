@@ -11,7 +11,7 @@ export class StickerCommand implements Command {
     key: string = '/sticker';
     example: string = '/sticker';
     description: string = 'membuat sticker';
-    level: CommandLevel = CommandLevel.ADMIN;
+    level: CommandLevel = CommandLevel.MEMBER;
 
     async run(botwa: BotWa, groupChat: GroupChat, conversation: string, quotedMessage: proto.IMessage, receivedMessage: proto.WebMessageInfo): Promise<void> {
         const jid = groupChat.jid

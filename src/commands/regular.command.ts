@@ -1,11 +1,12 @@
 import { CekCommand } from "./cek.command"
-import { TagAllCommand, GetGroupMetadataCommand, OpenGroupSettingsCommand, CloseGroupSettingsCommand, OpenGroupChatCommand, CloseGroupChatCommand, PromoteCommand, DemoteCommand, JoinGroupCommand, KickCommand } from "./commands"
+import { TagAllCommand, GetGroupMetadataCommand, OpenGroupSettingsCommand, CloseGroupSettingsCommand, OpenGroupChatCommand, CloseGroupChatCommand, PromoteCommand, DemoteCommand } from "./commands"
 import { AddCustomMenuCommand, RemoveCustomMenuCommand, UpdateCustomMenuCommand } from "./crud.menu.command"
 import { Command } from "./interface"
 import { BotMenuBasicCommand, GroupMenuBasicCommand } from "./menu.basic.command"
 import { GroupMenuElegantCommand } from "./menu.elegant.command"
 import { StickerCommand } from "./sticker.command"
 import { DeleteBotTypoCommand } from "./delete.command"
+import { KickCommand } from "./kick.command"
 
 
 export const allCommands: Command[] = [
