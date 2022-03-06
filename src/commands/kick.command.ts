@@ -16,11 +16,9 @@ export class KickCommand implements Command {
     async run(botwa: BotWa, groupChat: GroupChat, conversation: string, quotedMessage: proto.IMessage, receivedMessage: proto.WebMessageInfo): Promise<void> {
         let m1: string = ''
         if (quotedMessage) {
-            // get quoted participant phonenumber
-            // m1 = 
-            console.log(quotedMessage)
-            console.log('==================')
-            console.log(receivedMessage)
+            const participant = receivedMessage.message?.extendedTextMessage?.contextInfo?.participant!
+            m1 = participant.split('@')[0]
+            console.log(receivedMessage.message?.extendedTextMessage?.contextInfo)
 
         } else {
             m1 = conversation.slice(this.key.length + 1)
@@ -30,7 +28,7 @@ export class KickCommand implements Command {
             }
         }
         botwa.kick(groupChat.jid, m1)
-            .catch(err => {
+            .catch(() => {
                 botwa.sendMessage(groupChat.jid, 'kick gagal')
             })
 
