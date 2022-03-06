@@ -3,7 +3,6 @@ import { GroupChat } from "../groups/group.chat";
 import { LoggerOcedBot } from "../logger";
 import { BotLevel } from "../groups/interface";
 import { Command, CommandLevel } from "./interface";
-import { proto } from "@adiwajshing/baileys";
 
 
 
@@ -143,52 +142,9 @@ export class CloseGroupChatCommand implements Command {
     }
 
 }
-export class PromoteCommand implements Command {
-    botLevel: BotLevel = BotLevel.BASIC
-    key: string = '/promote';
-    example: string = this.key + ' 0000000000';
-    description: string = 'promote member grup';
-    level: CommandLevel = CommandLevel.ADMIN;
 
 
-    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
-        let m1 = conversation.slice(this.key.length + 1)
 
-        if (m1.startsWith('@')) {
-            m1 = m1.slice(1)
-        }
-
-        botwa.promote(groupChat.jid, m1)
-            .catch(err => {
-                botwa.sendMessage(groupChat.jid, 'promote gagal')
-            })
-
-    }
-
-}
-
-export class DemoteCommand implements Command {
-    botLevel: BotLevel = BotLevel.BASIC
-    key: string = '/demote';
-    example: string = this.key + ' 0000000000';
-    description: string = 'demote member grup';
-    level: CommandLevel = CommandLevel.ADMIN;
-
-
-    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
-        let m1 = conversation.slice(this.key.length + 1)
-
-        if (m1.startsWith('@')) {
-            m1 = m1.slice(1)
-        }
-        botwa.demote(groupChat.jid, m1)
-            .catch(err => {
-                botwa.sendMessage(groupChat.jid, 'demote gagal')
-            })
-
-    }
-
-}
 
 
 
