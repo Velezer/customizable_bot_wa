@@ -69,7 +69,7 @@ export class ImageMenuElegantCommand implements Command {
 
             sections.push(menuSection)
             await botwa.sendListMessageSingleSelect(groupChat.jid, 'Image', sections);
-        } else {
+        } else if (groupImageData === undefined || groupImageData!.images.length === 0) {
 
             await botwa.sendMessage(groupChat.jid, 'image kosong silakan tambahkan menggunakan\n\n' + new AddImageMenuCommand().example)
 
