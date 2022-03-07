@@ -5,10 +5,12 @@ import { Command, CommandLevel } from "../commands/interface";
 import { allCommands } from "../commands/regular.command";
 import { UnregCommand, TrialCommand, RegisterGroupCommand } from "../commands/special.command";
 import { GroupChat } from "../groups/group.chat";
+import { ImageStorage } from "../groups/group.image";
 import { GroupManager } from "../groups/group.manager";
 import { BotLevel } from "../groups/interface";
 import { OcedBot } from "../ocedbot";
 import { Handler } from "./interface";
+import fs from 'fs'
 
 
 export class CommandHandler implements Handler<Command> {
@@ -108,6 +110,11 @@ export class CommandHandler implements Handler<Command> {
         if (groupMenu) {
             this.botwa.sendMessage(jid, groupMenu.value)
             return
+        }
+
+        const imageMenu = ImageStorage.findImageById(jid, m0)
+        if(imageMenu){
+            this.botwa.sendImage(jid, fs.readFileSync(imageMenu.path))
         }
 
 
