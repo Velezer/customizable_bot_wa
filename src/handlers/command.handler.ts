@@ -5,7 +5,7 @@ import { Command, CommandLevel } from "../commands/interface";
 import { allCommands } from "../commands/regular.command";
 import { UnregCommand, TrialCommand, RegisterGroupCommand } from "../commands/special.command";
 import { GroupChat } from "../groups/group.chat";
-import { ImageStorage } from "../groups/group.image";
+import { ImageStorage } from "../groups/group.image.storage";
 import { GroupManager } from "../groups/group.manager";
 import { BotLevel } from "../groups/interface";
 import { OcedBot } from "../ocedbot";

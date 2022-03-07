@@ -5,7 +5,7 @@ import { GroupChat } from "../../groups/group.chat";
 import { Command, CommandLevel } from "../interface";
 import { AddCustomMenuCommand } from "./crud.menu.command";
 import { BotLevel } from "../../groups/interface";
-import { ImageStorage } from "../../groups/group.image";
+import { ImageStorage } from "../../groups/group.image.storage";
 import { AddImageMenuCommand } from "./crud.image.command";
 
 

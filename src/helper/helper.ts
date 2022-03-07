@@ -15,6 +15,7 @@ export class Helper {
         return fs.readFileSync(file, { encoding: 'utf8' })
     }
     static readJSON(file: string) {
+        if(!this.isExist(file)) this.saveJSON(file, [])
         return JSON.parse(this.readFile(file))
     }
 

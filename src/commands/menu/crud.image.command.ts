@@ -1,7 +1,7 @@
 import { proto } from "@adiwajshing/baileys";
 import { BotWa } from "../../botwa";
 import { GroupChat } from "../../groups/group.chat";
-import { ImageStorage } from "../../groups/group.image";
+import { ImageStorage } from "../../groups/group.image.storage";
 import { BotLevel, ImageEntity } from "../../groups/interface";
 import { Helper } from "../../helper/helper";
 import { Command, CommandLevel } from "../interface";
