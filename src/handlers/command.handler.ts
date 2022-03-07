@@ -115,6 +115,7 @@ export class CommandHandler implements Handler<Command> {
         const imageMenu = ImageStorage.findImageById(jid, m0)
         if(imageMenu){
             this.botwa.sendImage(jid, fs.readFileSync(imageMenu.path))
+            return
         }
 
 
