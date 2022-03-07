@@ -5,6 +5,7 @@ import { BotLevel } from "../groups/interface";
 import { Command, CommandLevel } from "./interface";
 import { exec } from 'child_process'
 import fs from 'fs'
+import { Helper } from "../helper/helper";
 
 export class StickerCommand implements Command {
     botLevel: BotLevel = BotLevel.BASIC
@@ -15,8 +16,11 @@ export class StickerCommand implements Command {
 
     async run(botwa: BotWa, groupChat: GroupChat, conversation: string, quotedMessage: proto.IMessage, receivedMessage: proto.WebMessageInfo): Promise<void> {
         const jid = groupChat.jid
-        let jpegFile = './src/images/media.jpeg'
-        const webpFile = './src/images/media1.webp'
+        let jpegFile = './storage/' + Helper.getRandomString(20) + 'jpeg'
+        let webpFile = './storage/' + Helper.getRandomString(20) + 'webp'
+        if (Helper.isExist(jpegFile)) fs.unlinkSync(jpegFile)
+        if (Helper.isExist(webpFile)) fs.unlinkSync(webpFile)
+
         if (quotedMessage) {
             const m = await botwa.sock.loadMessage(jid, receivedMessage.message?.extendedTextMessage?.contextInfo?.stanzaId!!)
             jpegFile = await botwa.sock.downloadAndSaveMediaMessage(m, jpegFile, false)
