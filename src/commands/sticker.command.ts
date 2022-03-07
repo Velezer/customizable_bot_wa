@@ -16,8 +16,8 @@ export class StickerCommand implements Command {
 
     async run(botwa: BotWa, groupChat: GroupChat, conversation: string, quotedMessage: proto.IMessage, receivedMessage: proto.WebMessageInfo): Promise<void> {
         const jid = groupChat.jid
-        let jpegFile = './storage/' + Helper.getRandomString(20) + 'jpeg'
-        let webpFile = './storage/' + Helper.getRandomString(20) + 'webp'
+        let jpegFile = './storage/sticker/' + Helper.getRandomString(20) + '.jpeg'
+        let webpFile = './storage/sticker/' + Helper.getRandomString(20) + '.webp'
         if (Helper.isExist(jpegFile)) fs.unlinkSync(jpegFile)
         if (Helper.isExist(webpFile)) fs.unlinkSync(webpFile)
 
