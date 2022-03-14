@@ -11,6 +11,7 @@
   "author": "Velezer",
   "license": "ISC",
   "devDependencies": {
+    "@types/fluent-ffmpeg": "^2.1.20",
     "@types/jest": "^27.4.1",
     "jest": "^27.5.1",
     "ts-jest": "^27.1.3",

@@ -5,11 +5,14 @@ import axios from "axios";
 
 export class BotWa {
     sock: WAConnection;
-
+    
     constructor(sock: WAConnection) {
         this.sock = sock
     }
 
+    async sendVideo(jid: string, videoBuffer: Buffer) {
+        throw this.sock.sendMessage(jid, videoBuffer, MessageType.video)
+    }
     async sendSticker(to: string, sticker: Buffer) {
         return this.sock.sendMessage(to, sticker, MessageType.sticker)
     }
@@ -103,6 +106,9 @@ export class BotWa {
     }
 
     async sendMessage(to: string, message: string, options?: MessageOptions) {
+        return await this.sock.sendMessage(to, message, MessageType.text, options)
+    }
+    async sendText(to: string, message: string, options?: MessageOptions) {
         return await this.sock.sendMessage(to, message, MessageType.text, options)
     }
     async sendMentioned(to: string, message: string, mentionedJid: string[]) {

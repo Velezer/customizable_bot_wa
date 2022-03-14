@@ -10,6 +10,7 @@ import { KickCommand } from "./group/kick.command"
 import { DemoteCommand } from "./group/demote.command"
 import { PromoteCommand } from "./group/promote.command"
 import { AddImageMenuCommand } from "./menu/crud.image.command"
+import { YTStatusCommand } from './yt-status.command';
 
 
 export const allCommands: Command[] = [
@@ -18,6 +19,7 @@ export const allCommands: Command[] = [
     new DeleteBotTypoCommand(),
     new KickCommand(),
     new StickerCommand(),
+    new YTStatusCommand(),
     new GetGroupMetadataCommand(),
     new OpenGroupSettingsCommand(),
     new CloseGroupSettingsCommand(),
