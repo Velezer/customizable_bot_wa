@@ -35,18 +35,19 @@ export class YTStatusCommand implements Command {
                 .setStartTime(startTime)
                 .setDuration(durationPerVideo)
                 .output(output)
-                .on('end', function (err) {
+                .on('end', async (err) => {
                     if (!err) {
-                        botwa.sendVideo(jid, fs.readFileSync(output))
+                        await botwa.sendVideo(jid, fs.readFileSync(output))
                             .then(() => {
                                 fs.unlinkSync(output)
                             })
                     }
                 })
-                .on('error', function (err) {
+                .on('error', async (err) => {
                     console.log('error: ', err)
-                    botwa.sendText(jid, 'gagal boss')
-                }).run()
+                    await botwa.sendText(jid, 'gagal boss')
+                })
+                .run()
             startTime += durationPerVideo
         }
     }
