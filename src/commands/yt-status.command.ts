@@ -26,9 +26,30 @@ export class YTStatusCommand implements Command {
         const videoDuration = +info!.videoDetails.lengthSeconds
         const stream = YTDownloader.downloadFromInfo(info!)
 
+        const durationPerVideo = 30
+
+        try {
+            this.cutVideo(stream, videoDuration, durationPerVideo,
+                (output: string) => {
+                    botwa.sendVideo(jid, fs.readFileSync(output))
+                        .then(() => {
+                            fs.unlinkSync(output)
+                        })
+                }, (err: any) => {
+                    console.log('error: ', err)
+                    botwa.sendText(jid, 'error bos')
+                })
+        } catch (err) {
+            console.log(err)
+            botwa.sendText(jid, 'command error, harap lapor')
+        }
+
+
+    }
+
+    async cutVideo(stream: any, videoDuration: number, durationPerVideo: number, cbSuccess: Function, cbError: Function) {
         const filename = Helper.getRandomString(10)
         let startTime = 0
-        const durationPerVideo = 30
         for (let i = 0; i < videoDuration / durationPerVideo; i++) {
             const output = i + '-' + filename + '.mp4'
             ffmpeg(stream)
@@ -37,15 +58,11 @@ export class YTStatusCommand implements Command {
                 .output(output)
                 .on('end', async (err) => {
                     if (!err) {
-                        await botwa.sendVideo(jid, fs.readFileSync(output))
-                            .then(() => {
-                                fs.unlinkSync(output)
-                            })
+                        cbSuccess(output)
                     }
                 })
                 .on('error', async (err) => {
-                    console.log('error: ', err)
-                    await botwa.sendText(jid, 'gagal boss')
+                    cbError(err)
                 })
                 .run()
             startTime += durationPerVideo
