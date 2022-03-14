@@ -22,10 +22,9 @@ export class YTStatusCommand implements Command {
 
         if (!YTDownloader.validateUrl(url)) return botwa.sendText(jid, "link apaan nih? ga valid")
 
-        if (!YTDownloader.validateUrl(url)) console.log('link tidak valid')
-        const info = await YTDownloader.getInfo(url)
-        const videoDuration = +info.videoDetails.lengthSeconds
-        const stream = YTDownloader.downloadFromInfo(info)
+        const info = await YTDownloader.getInfo(url).catch(err => console.log(err))
+        const videoDuration = +info!.videoDetails.lengthSeconds
+        const stream = YTDownloader.downloadFromInfo(info!)
 
         const filename = Helper.getRandomString(10)
         let startTime = 0
