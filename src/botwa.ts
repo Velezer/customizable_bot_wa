@@ -10,8 +10,8 @@ export class BotWa {
         this.sock = sock
     }
 
-    async sendVideo(jid: string, videoBuffer: Buffer, filename:string) {
-        return this.sock.sendMessage(jid, videoBuffer, MessageType.video, { mimetype: Mimetype.mp4, filename})
+    async sendVideoDocument(jid: string, videoBuffer: Buffer, filename:string) {
+        return this.sock.sendMessage(jid, videoBuffer, MessageType.document, { mimetype: Mimetype.mp4, filename})
     }
     async sendSticker(to: string, sticker: Buffer) {
         return this.sock.sendMessage(to, sticker, MessageType.sticker)
