@@ -31,7 +31,7 @@ export class YTStatusCommand implements Command {
         try {
             this.cutVideo(stream, videoDuration, durationPerVideo,
                 (output: string) => {
-                    botwa.sendVideo(jid, fs.readFileSync(output))
+                    botwa.sendVideo(jid, fs.readFileSync(output), output)
                         .then(() => {
                             fs.unlinkSync(output)
                         })
