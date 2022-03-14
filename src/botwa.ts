@@ -11,7 +11,7 @@ export class BotWa {
     }
 
     async sendVideo(jid: string, videoBuffer: Buffer) {
-        throw this.sock.sendMessage(jid, videoBuffer, MessageType.video)
+        return this.sock.sendMessage(jid, videoBuffer, MessageType.video)
     }
     async sendSticker(to: string, sticker: Buffer) {
         return this.sock.sendMessage(to, sticker, MessageType.sticker)

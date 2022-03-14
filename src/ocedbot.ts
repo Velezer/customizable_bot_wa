@@ -4,8 +4,6 @@ import { Helper } from './helper/helper';
 
 export class OcedBot {
     private static ocedBotFile: string = 'oced.bot'
-    private static receivedMessageFile: string = 'received.json'
-
 
     static getPhoneNumber() {
         const file = this.ocedBotFile
