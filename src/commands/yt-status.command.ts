@@ -46,10 +46,10 @@ export class YTStatusCommand implements Command {
                     console.log('error: ', err)
                     botwa.sendText(jid, 'error bos')
                 })
+            setTimeout(() => {
+                fs.unlinkSync(downloadedName)
+            }, 10 * 60 * 1000);
         })
-        setTimeout(() => {
-            fs.unlinkSync(downloadedName)
-        }, 10 * 60 * 1000);
 
     }
 
