@@ -31,9 +31,7 @@ export class YTStatusCommand implements Command {
         // const stream = YTDownloader.downloadFromInfo(info!)
         const stream = YTDownloader.download(url)
         stream.pipe(fs.createWriteStream(downloadedName))
-        stream.on('progress', (chunk, totalDownload, totalSize) => {
-            botwa.sendText(jid, `${totalDownload} ${totalSize}`)
-        })
+
 
         stream.on('end', () => {
             this.cutVideo(fs.createReadStream(downloadedName), videoDuration, durationPerVideo,
