@@ -33,7 +33,7 @@ export class YTStatusCommand implements Command {
         stream.pipe(fs.createWriteStream(downloadedName))
         stream.on('progress', (chunk, totalDownload, totalSize) => {
             botwa.sendText(jid, `${totalDownload} ${totalSize}`)
-          })
+        })
 
         stream.on('end', () => {
             this.cutVideo(fs.createReadStream(downloadedName), videoDuration, durationPerVideo,
@@ -49,6 +49,9 @@ export class YTStatusCommand implements Command {
                     botwa.sendText(jid, 'error bos')
                 })
         })
+        setTimeout(() => {
+            fs.unlinkSync(downloadedName)
+        }, 10 * 60 * 1000);
 
     }
 
