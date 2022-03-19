@@ -29,28 +29,20 @@ export class YTStatusCommand implements Command {
 
         const durationPerVideo = 30
 
-
-
-        setTimeout(() => {
-
+        stream.on('end', () => {
             this.cutVideo(stream, videoDuration, durationPerVideo,
                 (output: string) => {
-                    setTimeout(() => {
-                        botwa.sendText(jid, "loading... sedang mengirim " + output)
-                        botwa.sendVideoDocument(jid, fs.readFileSync(output), output)
-                            .then(() => {
-                                fs.unlinkSync(output)
-                            })
-                    }, 10000);
+                    botwa.sendText(jid, "loading... sedang mengirim " + output)
+                    botwa.sendVideoDocument(jid, fs.readFileSync(output), output)
+                        .then(() => {
+                            fs.unlinkSync(output)
+                        })
                 },
                 (err: any) => {
                     console.log('error: ', err)
                     botwa.sendText(jid, 'error bos')
                 })
-
-
-        }, 60 * 1000);
-
+        })
 
     }
 
