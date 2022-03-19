@@ -33,8 +33,8 @@ export class YTStatusCommand implements Command {
 
         setTimeout(() => {
 
-            this.cutVideoPromise(stream, videoDuration, durationPerVideo)
-                .then(output => {
+            this.cutVideo(stream, videoDuration, durationPerVideo, 
+                (output: string)=>{
                     setTimeout(() => {
                         botwa.sendText(jid, "loading... sedang mengirim "+ output)
                         botwa.sendVideoDocument(jid, fs.readFileSync(output), output)
@@ -42,8 +42,8 @@ export class YTStatusCommand implements Command {
                                 fs.unlinkSync(output)
                             })
                     }, 10000);
-                })
-                .catch(err => {
+                }, 
+                (err: any)=>{
                     console.log('error: ', err)
                     botwa.sendText(jid, 'error bos')
                 })
@@ -54,7 +54,7 @@ export class YTStatusCommand implements Command {
 
     }
 
-    async cutVideo(stream: any, videoDuration: number, durationPerVideo: number, cbSuccess: Function, cbError: Function) {
+    async cutVideo(stream: any, videoDuration: number, durationPerVideo: number, resolve: Function, reject: Function) {
         const filename = Helper.getRandomString(10)
         let startTime = 0
         for (let i = 0; i < videoDuration / durationPerVideo; i++) {
@@ -65,11 +65,11 @@ export class YTStatusCommand implements Command {
                 .output(output)
                 .on('end', async (err) => {
                     if (!err) {
-                        cbSuccess(output)
+                        resolve(output)
                     }
                 })
                 .on('error', async (err) => {
-                    cbError(err)
+                    reject(err)
                 })
                 .run()
             startTime += durationPerVideo
