@@ -21,6 +21,7 @@ export class YTStatusCommand implements Command {
         const url = m1
 
         if (!YTDownloader.validateUrl(url)) return botwa.sendText(jid, "link apaan nih? ga valid")
+        botwa.sendText(jid, 'loading... sedang memproses video')
 
         const info = await YTDownloader.getInfo(url).catch(err => console.log(err))
         const videoDuration = +info!.videoDetails.lengthSeconds
@@ -28,7 +29,6 @@ export class YTStatusCommand implements Command {
 
         const durationPerVideo = 30
 
-        botwa.sendText(jid, 'loading... sedang memproses video')
 
 
         setTimeout(() => {
@@ -75,7 +75,7 @@ export class YTStatusCommand implements Command {
             startTime += durationPerVideo
         }
     }
-    
+
     async cutVideoPromise(stream: any, videoDuration: number, durationPerVideo: number): Promise<string> {
         return new Promise((resolve, reject) => {
             this.cutVideo(stream, videoDuration, durationPerVideo, resolve, reject)
