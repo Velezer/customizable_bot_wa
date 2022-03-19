@@ -36,7 +36,6 @@ export class YTStatusCommand implements Command {
         stream.on('end', () => {
             this.cutVideo(fs.createReadStream(downloadedName), videoDuration, durationPerVideo,
                 (output: string) => {
-                    botwa.sendText(jid, "loading... sedang mengirim " + output)
                     botwa.sendVideoDocument(jid, fs.readFileSync(output), output)
                         .then(() => {
                             fs.unlinkSync(output)
