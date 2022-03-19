@@ -1,4 +1,4 @@
-import { GroupSettingChange, MessageOptions, MessageType, proto, WAConnection, WAMediaUpload } from "@adiwajshing/baileys";
+import { GroupSettingChange, MessageOptions, MessageType, Mimetype, proto, WAConnection, WAMediaUpload } from "@adiwajshing/baileys";
 import axios from "axios";
 
 
@@ -10,6 +10,9 @@ export class BotWa {
         this.sock = sock
     }
 
+    async sendVideoDocument(jid: string, videoBuffer: Buffer, filename:string) {
+        return this.sock.sendMessage(jid, videoBuffer, MessageType.document, { mimetype: Mimetype.mp4, filename})
+    }
     async sendSticker(to: string, sticker: Buffer) {
         return this.sock.sendMessage(to, sticker, MessageType.sticker)
     }
@@ -103,6 +106,9 @@ export class BotWa {
     }
 
     async sendMessage(to: string, message: string, options?: MessageOptions) {
+        return await this.sock.sendMessage(to, message, MessageType.text, options)
+    }
+    async sendText(to: string, message: string, options?: MessageOptions) {
         return await this.sock.sendMessage(to, message, MessageType.text, options)
     }
     async sendMentioned(to: string, message: string, mentionedJid: string[]) {

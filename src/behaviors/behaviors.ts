@@ -14,7 +14,7 @@ export class WelcomeGroupParticipantAddBehavior implements Behavior {
         try {
             const ppImg = await botwa.getProfilePictureBuffer(participantJid)
 
-            const card = new Card('./src/images/OcedBot-welcome.jpg')
+            const card = new Card('./storage/group-action-cards/OcedBot-welcome.jpg')
             const cardBuffer = await card.make(ppImg)
             const preparedImageMessage = await botwa.prepareImageMessage(cardBuffer)
 
@@ -22,7 +22,7 @@ export class WelcomeGroupParticipantAddBehavior implements Behavior {
 
         } catch (err) {
             console.log(err)
-            const defaultCard = await new Card('./src/images/OcedBot-welcome-1.jpg').getBuffer()
+            const defaultCard = await new Card('./storage/group-action-cards/OcedBot-welcome-1.jpg').getBuffer()
             const preparedImageMessage = await botwa.prepareImageMessage(defaultCard)
             await botwa.sendButtonMessage(to, text, preparedImageMessage.message?.imageMessage!, ['/menu'], [participantJid])
         }
@@ -42,7 +42,7 @@ export class LeaveGroupParticipantBehavior implements Behavior {
         try {
             const ppImg = await botwa.getProfilePictureBuffer(participantJid)
 
-            const card = new Card('./src/images/OcedBot-leave.jpg')
+            const card = new Card('./storage/group-action-cards/OcedBot-leave.jpg')
             const cardBuffer = await card.make(ppImg)
             const preparedImageMessage = await botwa.prepareImageMessage(cardBuffer)
 
@@ -50,7 +50,7 @@ export class LeaveGroupParticipantBehavior implements Behavior {
 
         } catch (err) {
             console.log(err)
-            const defaultCard = await new Card('./src/images/OcedBot-leave-1.jpg').getBuffer()
+            const defaultCard = await new Card('./storage/group-action-cards/OcedBot-leave-1.jpg').getBuffer()
             const preparedImageMessage = await botwa.prepareImageMessage(defaultCard)
             await botwa.sendButtonMessage(to, text, preparedImageMessage.message?.imageMessage!, ['Yay beban berkurang!!'], [participantJid])
         }

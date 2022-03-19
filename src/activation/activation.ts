@@ -1,16 +1,10 @@
 
 import fs from 'fs'
 import { BotLevel } from '../groups/interface';
+import { Helper } from '../helper/helper';
 import { ActivationKey } from './interface';
 
-function getRandomString(length: number) {
-    var randomChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    var result = '';
-    for (var i = 0; i < length; i++) {
-        result += randomChars.charAt(Math.floor(Math.random() * randomChars.length));
-    }
-    return result;
-}
+
 
 export class Activation {
     static activationKeyFile: string = 'activation.key'
@@ -26,11 +20,11 @@ export class Activation {
     static generateActivationKey() {
         const activationKeys: ActivationKey[] = [
             {
-                key: getRandomString(15),
+                key: Helper.getRandomString(15),
                 botLevel: BotLevel.BASIC
             },
             {
-                key: getRandomString(15),
+                key: Helper.getRandomString(15),
                 botLevel: BotLevel.ELEGANT
             }
         ]

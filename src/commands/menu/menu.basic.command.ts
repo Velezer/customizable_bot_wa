@@ -5,6 +5,8 @@ import { GroupChat } from "../../groups/group.chat";
 import { Command, CommandLevel } from "../interface";
 import { AddCustomMenuCommand } from "./crud.menu.command";
 import { BotLevel } from "../../groups/interface";
+import { ImageStorage } from "../../groups/group.image.storage";
+import { AddImageMenuCommand } from "./crud.image.command";
 
 
 export class BotMenuBasicCommand implements Command {
@@ -81,6 +83,34 @@ export class GroupMenuBasicCommand implements Command {
         } else {
 
             await botwa.sendMessage(groupChat.jid, 'menu kosong silakan tambahkan menggunakan\n\n' + new AddCustomMenuCommand().example)
+
+        }
+
+
+    }
+}
+
+export class ImageMenuBasicCommand implements Command {
+    botLevel: BotLevel = BotLevel.BASIC
+    key: string = '/image';
+    description: string = 'nampilin image';
+    example: string = this.key;
+    level: CommandLevel = CommandLevel.MEMBER;
+
+    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
+        const groupImageData = ImageStorage.findByGroupJid(groupChat.jid)
+        if (groupImageData!.images.length > 0) {
+            let msg = ''
+
+            msg += '_Image_\n\n'
+            groupImageData!.images.forEach(img => {
+                msg += `${img.id}\n\n`
+            })
+            msg = msg.slice(0, -2)
+            await botwa.sendMessage(groupChat.jid, msg);
+        } else {
+
+            await botwa.sendMessage(groupChat.jid, 'image kosong silakan tambahkan menggunakan\n\n' + new AddImageMenuCommand().example)
 
         }
 

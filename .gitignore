@@ -7,6 +7,7 @@ oced.bot
 groups.json
 received.json
 *.jpeg
+example.ts
 
 # Logs
 logs

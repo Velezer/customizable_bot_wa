@@ -9,8 +9,4 @@ export class LoggerOcedBot {
         botwa.sendMessage(this.jid, message)
     }
 
-    // static _test(botwa: BotWa){
-    //     botwa.sendListMessage('120363038925650049@g.us')
-    // }
-
 }

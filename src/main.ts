@@ -1,7 +1,7 @@
 import { BotWa } from './botwa'
 import { proto, ReconnectMode, WAConnection } from '@adiwajshing/baileys'
 import { Activation } from './activation/activation'
-import { Helper } from './helper/file'
+import { Helper } from './helper/helper'
 import { BehaviorHandler } from './handlers/behavior.handler'
 import { CommandHandler } from './handlers/command.handler'
 import { LoggerOcedBot } from './logger'
