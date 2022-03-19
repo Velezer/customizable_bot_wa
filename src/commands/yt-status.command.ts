@@ -25,12 +25,18 @@ export class YTStatusCommand implements Command {
 
         const info = await YTDownloader.getInfo(url).catch(err => console.log(err))
         const videoDuration = +info!.videoDetails.lengthSeconds
-        const stream = YTDownloader.downloadFromInfo(info!)
-
         const durationPerVideo = 30
 
+        const downloadedName = Helper.getRandomString(10) + '.mp4'
+        // const stream = YTDownloader.downloadFromInfo(info!)
+        const stream = YTDownloader.download(url)
+        stream.pipe(fs.createWriteStream(downloadedName))
+        stream.on('progress', (chunk, totalDownload, totalSize) => {
+            botwa.sendText(jid, `${totalDownload} ${totalSize}`)
+          })
+
         stream.on('end', () => {
-            this.cutVideo(stream, videoDuration, durationPerVideo,
+            this.cutVideo(fs.createReadStream(downloadedName), videoDuration, durationPerVideo,
                 (output: string) => {
                     botwa.sendText(jid, "loading... sedang mengirim " + output)
                     botwa.sendVideoDocument(jid, fs.readFileSync(output), output)
