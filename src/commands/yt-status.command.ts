@@ -1,4 +1,4 @@
-import { Mimetype, proto } from "@adiwajshing/baileys";
+import { proto } from "@adiwajshing/baileys";
 import { BotWa } from "../botwa";
 import { GroupChat } from "../groups/group.chat";
 import { BotLevel } from "../groups/interface";
@@ -28,21 +28,28 @@ export class YTStatusCommand implements Command {
 
         const durationPerVideo = 30
 
-        try {
-            this.cutVideo(stream, videoDuration, durationPerVideo,
-                (output: string) => {
-                    botwa.sendVideoDocument(jid, fs.readFileSync(output), output)
-                        .then(() => {
-                            fs.unlinkSync(output)
-                        })
-                }, (err: any) => {
+        botwa.sendText(jid, 'loading... sedang memproses video')
+
+
+        setTimeout(() => {
+
+            this.cutVideoPromise(stream, videoDuration, durationPerVideo)
+                .then(output => {
+                    setTimeout(() => {
+                        botwa.sendText(jid, "loading... sedang mengirim "+ output)
+                        botwa.sendVideoDocument(jid, fs.readFileSync(output), output)
+                            .then(() => {
+                                fs.unlinkSync(output)
+                            })
+                    }, 10000);
+                })
+                .catch(err => {
                     console.log('error: ', err)
                     botwa.sendText(jid, 'error bos')
                 })
-        } catch (err) {
-            console.log(err)
-            botwa.sendText(jid, 'command error, harap lapor')
-        }
+
+
+        }, 10000);
 
 
     }
@@ -67,5 +74,11 @@ export class YTStatusCommand implements Command {
                 .run()
             startTime += durationPerVideo
         }
+    }
+    
+    async cutVideoPromise(stream: any, videoDuration: number, durationPerVideo: number): Promise<string> {
+        return new Promise((resolve, reject) => {
+            this.cutVideo(stream, videoDuration, durationPerVideo, resolve, reject)
+        })
     }
 }
