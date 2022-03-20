@@ -1,8 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from "typeorm"
 import { BotLevel } from "../../src/groups/interface"
 
-@Entity()
-export class GroupChat {
+@Entity('group_chat')
+export class GroupChatEntity {
 
     @PrimaryGeneratedColumn()
     id!: number
@@ -10,21 +10,23 @@ export class GroupChat {
     @Column({ unique: true, nullable: false })
     jid!: string
 
-    @Column()
+    @Column({ nullable: true })
     welcome!: string
 
     @Column({ type: 'enum', enum: BotLevel, default: BotLevel.BASIC })
     botLevel!: BotLevel
 
-    @Column({ array: true })
-    groupMenu!: { key: string, value: string }[]
+    @Column({
+        type: 'timestamp', 
+        default: (() => {
+            const now = new Date()
+            const add1day = new Date(now)
+            add1day.setDate(now.getDate() + 1)
+            return add1day
+        })()
+    })
+    trialExpiredAt!: boolean
 
-    @Column({ array: true })
-    imageMenu!: { key: string, fileLocation: string }[]
-
-    @Column({ default: false })
-    trial!: boolean
-
-    @Column({ type: 'datetime', default: () => 'NOW()' })
-    registeredAt!: Date
+    @Column({ type: 'timestamp', default: null })
+    sewaExpiredAt!: Date
 }
