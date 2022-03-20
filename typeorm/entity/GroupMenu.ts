@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne } from "typeorm"
 import { GroupChatEntity } from './GroupChat';
 
-enum GroupMenuType {
+export enum GroupMenuType {
     TEXT = 'text',
     IMAGE = 'image'
 }
