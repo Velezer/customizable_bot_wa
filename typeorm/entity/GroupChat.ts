@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from "typeorm"
 import { BotLevel } from "../../src/groups/interface"
+import { GroupMenuEntity } from './GroupMenu';
 
 @Entity('group_chat')
 export class GroupChatEntity {
@@ -16,16 +17,14 @@ export class GroupChatEntity {
     @Column({ type: 'enum', enum: BotLevel, default: BotLevel.BASIC })
     botLevel!: BotLevel
 
-    @Column({
-        type: 'timestamp', 
-        default: (() => {
-            const now = new Date()
-            const add1day = new Date(now)
-            add1day.setDate(now.getDate() + 1)
-            return add1day
-        })()
-    })
-    trialExpiredAt!: boolean
+    @Column({ default: false })
+    blacklist!: boolean
+
+    @OneToMany(() => GroupMenuEntity, groupMenu => groupMenu.groupChat)
+    groupMenu!: GroupMenuEntity[]
+
+    @Column({ type: 'timestamp', default: null })
+    trialExpiredAt!: Date
 
     @Column({ type: 'timestamp', default: null })
     sewaExpiredAt!: Date

@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne } from "typeorm"
+import { GroupChatEntity } from './GroupChat';
 
 enum GroupMenuType {
     TEXT = 'text',
@@ -20,8 +21,11 @@ export class GroupMenuEntity {
     @Column()
     value!: string
 
-    @Column({type: 'enum', enum: GroupMenuType })
+    @Column({ type: 'enum', enum: GroupMenuType })
     type!: GroupMenuType
 
-    
+    @ManyToOne(() => GroupChatEntity, (gc) => gc.groupMenu)
+    groupChat!: GroupChatEntity;
+
+
 }
