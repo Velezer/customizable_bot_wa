@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from "typeorm"
 import { BotLevel } from "../../src/groups/interface"
 import { GroupMenuEntity } from './GroupMenu'
-import { AwareColumn } from '../helper/awarecolumn.decorator.ts'
+import { LocalColumn } from '../helper/LocalColumn'
 
 @Entity('group_chat')
 export class GroupChatEntity {
@@ -15,7 +15,7 @@ export class GroupChatEntity {
     @Column({ nullable: true })
     welcome!: string
 
-    @AwareColumn({ type: 'enum', enum: BotLevel, default: BotLevel.BASIC })
+    @LocalColumn({ type: 'enum', enum: BotLevel, default: BotLevel.BASIC }, 'simple-enum')
     botLevel!: BotLevel
 
     @Column({ default: false })
@@ -24,9 +24,9 @@ export class GroupChatEntity {
     @OneToMany(() => GroupMenuEntity, groupMenu => groupMenu.groupChat)
     groupMenu!: GroupMenuEntity[]
 
-    @AwareColumn({ type: 'timestamp', default: null })
+    @LocalColumn({ type: 'timestamp', default: null }, 'datetime')
     trialExpiredAt!: Date
 
-    @AwareColumn({ type: 'timestamp', default: null })
+    @LocalColumn({ type: 'timestamp', default: null }, 'datetime')
     sewaExpiredAt!: Date
 }

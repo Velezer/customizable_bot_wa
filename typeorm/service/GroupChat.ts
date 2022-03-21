@@ -2,16 +2,9 @@
 import { QueryFailedError, Repository } from 'typeorm'
 import { BotLevel } from '../../src/groups/interface'
 import { GroupChatEntity } from '../entity/GroupChat'
+import { futureDateFromNow } from '../helper/futureDate'
 
-function futureDateFromNow(day: number) {
-    // const now = new Date()
-    // const futureDate = new Date(now)
-    // futureDate.setDate(now.getDate() + day)
-    // return futureDate
-    const futureDate = new Date()
-    futureDate.setDate(futureDate.getDate() + day)
-    return futureDate
-}
+
 
 export class GroupChatService {
     private repo: Repository<GroupChatEntity>
@@ -38,16 +31,7 @@ export class GroupChatService {
         })
 
 
-        try {
-            return await this.repo.save(groupChat)
-        } catch (err) {
-            if (err instanceof QueryFailedError) {
-                if (err.message.includes('duplicate')) {
-                    throw new Error(err.driverError.detail)
-                }
-            }
-            throw err
-        }
+        return await this.repo.save(groupChat)
     }
 
     async trial(jid: string) {
@@ -73,7 +57,8 @@ export class GroupChatService {
         return await this.repo.save(found)
     }
 
-    async setWelcome(jid: string, welcome:string) {
+
+    async setWelcome(jid: string, welcome: string) {
         const found = await this.findOneByJid(jid)
         found.welcome = welcome
 
@@ -81,8 +66,7 @@ export class GroupChatService {
     }
 
     async remove(jid: string) {
-        const found = await this.findOneByJid(jid)
-        return this.repo.remove(found)
+        return this.repo.delete({ jid })
     }
 
 }
