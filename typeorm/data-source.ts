@@ -1,6 +1,7 @@
 import "reflect-metadata"
 import { DataSource } from "typeorm"
-import { GroupChat } from "./entity/GroupChat"
+import { GroupChatEntity } from "./entity/GroupChat"
+import { GroupMenuEntity } from './entity/GroupMenu';
 
 export const AppDataSource = new DataSource({
     type: "postgres",
@@ -8,10 +9,10 @@ export const AppDataSource = new DataSource({
     port: 5432,
     username: "user",
     password: "password",
-    database: "botwa",
+    database: "db_bot_wa",
     synchronize: true,
     logging: false,
-    entities: [GroupChat],
+    entities: [GroupChatEntity, GroupMenuEntity],
     migrations: [],
     subscribers: [],
 })

@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, JoinTable } from "typeorm"
 import { GroupChatEntity } from './GroupChat';
+import { AwareColumn } from '../helper/awarecolumn.decorator.ts';
 
 export enum GroupMenuType {
     TEXT = 'text',
@@ -13,15 +14,12 @@ export class GroupMenuEntity {
     id!: number
 
     @Column()
-    jid!: string
-
-    @Column()
     key!: string
 
     @Column()
     value!: string
 
-    @Column({ type: 'enum', enum: GroupMenuType })
+    @AwareColumn({ type: 'enum', enum: GroupMenuType })
     type!: GroupMenuType
 
     @ManyToOne(() => GroupChatEntity, (gc) => gc.groupMenu)

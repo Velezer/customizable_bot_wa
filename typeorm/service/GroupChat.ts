@@ -1,7 +1,7 @@
 
-import { Repository } from 'typeorm';
-import { BotLevel } from '../../src/groups/interface';
-import { GroupChatEntity } from '../entity/GroupChat';
+import { QueryFailedError, Repository } from 'typeorm'
+import { BotLevel } from '../../src/groups/interface'
+import { GroupChatEntity } from '../entity/GroupChat'
 
 function futureDateFromNow(day: number) {
     // const now = new Date()
@@ -14,7 +14,7 @@ function futureDateFromNow(day: number) {
 }
 
 export class GroupChatService {
-    private repo: Repository<GroupChatEntity>;
+    private repo: Repository<GroupChatEntity>
     constructor(repo: Repository<GroupChatEntity>) {
         this.repo = repo
     }
@@ -37,10 +37,16 @@ export class GroupChatService {
             jid,
         })
 
+
         try {
-            await this.repo.save(groupChat)
+            return await this.repo.save(groupChat)
         } catch (err) {
-            console.log(err)
+            if (err instanceof QueryFailedError) {
+                if (err.message.includes('duplicate')) {
+                    throw new Error(err.driverError.detail)
+                }
+            }
+            throw err
         }
     }
 
@@ -49,11 +55,7 @@ export class GroupChatService {
         found.botLevel = BotLevel.ELEGANT
         found.trialExpiredAt = futureDateFromNow(1)
 
-        try {
-            return await this.repo.save(found)
-        } catch (err) {
-            console.log(err)
-        }
+        return await this.repo.save(found)
     }
 
     async sewa(jid: string, botLevel: BotLevel) {
@@ -61,22 +63,21 @@ export class GroupChatService {
         found.botLevel = botLevel
         found.sewaExpiredAt = futureDateFromNow(30)
 
-        try {
-            return await this.repo.save(found)
-        } catch (err) {
-            console.log(err)
-        }
+        return await this.repo.save(found)
     }
 
     async blacklist(jid: string) {
         const found = await this.findOneByJid(jid)
         found.blacklist = true
 
-        try {
-            return await this.repo.save(found)
-        } catch (err) {
-            console.log(err)
-        }
+        return await this.repo.save(found)
+    }
+
+    async setWelcome(jid: string, welcome:string) {
+        const found = await this.findOneByJid(jid)
+        found.welcome = welcome
+
+        return await this.repo.save(found)
     }
 
     async remove(jid: string) {

@@ -10,7 +10,7 @@ export class GroupMenuService {
     }
 
     async findAllMenu(jid: string): Promise<GroupMenuEntity[]> {
-        const founds = await this.repo.findBy({ jid })
+        const founds = await this.repo.findBy({ groupChat: { jid } })
         if (!founds) {
             throw new Error(`${jid} not found`)
         }
@@ -19,7 +19,7 @@ export class GroupMenuService {
     }
 
     async findOneMenu(jid: string, key: string) {
-        const found = await this.repo.findOneBy({ jid, key })
+        const found = await this.repo.findOneBy({ groupChat: { jid }, key })
         if (!found) {
             throw new Error(`${key} not found in ${jid}`)
         }
@@ -28,7 +28,7 @@ export class GroupMenuService {
 
     async createMenu(jid: string, key: string, value: string, type: GroupMenuType) {
         const groupMenu = this.repo.create({
-            jid,
+            groupChat: { jid },
             key,
             value,
             type
