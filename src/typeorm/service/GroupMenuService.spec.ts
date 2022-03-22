@@ -21,19 +21,19 @@ describe('GroupMenu with jid=jidmenu', () => {
     it('create text menu', async () => {
         const gc = await serviceGroupChat.findOneByJid(jid)
         const createdMenu = await serviceGroupMenu.createMenuText(gc!, m.key, m.value)
-        expect(createdMenu.groupChat.jid).toBe(jid)
-        expect(createdMenu.key).toBe(m.key)
-        expect(createdMenu.value).toBe(m.value)
-        expect(createdMenu.type).toBe(GroupMenuType.TEXT)
+        expect(createdMenu!.groupChat.jid).toBe(jid)
+        expect(createdMenu!.key).toBe(m.key)
+        expect(createdMenu!.value).toBe(m.value)
+        expect(createdMenu!.type).toBe(GroupMenuType.TEXT)
 
     })
     it('create image menu', async () => {
         const gc = await serviceGroupChat.findOneByJid(jid)
         const createdMenu = await serviceGroupMenu.createMenuImage(gc!, im.key, im.value)
-        expect(createdMenu.groupChat.jid).toBe(jid)
-        expect(createdMenu.key).toBe(im.key)
-        expect(createdMenu.value).toBe(im.value)
-        expect(createdMenu.type).toBe(GroupMenuType.IMAGE)
+        expect(createdMenu!.groupChat.jid).toBe(jid)
+        expect(createdMenu!.key).toBe(im.key)
+        expect(createdMenu!.value).toBe(im.value)
+        expect(createdMenu!.type).toBe(GroupMenuType.IMAGE)
 
     })
     it('foundOne menu', async () => {
