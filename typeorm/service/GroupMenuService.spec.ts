@@ -1,17 +1,18 @@
 import { GroupMenuType } from "../entity/GroupMenuEntity"
-import { TestHelper } from './../test/index';
+import { TestDatabase } from './../test/index';
 
-const { serviceGroupMenu, serviceGroupChat } = TestHelper.getServices()
+const testDatabase = new TestDatabase()
+const { serviceGroupMenu, serviceGroupChat } = testDatabase.getServices()
 const jid = 'jidmenu'
 
 beforeAll(async () => {
-    await TestHelper.setup()
+    await testDatabase.setup()
     await serviceGroupChat.create(jid)
 })
 
 afterAll(async () => {
     await serviceGroupChat.remove(jid)
-    await TestHelper.down()
+    await testDatabase.down()
 })
 
 describe('GroupMenu with jid=jidmenu', () => {

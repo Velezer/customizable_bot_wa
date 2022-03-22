@@ -1,16 +1,17 @@
 import { BotLevel } from "../../src/groups/interface"
 import { futureDateFromNow } from '../helper/futureDate';
-import { TestHelper } from "../test"
+import { TestDatabase } from "../test"
 
-const { serviceGroupMenu, serviceGroupChat } = TestHelper.getServices()
+const testDatabase = new TestDatabase()
+const { serviceGroupMenu, serviceGroupChat } = testDatabase.getServices()
 const service = serviceGroupChat
 
 beforeAll(async () => {
-    await TestHelper.setup()
+    await testDatabase.setup()
 })
 
 afterAll(async () => {
-    await TestHelper.down()
+    await testDatabase.down()
 })
 
 describe('GroupChat with jid=jid', () => {
