@@ -10,7 +10,7 @@ beforeAll(async () => {
 })
 
 afterAll(async () => {
-    await TestHelper.down
+    await TestHelper.down()
 })
 
 describe('GroupChat with jid=jid', () => {
