@@ -1,9 +1,9 @@
 import "reflect-metadata"
 import { DataSource, Repository } from "typeorm"
-import { GroupChatEntity } from "../entity/GroupChatEntity"
-import { GroupMenuEntity } from "../entity/GroupMenuEntity"
-import { GroupChatService } from "../service/GroupChatService"
-import { GroupMenuService } from "../service/GroupMenuService"
+import { GroupChatEntity } from "./entity/GroupChatEntity"
+import { GroupMenuEntity } from "./entity/GroupMenuEntity"
+import { GroupChatService } from "./service/GroupChatService"
+import { GroupMenuService } from "./service/GroupMenuService"
 
 
 export class AppDatabase {

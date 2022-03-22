@@ -1,4 +1,4 @@
-import { BotLevel } from "../../src/groups/interface"
+import { BotLevel } from "../../groups/interface"
 import { futureDateFromNow } from '../helper/futureDate';
 import { TestDatabase } from "../test"
 
@@ -69,28 +69,14 @@ describe('GroupChat with jid=jid', () => {
         expect(res.jid).toBe(jid)
         expect(res.blacklist).toBe(true)
     })
-    it('error blacklist GroupChat', async () => {
-        try {
-            const res = await service.findOneByJid(jid)
-        } catch (err) {
-            if (err instanceof Error) {
-                expect(err.message).toContain('blacklist')
-            }
-        }
-    })
 
     it('remove GroupChat', async () => {
         const res = await service.remove(jid)
         expect(res.affected).toBe(1)
     })
     it('error not found GroupChat', async () => {
-        try {
-            const res = await service.findOneByJid(jid)
-        } catch (err) {
-            if (err instanceof Error) {
-                expect(err.message).toContain('not found')
-            }
-        }
+        const found = await service.findOneByJid(jid)
+        expect(found).toBeNull
     })
 
 

@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from "typeorm"
-import { BotLevel } from "../../src/groups/interface"
+import { BotLevel } from "../../groups/interface"
 import { GroupMenuEntity } from './GroupMenuEntity'
 import { LocalColumn } from './decorator/LocalColumn'
 

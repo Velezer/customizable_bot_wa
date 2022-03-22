@@ -1,12 +1,8 @@
 import { Activation } from "../activation/activation";
-import { BotWa } from "../botwa";
-import { GroupChat } from "../groups/group.chat";
-import { GroupManager } from "../groups/group.manager";
 import { BotLevel } from "../groups/interface";
 import { LoggerOcedBot } from "../logger";
 import { OcedBot } from "../ocedbot";
-import { Command, CommandLevel } from "./interface";
-
+import { Command, CommandLevel, RunArgs } from "./interface";
 
 
 export class RegisterGroupCommand implements Command {
@@ -16,7 +12,8 @@ export class RegisterGroupCommand implements Command {
     description: string = 'sewa bot 30 hari';
     level: CommandLevel = CommandLevel.ADMIN;
 
-    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
+    async run(args: RunArgs): Promise<void> {
+        const { conversation, groupChat, botwa, services } = args
         const m1 = conversation.slice(this.key.length + 1)
         const jid = groupChat.jid
         const groupSubject = await botwa.getGroupSubject(groupChat.jid)
@@ -31,23 +28,20 @@ export class RegisterGroupCommand implements Command {
 
         if (activationKey) {
             botwa.sendMessage(jid, 'sedang mengaktivasi...')
-            let isRegistered = false
-            try {
-                groupChat.botLevel = activationKey.botLevel
-                isRegistered = GroupManager.register(groupChat, false)
-            } catch (err) {
-                console.error(err)
-                botwa.sendMessage(jid, 'aktivasi gagal, mohon hubungi \nwa.me/' + OcedBot.getPhoneNumber())
-                LoggerOcedBot.log(botwa, 'aktivasi gagal dengan key ' + activationKey + '\n\n' + groupSubject)
-                return
-            }
 
-            if (isRegistered) {
-                botwa.sendMessage(jid, 'aktivasi sukses bot ' + groupChat.botLevel)
+            services.serviceGroupChat.sewa(groupChat.jid, activationKey.botLevel)
+                .then(() => {
+                    botwa.sendMessage(jid, 'aktivasi sukses bot ' + groupChat.botLevel)
+                    LoggerOcedBot.log(botwa, 'aktivasi sukses dengan key \n\n' + JSON.stringify(activationKey) + '\n\n' + groupSubject + '\n\n' + jid)
+                    Activation.generateActivationKey()
+                })
+                .catch(err => {
+                    console.error(err)
+                    botwa.sendMessage(jid, 'aktivasi gagal, mohon hubungi \nwa.me/' + OcedBot.getPhoneNumber())
+                    LoggerOcedBot.log(botwa, 'aktivasi gagal dengan key ' + activationKey + '\n\n' + groupSubject)
 
-                LoggerOcedBot.log(botwa, 'aktivasi sukses dengan key \n\n' + JSON.stringify(activationKey) + '\n\n' + groupSubject + '\n\n' + jid)
-                Activation.generateActivationKey()
-            }
+                })
+
         } else {
             botwa.sendMessage(jid, 'aktivasi gagal, mohon periksa key-aktivasi anda')
             LoggerOcedBot.log(botwa, 'upaya aktivasi gagal, diperkirakan ada kesalahan key' + '\n\n' + groupSubject)
@@ -63,29 +57,25 @@ export class TrialCommand implements Command {
     description: string = 'trial 1 hari';
     level: CommandLevel = CommandLevel.ADMIN;
 
-    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
+    async run(args: RunArgs): Promise<void> {
+        const { botwa, groupChat, services } = args
         const jid = groupChat.jid
-
 
         const groupSubject = await botwa.getGroupSubject(groupChat.jid)
 
         botwa.sendMessage(jid, 'sedang mengaktivasi trial...')
-        let isRegistered = false
-        try {
-            groupChat.botLevel = BotLevel.ELEGANT
-            isRegistered = GroupManager.register(groupChat, true);
-        } catch (err) {
-            console.error(err)
-            botwa.sendMessage(jid, 'aktivasi trial gagal, mohon hubungi \nwa.me/' + OcedBot.getPhoneNumber())
-            LoggerOcedBot.log(botwa, 'aktivasi trial gagal ' + '\n\n' + groupSubject)
-            return
-        }
 
-        if (isRegistered) {
-            botwa.sendMessage(jid, 'aktivasi trial sukses bot ' + groupChat.botLevel)
+        services.serviceGroupChat.trial(jid)
+            .then(() => {
+                botwa.sendMessage(jid, 'aktivasi trial sukses bot ' + groupChat.botLevel)
+                LoggerOcedBot.log(botwa, 'aktivasi trial sukses' + '\n\n' + groupSubject + '\n\n' + jid)
+            })
+            .catch(err => {
+                console.error(err)
+                botwa.sendMessage(jid, 'aktivasi trial gagal, mohon hubungi \nwa.me/' + OcedBot.getPhoneNumber())
+                LoggerOcedBot.log(botwa, 'aktivasi trial gagal ' + '\n\n' + groupSubject)
 
-            LoggerOcedBot.log(botwa, 'aktivasi trial sukses' + '\n\n' + groupSubject + '\n\n' + jid)
-        }
+            })
 
     }
 }
@@ -97,11 +87,13 @@ export class UnregCommand implements Command {
     description: string = 'unreg group';
     level: CommandLevel = CommandLevel.OCEDBOT;
 
-    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
+    async run(args: RunArgs): Promise<void> {
+        const { conversation, services, botwa } = args
         const m1 = conversation.slice(this.key.length + 1)
         const targetJid = m1
 
-        if (GroupManager.remove(targetJid)) {
+        const res = await services.serviceGroupChat.remove(targetJid)
+        if (res.affected! > 0) {
             LoggerOcedBot.log(botwa, 'unreg ' + targetJid)
         } else {
             LoggerOcedBot.log(botwa, 'unreg gagal')

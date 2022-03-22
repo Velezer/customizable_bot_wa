@@ -1,8 +1,5 @@
-import { Mimetype, proto } from "@adiwajshing/baileys";
-import { BotWa } from "../botwa";
-import { GroupChat } from "../groups/group.chat";
 import { BotLevel } from "../groups/interface";
-import { Command, CommandLevel } from "./interface";
+import { Command, CommandLevel, RunArgs } from "./interface";
 import { exec } from 'child_process'
 import fs from 'fs'
 import { Helper } from "../helper/helper";
@@ -14,7 +11,8 @@ export class StickerCommand implements Command {
     description: string = 'membuat sticker';
     level: CommandLevel = CommandLevel.MEMBER;
 
-    async run(botwa: BotWa, groupChat: GroupChat, conversation: string, quotedMessage: proto.IMessage, receivedMessage: proto.WebMessageInfo): Promise<void> {
+    async run(args: RunArgs): Promise<void> {
+        const { botwa, groupChat, services, quotedMessage, receivedMessage } = args
         const jid = groupChat.jid
         let jpegFile = './storage/sticker/' + Helper.getRandomString(20) + '.jpeg'
         let webpFile = './storage/sticker/' + Helper.getRandomString(20) + '.webp'
@@ -22,9 +20,9 @@ export class StickerCommand implements Command {
         if (Helper.isExist(webpFile)) fs.unlinkSync(webpFile)
 
         if (quotedMessage) {
-            const m = await botwa.sock.loadMessage(jid, receivedMessage.message?.extendedTextMessage?.contextInfo?.stanzaId!!)
+            const m = await botwa.sock.loadMessage(jid, receivedMessage?.message?.extendedTextMessage?.contextInfo?.stanzaId!!)
             jpegFile = await botwa.sock.downloadAndSaveMediaMessage(m, jpegFile, false)
-        } else if (receivedMessage.message?.imageMessage) {
+        } else if (receivedMessage?.message?.imageMessage) {
             jpegFile = await botwa.sock.downloadAndSaveMediaMessage(receivedMessage, jpegFile, false)
         }
 

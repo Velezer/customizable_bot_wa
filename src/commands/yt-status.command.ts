@@ -1,8 +1,5 @@
-import { proto } from "@adiwajshing/baileys";
-import { BotWa } from "../botwa";
-import { GroupChat } from "../groups/group.chat";
 import { BotLevel } from "../groups/interface";
-import { Command, CommandLevel } from "./interface";
+import { Command, CommandLevel, RunArgs } from "./interface";
 import fs from 'fs'
 import { Helper } from "../helper/helper";
 import { YTDownloader } from "../video/ytdownloader";
@@ -15,7 +12,8 @@ export class YTStatusCommand implements Command {
     description: string = 'bikin video status dari youtube';
     level: CommandLevel = CommandLevel.MEMBER;
 
-    async run(botwa: BotWa, groupChat: GroupChat, conversation: string, quotedMessage: proto.IMessage, receivedMessage: proto.WebMessageInfo) {
+    async run(args: RunArgs) {
+        const { botwa, groupChat, services, quotedMessage, conversation } = args
         const m1 = conversation.slice(this.key.length + 1)
         const jid = groupChat.jid
         const url = m1
@@ -75,9 +73,9 @@ export class YTStatusCommand implements Command {
         }
     }
 
-    async cutVideoPromise(stream: any, videoDuration: number, durationPerVideo: number): Promise<string> {
-        return new Promise((resolve, reject) => {
-            this.cutVideo(stream, videoDuration, durationPerVideo, resolve, reject)
-        })
-    }
+    // async cutVideoPromise(stream: any, videoDuration: number, durationPerVideo: number): Promise<string> {
+    //     return new Promise((resolve, reject) => {
+    //         this.cutVideo(stream, videoDuration, durationPerVideo, resolve, reject)
+    //     })
+    // }
 }

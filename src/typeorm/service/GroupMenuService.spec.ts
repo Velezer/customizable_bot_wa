@@ -1,5 +1,5 @@
 import { GroupMenuType } from "../entity/GroupMenuEntity"
-import { TestDatabase } from './../test/index';
+import { TestDatabase } from '../test/index';
 
 const testDatabase = new TestDatabase()
 const { serviceGroupMenu, serviceGroupChat } = testDatabase.getServices()
@@ -20,7 +20,7 @@ describe('GroupMenu with jid=jidmenu', () => {
     const im = { key: 'imgkey', value: 'imglocation' }
     it('create text menu', async () => {
         const gc = await serviceGroupChat.findOneByJid(jid)
-        const createdMenu = await serviceGroupMenu.createMenuText(gc, m.key, m.value)
+        const createdMenu = await serviceGroupMenu.createMenuText(gc!, m.key, m.value)
         expect(createdMenu.groupChat.jid).toBe(jid)
         expect(createdMenu.key).toBe(m.key)
         expect(createdMenu.value).toBe(m.value)
@@ -29,7 +29,7 @@ describe('GroupMenu with jid=jidmenu', () => {
     })
     it('create image menu', async () => {
         const gc = await serviceGroupChat.findOneByJid(jid)
-        const createdMenu = await serviceGroupMenu.createMenuImage(gc, im.key, im.value)
+        const createdMenu = await serviceGroupMenu.createMenuImage(gc!, im.key, im.value)
         expect(createdMenu.groupChat.jid).toBe(jid)
         expect(createdMenu.key).toBe(im.key)
         expect(createdMenu.value).toBe(im.value)
@@ -38,9 +38,9 @@ describe('GroupMenu with jid=jidmenu', () => {
     })
     it('foundOne menu', async () => {
         const foundMenu = await serviceGroupMenu.findOneMenu(jid, m.key)
-        expect(foundMenu.key).toBe(m.key)
-        expect(foundMenu.value).toBe(m.value)
-        expect(foundMenu.type).toBe(GroupMenuType.TEXT)
+        expect(foundMenu!.key).toBe(m.key)
+        expect(foundMenu!.value).toBe(m.value)
+        expect(foundMenu!.type).toBe(GroupMenuType.TEXT)
 
         // expect(foundMenu.groupChat.jid).toBe(jid)
     })
@@ -52,28 +52,23 @@ describe('GroupMenu with jid=jidmenu', () => {
     it('update menu', async () => {
         m.value = 'value updated'
         const updatedMenu = await serviceGroupMenu.updateMenuValue(jid, m.key, m.value)
-        expect(updatedMenu.value).toBe(m.value)
+        expect(updatedMenu!.value).toBe(m.value)
 
     })
     it('findOne menu', async () => {
         const found = await serviceGroupMenu.findOneMenu(jid, m.key)
-        expect(found.key).toBe(m.key)
-        expect(found.value).toBe(m.value)
+        expect(found!.key).toBe(m.key)
+        expect(found!.value).toBe(m.value)
 
     })
     it('delete one menu', async () => {
         const found = await serviceGroupMenu.removeOneMenu(jid, m.key)
-        expect(found.key).toBe(m.key)
+        expect(found!.key).toBe(m.key)
 
     })
     it('findOne deleted menu key', async () => {
-        try {
-            const found = await serviceGroupMenu.findOneMenu(jid, m.key)
-        } catch (err) {
-            if (err instanceof Error) {
-                expect(err.message).toContain('not found')
-            }
-        }
+        const found = await serviceGroupMenu.findOneMenu(jid, m.key)
+        expect(found).toBe(null)
 
     })
     it('delete all menu', async () => {

@@ -1,10 +1,6 @@
-import { proto } from "@adiwajshing/baileys";
-import { BotWa } from "../../botwa";
-import { GroupChat } from "../../groups/group.chat";
-import { ImageStorage } from "../../groups/group.image.storage";
 import { BotLevel, ImageEntity } from "../../groups/interface";
 import { Helper } from "../../helper/helper";
-import { Command, CommandLevel } from "../interface";
+import { Command, CommandLevel, RunArgs } from "../interface";
 
 
 export class AddImageMenuCommand implements Command {
@@ -14,9 +10,10 @@ export class AddImageMenuCommand implements Command {
     description: string = 'menambahkan gambar';
     level: CommandLevel = CommandLevel.ADMIN;
 
-    async run(botwa: BotWa, groupChat: GroupChat, conversation: string, quotedMessage: proto.IMessage, receivedMessage: proto.WebMessageInfo): Promise<void> {
+    async run(args: RunArgs): Promise<void> {
+        const { quotedMessage, receivedMessage, conversation, botwa, groupChat,services } = args
         const jid = groupChat.jid
-        if (!receivedMessage.message?.imageMessage) {
+        if (!receivedMessage?.message?.imageMessage) {
             botwa.sendMessage(jid, 'kasi gambarnya')
             return
         }
@@ -34,8 +31,7 @@ export class AddImageMenuCommand implements Command {
 
 
         const path = await botwa.sock.downloadAndSaveMediaMessage(receivedMessage, Helper.getRandomString(20))
-        const imageEntity: ImageEntity = { id: m1, path }
-        ImageStorage.save(jid, imageEntity)
+        services.serviceGroupMenu.createMenuImage(groupChat, m1, path)
         botwa.sendMessage(jid, 'gambar ditambahkan')
 
 

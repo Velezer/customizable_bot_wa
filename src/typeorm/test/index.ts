@@ -1,8 +1,8 @@
 import "reflect-metadata"
 import { DataSource, Repository } from "typeorm"
 import { GroupChatEntity } from "../entity/GroupChatEntity"
-import { AppDatabase } from './../db/index';
-import { DataSources } from './../db/data-source';
+import { AppDatabase } from '../index';
+import { DataSources } from '../data-source';
 
 export class TestDatabase extends AppDatabase {
     constructor() {

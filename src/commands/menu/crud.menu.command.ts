@@ -1,8 +1,5 @@
-import { BotWa } from "../../botwa";
-import { GroupChat } from "../../groups/group.chat";
-import { GroupManager } from "../../groups/group.manager";
 import { BotLevel } from "../../groups/interface";
-import { Command, CommandLevel } from "../interface";
+import { Command, CommandLevel, RunArgs } from "../interface";
 
 
 
@@ -14,7 +11,8 @@ export class AddCustomMenuCommand implements Command {
     description: string = 'menambahkan menu';
     level: CommandLevel = CommandLevel.ADMIN;
 
-    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
+    async run(args: RunArgs): Promise<void> {
+        const { quotedMessage, receivedMessage, conversation, botwa, groupChat, services } = args
         const m12 = conversation.slice(this.key.length + 1)
         let m1 = m12.split(' ')[0]
         const m2 = m12.slice(m1.length + 1)
@@ -30,8 +28,8 @@ export class AddCustomMenuCommand implements Command {
             m1 = '/' + m1
         }
 
-        groupChat.addGroupMenu(m1, m2)
-        GroupManager.update(groupChat)
+        services.serviceGroupMenu.createMenuText(groupChat, m1, m2)
+        
         botwa.sendMessage(jid, 'menu ditambahkan')
 
 
@@ -46,8 +44,9 @@ export class UpdateCustomMenuCommand implements Command {
     description: string = 'mengupdate menu';
     level: CommandLevel = CommandLevel.ADMIN;
 
-    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
-        const m12 = conversation.slice(this.key.length + 1)
+    async run(args: RunArgs): Promise<void> {
+        const { quotedMessage, receivedMessage, conversation, botwa, groupChat, services } = args
+      const m12 = conversation.slice(this.key.length + 1)
         let m1 = m12.split(' ')[0]
         const m2 = m12.slice(m1.length + 1)
 
@@ -62,8 +61,8 @@ export class UpdateCustomMenuCommand implements Command {
             m1 = '/' + m1
         }
 
-        groupChat.updateGroupMenu(m1, m2)
-        GroupManager.update(groupChat)
+        services.serviceGroupMenu.updateMenuValue(groupChat.jid, m1, m2)
+        
         botwa.sendMessage(jid, 'menu diupdate')
 
 
@@ -76,7 +75,9 @@ export class RemoveCustomMenuCommand implements Command {
     description: string = 'menghapus menu';
     level: CommandLevel = CommandLevel.ADMIN;
 
-    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
+    async run(args: RunArgs): Promise<void> {
+        const { quotedMessage, receivedMessage, conversation, botwa, groupChat, services } = args
+ 
         let m1 = conversation.slice(this.key.length + 1)
 
         const jid = groupChat.jid
@@ -87,12 +88,11 @@ export class RemoveCustomMenuCommand implements Command {
         }
 
         if (!m1.startsWith('/')) {
-            groupChat.removeGroupMenu(m1)
             m1 = '/' + m1
         }
 
-        groupChat.removeGroupMenu(m1)
-        GroupManager.update(groupChat)
+        services.serviceGroupMenu.removeOneMenu(groupChat.jid, m1)
+
         botwa.sendMessage(jid, 'menu dihapus')
 
 

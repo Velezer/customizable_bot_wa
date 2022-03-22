@@ -2,8 +2,8 @@ import { CekCommand } from "./cek.command"
 import { TagAllCommand, GetGroupMetadataCommand, OpenGroupSettingsCommand, CloseGroupSettingsCommand, OpenGroupChatCommand, CloseGroupChatCommand} from "./commands"
 import { AddCustomMenuCommand, RemoveCustomMenuCommand, UpdateCustomMenuCommand } from "./menu/crud.menu.command"
 import { Command } from "./interface"
-import { BotMenuBasicCommand, GroupMenuBasicCommand, ImageMenuBasicCommand } from "./menu/menu.basic.command"
-import { GroupMenuElegantCommand, ImageMenuElegantCommand } from "./menu/menu.elegant.command"
+import { BotMenuBasicCommand, GroupMenuBasicCommand } from "./menu/menu.basic.command"
+import { GroupMenuElegantCommand } from "./menu/menu.elegant.command"
 import { StickerCommand } from "./sticker.command"
 import { DeleteBotTypoCommand } from "./delete.command"
 import { KickCommand } from "./group/kick.command"
@@ -33,8 +33,6 @@ export const allCommands: Command[] = [
     new GroupMenuElegantCommand(),
     new GroupMenuBasicCommand(),
     new AddImageMenuCommand(),
-    new ImageMenuElegantCommand(),
-    new ImageMenuBasicCommand(),
 ]
 
 allCommands.push(new BotMenuBasicCommand(allCommands))

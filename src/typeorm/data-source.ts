@@ -1,6 +1,6 @@
 import { DataSource } from "typeorm";
-import { GroupChatEntity } from "../entity/GroupChatEntity";
-import { GroupMenuEntity } from "../entity/GroupMenuEntity";
+import { GroupChatEntity } from "./entity/GroupChatEntity";
+import { GroupMenuEntity } from "./entity/GroupMenuEntity";
 
 export const DataSources = {
     betterSqlite3: new DataSource({

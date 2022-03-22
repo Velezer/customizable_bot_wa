@@ -6,10 +6,15 @@ import { BehaviorHandler } from './handlers/behavior.handler'
 import { CommandHandler } from './handlers/command.handler'
 import { LoggerOcedBot } from './logger'
 import { CommandLevel } from './commands/interface'
+import { AppDatabase } from './typeorm'
+import { DataSources } from './typeorm/data-source'
 
 
 
 async function main() {
+    const db = new AppDatabase(DataSources.betterSqlite3)
+    db.setup()
+    const services = db.getServices()
     const sock: WAConnection = new WAConnection()
     sock.logger.level = 'debug' //''debug', 'fatal', 'error',  'trace'
     sock.version = [2, 2143, 3]
@@ -78,7 +83,7 @@ async function main() {
 
         if (!conversation) return
 
-        const commander = new CommandHandler(botwa)
+        const commander = new CommandHandler(botwa, services)
         if (! await commander.isSentByGroupAdmin(receivedMessage, participants)) {
             await commander.run(jid, conversation, CommandLevel.MEMBER, quotedMessage!, receivedMessage).catch(err => console.error(err))
             return
