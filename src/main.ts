@@ -1,5 +1,6 @@
+require('dotenv').config()
 import { BotWa } from './botwa'
-import { proto, ReconnectMode, WAConnection } from '@adiwajshing/baileys'
+import { ReconnectMode, WAConnection } from '@adiwajshing/baileys'
 import { Activation } from './activation/activation'
 import { Helper } from './helper/helper'
 import { BehaviorHandler } from './handlers/behavior.handler'
