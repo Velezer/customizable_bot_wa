@@ -1,8 +1,8 @@
 import { Repository } from "typeorm"
 import { BotLevel } from "../src/groups/interface"
 import { AppDataSource } from "./data-source"
-import { GroupChatEntity } from "./entity/GroupChat"
-import { GroupChatService } from './service/GroupChat';
+import { GroupChatEntity } from "./entity/GroupChatEntity"
+import { GroupChatService } from './service/GroupChatService';
 
 AppDataSource.initialize().then(async () => {
     const repo = new Repository(GroupChatEntity, AppDataSource.manager)

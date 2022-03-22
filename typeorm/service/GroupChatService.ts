@@ -1,8 +1,8 @@
 
 import { QueryFailedError, Repository } from 'typeorm'
 import { BotLevel } from '../../src/groups/interface'
-import { GroupChatEntity } from '../entity/GroupChat'
-import { GroupMenuEntity, GroupMenuType } from '../entity/GroupMenu'
+import { GroupChatEntity } from '../entity/GroupChatEntity'
+import { GroupMenuEntity, GroupMenuType } from '../entity/GroupMenuEntity'
 import { futureDateFromNow } from '../helper/futureDate'
 
 

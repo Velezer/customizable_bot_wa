@@ -1,31 +1,16 @@
-import "reflect-metadata"
-import { DataSource, Repository } from "typeorm"
 import { BotLevel } from "../../src/groups/interface"
-import { GroupChatEntity } from "../entity/GroupChat"
-import { GroupMenuEntity } from "../entity/GroupMenu"
-import { GroupChatService } from "./GroupChat"
-import { futureDateFromNow } from './../helper/futureDate';
+import { futureDateFromNow } from '../helper/futureDate';
+import { TestHelper } from "../test"
 
-process.env.NODE_ENV = 'test'
-const dataSource = new DataSource({
-    type: 'better-sqlite3',
-    database: ":memory:",
-    dropSchema: true,
-    synchronize: true,
-    logging: false,
-    entities: [GroupChatEntity, GroupMenuEntity],
-    migrations: [],
-    subscribers: [],
-})
-const repo = new Repository(GroupChatEntity, dataSource.manager)
-const service = new GroupChatService(repo)
+const { serviceGroupMenu, serviceGroupChat } = TestHelper.getServices()
+const service = serviceGroupChat
 
 beforeAll(async () => {
-    await dataSource.initialize().catch(err => console.log(err))
+    await TestHelper.setup()
 })
 
 afterAll(async () => {
-    await dataSource.destroy()
+    await TestHelper.down
 })
 
 describe('GroupChat with jid=jid', () => {
@@ -92,7 +77,7 @@ describe('GroupChat with jid=jid', () => {
             }
         }
     })
-    
+
     it('remove GroupChat', async () => {
         const res = await service.remove(jid)
         expect(res.affected).toBe(1)

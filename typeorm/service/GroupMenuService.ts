@@ -1,7 +1,7 @@
 
 import { Repository } from 'typeorm';
-import { GroupMenuEntity, GroupMenuType } from '../entity/GroupMenu';
-import { GroupChatEntity } from './../entity/GroupChat';
+import { GroupMenuEntity, GroupMenuType } from '../entity/GroupMenuEntity';
+import { GroupChatEntity } from '../entity/GroupChatEntity';
 
 
 export class GroupMenuService {

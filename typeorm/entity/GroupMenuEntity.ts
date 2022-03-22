@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, JoinTable } from "typeorm"
-import { GroupChatEntity } from './GroupChat';
-import { LocalColumn } from '../helper/LocalColumn';
+import { GroupChatEntity } from './GroupChatEntity';
+import { LocalColumn } from './decorator/LocalColumn';
 
 export enum GroupMenuType {
     TEXT = 'text',

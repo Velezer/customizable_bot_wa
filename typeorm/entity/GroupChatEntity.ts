@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from "typeorm"
 import { BotLevel } from "../../src/groups/interface"
-import { GroupMenuEntity } from './GroupMenu'
-import { LocalColumn } from '../helper/LocalColumn'
+import { GroupMenuEntity } from './GroupMenuEntity'
+import { LocalColumn } from './decorator/LocalColumn'
 
 @Entity('group_chat')
 export class GroupChatEntity {

@@ -1,35 +1,17 @@
-import "reflect-metadata"
-import { DataSource, Repository } from "typeorm"
-import { GroupChatEntity } from "../entity/GroupChat"
-import { GroupMenuEntity, GroupMenuType } from "../entity/GroupMenu"
-import { GroupMenuService } from './GroupMenu';
-import { GroupChatService } from './GroupChat';
+import { GroupMenuType } from "../entity/GroupMenuEntity"
+import { TestHelper } from './../test/index';
 
-process.env.NODE_ENV = 'test'
-const dataSource = new DataSource({
-    type: 'better-sqlite3',
-    database: ":memory:",
-    dropSchema: true,
-    synchronize: true,
-    logging: false,
-    entities: [GroupChatEntity, GroupMenuEntity],
-    migrations: [],
-    subscribers: [],
-})
-const repoGroupMenu = new Repository(GroupMenuEntity, dataSource.manager)
-const serviceGroupMenu = new GroupMenuService(repoGroupMenu)
-const repoGroupChat = new Repository(GroupChatEntity, dataSource.manager)
-const serviceGroupChat = new GroupChatService(repoGroupChat)
+const { serviceGroupMenu, serviceGroupChat } = TestHelper.getServices()
 const jid = 'jidmenu'
 
 beforeAll(async () => {
-    await dataSource.initialize().catch(err => console.log(err))
+    await TestHelper.setup()
     await serviceGroupChat.create(jid)
 })
 
 afterAll(async () => {
     await serviceGroupChat.remove(jid)
-    await dataSource.destroy()
+    await TestHelper.down()
 })
 
 describe('GroupMenu with jid=jidmenu', () => {
