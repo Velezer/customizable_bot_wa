@@ -1,6 +1,7 @@
 
 import { Repository } from 'typeorm';
 import { GroupMenuEntity, GroupMenuType } from '../entity/GroupMenu';
+import { GroupChatEntity } from './../entity/GroupChat';
 
 
 export class GroupMenuService {
@@ -11,10 +12,6 @@ export class GroupMenuService {
 
     async findAllMenu(jid: string): Promise<GroupMenuEntity[]> {
         const founds = await this.repo.findBy({ groupChat: { jid } })
-        if (!founds) {
-            throw new Error(`${jid} not found`)
-        }
-
         return founds
     }
 
@@ -26,29 +23,27 @@ export class GroupMenuService {
         return found
     }
 
-    async createMenu(jid: string, key: string, value: string, type: GroupMenuType) {
+    async createMenu(groupChat: GroupChatEntity, key: string, value: string, type: GroupMenuType) {
         const groupMenu = this.repo.create({
-            groupChat: { jid },
+            groupChat,
             key,
             value,
             type
         })
 
-        try {
-            await this.repo.save(groupMenu)
-        } catch (err) {
-            console.log(err)
-        }
+        return await this.repo.save(groupMenu)
+    }
+    async createMenuText(groupChat: GroupChatEntity, key: string, value: string) {
+        return this.createMenu(groupChat, key, value, GroupMenuType.TEXT)
+    }
+    async createMenuImage(groupChat: GroupChatEntity, key: string, value: string) {
+        return this.createMenu(groupChat, key, value, GroupMenuType.IMAGE)
     }
 
-    async updateMenu(jid: string, key: string, value: string) {
+    async updateMenuValue(jid: string, key: string, value: string) {
         const found = await this.findOneMenu(jid, key)
         found.value = value
-        try {
-            await this.repo.save(found)
-        } catch (err) {
-            console.log(err)
-        }
+        return await this.repo.save(found)
     }
 
     async removeAllMenu(jid: string) {

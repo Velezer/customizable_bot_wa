@@ -2,6 +2,7 @@
 import { QueryFailedError, Repository } from 'typeorm'
 import { BotLevel } from '../../src/groups/interface'
 import { GroupChatEntity } from '../entity/GroupChat'
+import { GroupMenuEntity, GroupMenuType } from '../entity/GroupMenu'
 import { futureDateFromNow } from '../helper/futureDate'
 
 

@@ -27,6 +27,7 @@
       "@adiwajshing/baileys": "^3.5.3",
       "axios": "^0.26.0",
       "class-transformer": "^0.5.1",
+      "dotenv": "^16.0.0",
       "fluent-ffmpeg": "^2.1.2",
       "jimp": "^0.16.1",
       "pg": "^8.4.0",

@@ -15,7 +15,10 @@ export class GroupChatEntity {
     @Column({ nullable: true })
     welcome!: string
 
-    @LocalColumn({ type: 'enum', enum: BotLevel, default: BotLevel.BASIC }, 'simple-enum')
+    @LocalColumn(
+        { type: 'enum', enum: BotLevel, default: BotLevel.BASIC },
+        { type: 'simple-enum' }
+    )
     botLevel!: BotLevel
 
     @Column({ default: false })
@@ -24,9 +27,15 @@ export class GroupChatEntity {
     @OneToMany(() => GroupMenuEntity, groupMenu => groupMenu.groupChat)
     groupMenu!: GroupMenuEntity[]
 
-    @LocalColumn({ type: 'timestamp', default: null }, 'datetime')
+    @LocalColumn(
+        { type: 'timestamp', default: null },
+        { type: 'datetime' }
+    )
     trialExpiredAt!: Date
 
-    @LocalColumn({ type: 'timestamp', default: null }, 'datetime')
+    @LocalColumn(
+        { type: 'timestamp', default: null },
+        { type: 'datetime' }
+    )
     sewaExpiredAt!: Date
 }

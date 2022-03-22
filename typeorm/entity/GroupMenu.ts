@@ -19,10 +19,14 @@ export class GroupMenuEntity {
     @Column()
     value!: string
 
-    @LocalColumn({ type: 'enum', enum: GroupMenuType }, 'simple-enum')
+    @LocalColumn(
+        { type: 'enum', enum: GroupMenuType },
+        { type: 'simple-enum' }
+    )
     type!: GroupMenuType
 
-    @ManyToOne(() => GroupChatEntity, (gc) => gc.groupMenu)
+    @ManyToOne(() => GroupChatEntity, (gc) => gc.groupMenu, { onDelete: 'CASCADE' })
+    // @JoinColumn()
     groupChat!: GroupChatEntity;
 
 

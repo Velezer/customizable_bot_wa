@@ -17,8 +17,8 @@ const dataSource = new DataSource({
     migrations: [],
     subscribers: [],
 })
-let repo: Repository<GroupChatEntity> = new Repository(GroupChatEntity, dataSource.manager)
-let service: GroupChatService = new GroupChatService(repo)
+const repo = new Repository(GroupChatEntity, dataSource.manager)
+const service = new GroupChatService(repo)
 
 beforeAll(async () => {
     await dataSource.initialize().catch(err => console.log(err))
@@ -29,7 +29,7 @@ afterAll(async () => {
 })
 
 describe('GroupChat with jid=jid', () => {
-    let jid = 'jid'
+    const jid = 'jid'
     it('create GroupChat', async () => {
         const res = await service.create(jid)
         expect(res.jid).toBe(jid)
