@@ -25,7 +25,7 @@ export const DataSources = {
         database: process.env.DB_DATABASE,
         synchronize: true,
         logging: false,
-        entities: [GroupChatEntity, GroupMenuEntity, AuthEntity],
+        entities,
         migrations: [],
         subscribers: [],
     })

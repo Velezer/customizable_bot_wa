@@ -13,7 +13,7 @@ import { DataSources } from './typeorm/data-source'
 
 async function main() {
     const db = new AppDatabase(DataSources.postgres)
-    db.setup()
+    await db.setup()
         .then(() => console.log('db connected'))
         .catch(err => console.log(err))
     const services = db.getServices()
