@@ -9,8 +9,7 @@ type PromiseFunction<T> = () => Promise<T>
 /**
  * 
  * @param fn Function must return promise
- * @param seconds 
- * @returns Promise
+ * @param seconds interval to run fn
  */
 function retryPromise<T>(fn: PromiseFunction<T>, seconds: number): Promise<T> {
     return new Promise(resolve => {
