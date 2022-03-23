@@ -65,13 +65,15 @@ export class YTStatusCommand implements Command {
         let startTime = 0
         for (let i = 0; i < videoDuration / durationPerVideo; i++) {
             const output = i + '-' + filename + '.mp4'
-            await this.cutVideo(stream, durationPerVideo, startTime, output, resolve, reject)
+            await this.cutVideo(stream, durationPerVideo, startTime, output)
+                .then(output => resolve(output))
+                .catch(err=>reject(err))
             startTime += durationPerVideo
         }
     }
 
-    async cutVideo(stream: any, durationPerVideo: number, startTime: number, output: string, resolve: Function, reject: Function) {
-        return new Promise((resolve, reject)=>{
+    async cutVideo(stream: any, durationPerVideo: number, startTime: number, output: string) {
+        return new Promise((resolve, reject) => {
             ffmpeg(stream)
                 .setStartTime(startTime)
                 .setDuration(durationPerVideo)
@@ -83,7 +85,6 @@ export class YTStatusCommand implements Command {
                 })
                 .on('error', async (err) => {
                     reject(err)
-                    this.cutVideo(stream, durationPerVideo, startTime, output, resolve, reject)
                 })
                 .run()
         })
