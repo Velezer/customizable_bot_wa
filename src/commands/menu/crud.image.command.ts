@@ -1,4 +1,4 @@
-import { BotLevel, ImageEntity } from "../../groups/interface";
+import { BotLevel } from "../../groups/interface";
 import { Helper } from "../../helper/helper";
 import { Command, CommandLevel, RunArgs } from "../interface";
 
@@ -12,7 +12,7 @@ export class AddImageMenuCommand implements Command {
 
     async run(args: RunArgs): Promise<void> {
         const { quotedMessage, receivedMessage, conversation, botwa, groupChat,services } = args
-        const jid = groupChat.jid
+        const jid = groupChat!.jid
         if (!receivedMessage?.message?.imageMessage) {
             botwa.sendMessage(jid, 'kasi gambarnya')
             return
@@ -31,7 +31,7 @@ export class AddImageMenuCommand implements Command {
 
 
         const path = await botwa.sock.downloadAndSaveMediaMessage(receivedMessage, Helper.getRandomString(20))
-        services.serviceGroupMenu.createMenuImage(groupChat, m1, path)
+        services!.serviceGroupMenu.createMenuImage(groupChat!, m1, path)
         botwa.sendMessage(jid, 'gambar ditambahkan')
 
 

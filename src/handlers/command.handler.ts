@@ -47,8 +47,12 @@ export class CommandHandler implements Handler<Command> {
 
     async unreg(conversation: string) {
         if (conversation.startsWith('/unreg')) {
-            const c = new UnregCommand()
-            c.run(this.botwa, undefined, conversation).catch(err => console.error(err))
+            new UnregCommand()
+                .run({
+                    botwa: this.botwa,
+                    conversation: conversation
+                })
+                .catch(err => console.error(err))
         }
     }
 
@@ -68,12 +72,14 @@ export class CommandHandler implements Handler<Command> {
         if (level !== CommandLevel.MEMBER) {
             if (conversation.startsWith('/trial')) {
                 if (neverTrial) {
-                    return new TrialCommand().run(this.botwa, group, conversation).catch(err => console.error(err))
+                    return new TrialCommand().run({ botwa: this.botwa, groupChat: group, conversation })
+                        .catch(err => console.error(err))
                 }
             }
             if (conversation.startsWith('/sewa')) {
                 if (sewaExpired || neverSewa) {
-                    return new RegisterGroupCommand().run(this.botwa, group, conversation).catch(err => console.error(err))
+                    return new RegisterGroupCommand().run({ botwa: this.botwa, groupChat: group, conversation })
+                        .catch(err => console.error(err))
                 }
             }
         }
@@ -111,7 +117,7 @@ export class CommandHandler implements Handler<Command> {
         if (commands.length < 1) return
 
         const command = commands[0]
-        command.run(this.botwa, group!, conversation, quotedMessage, receivedMessage)
+        command.run({botwa:this.botwa, groupChat:group, conversation, quotedMessage, receivedMessage})
             .catch(err => {
                 console.error(err)
             })

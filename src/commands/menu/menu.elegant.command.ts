@@ -18,10 +18,10 @@ export class GroupMenuElegantCommand implements Command {
         const { quotedMessage, receivedMessage, services, botwa, groupChat } = args
         const sections: proto.ISection[] = []
 
-        groupChat.groupMenu = await services.serviceGroupMenu.findAllMenu(groupChat.jid)
-        if (groupChat.groupMenu.length > 0) {
+        groupChat!.groupMenu = await services!.serviceGroupMenu.findAllMenu(groupChat!.jid)
+        if (groupChat!.groupMenu.length > 0) {
             const menuRows: proto.IRow[] = []
-            groupChat.groupMenu.forEach(m => {
+            groupChat!.groupMenu.forEach(m => {
                 const row: proto.IRow = { rowId: m.key, title: m.key }
                 menuRows.push(row)
             })
@@ -32,10 +32,10 @@ export class GroupMenuElegantCommand implements Command {
             }
 
             sections.push(menuSection)
-            await botwa.sendListMessageSingleSelect(groupChat.jid, 'Menu', sections);
+            await botwa.sendListMessageSingleSelect(groupChat!.jid, 'Menu', sections);
         } else {
 
-            await botwa.sendMessage(groupChat.jid, 'menu kosong silakan tambahkan menggunakan\n\n' + new AddCustomMenuCommand().example 
+            await botwa.sendMessage(groupChat!.jid, 'menu kosong silakan tambahkan menggunakan\n\n' + new AddCustomMenuCommand().example 
             + '\n\n' + 'atau\n\n' + new AddImageMenuCommand().example
             )
 

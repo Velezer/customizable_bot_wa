@@ -17,7 +17,7 @@ export class AddCustomMenuCommand implements Command {
         let m1 = m12.split(' ')[0]
         const m2 = m12.slice(m1.length + 1)
 
-        const jid = groupChat.jid
+        const jid = groupChat!.jid
 
         if (!m1) {
             botwa.sendMessage(jid, 'silakan tambahkan data terlebih dahulu')
@@ -28,7 +28,7 @@ export class AddCustomMenuCommand implements Command {
             m1 = '/' + m1
         }
 
-        services.serviceGroupMenu.createMenuText(groupChat, m1, m2)
+        services!.serviceGroupMenu.createMenuText(groupChat!, m1, m2)
         
         botwa.sendMessage(jid, 'menu ditambahkan')
 
@@ -50,7 +50,7 @@ export class UpdateCustomMenuCommand implements Command {
         let m1 = m12.split(' ')[0]
         const m2 = m12.slice(m1.length + 1)
 
-        const jid = groupChat.jid
+        const jid = groupChat!.jid
 
         if (!m1) {
             botwa.sendMessage(jid, 'silakan tambahkan data terlebih dahulu')
@@ -61,7 +61,7 @@ export class UpdateCustomMenuCommand implements Command {
             m1 = '/' + m1
         }
 
-        services.serviceGroupMenu.updateMenuValue(groupChat.jid, m1, m2)
+        services!.serviceGroupMenu.updateMenuValue(groupChat!.jid, m1, m2)
         
         botwa.sendMessage(jid, 'menu diupdate')
 
@@ -80,7 +80,7 @@ export class RemoveCustomMenuCommand implements Command {
  
         let m1 = conversation.slice(this.key.length + 1)
 
-        const jid = groupChat.jid
+        const jid = groupChat!.jid
 
         if (!m1) {
             botwa.sendMessage(jid, 'kasi nama menunya bos')
@@ -91,7 +91,7 @@ export class RemoveCustomMenuCommand implements Command {
             m1 = '/' + m1
         }
 
-        services.serviceGroupMenu.removeOneMenu(groupChat.jid, m1)
+        services!.serviceGroupMenu.removeOneMenu(groupChat!.jid, m1)
 
         botwa.sendMessage(jid, 'menu dihapus')
 

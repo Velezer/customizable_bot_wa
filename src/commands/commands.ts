@@ -1,4 +1,3 @@
-import { BotWa } from "../botwa";
 import { LoggerOcedBot } from "../logger";
 import { BotLevel } from "../groups/interface";
 import { Command, CommandLevel, RunArgs } from "./interface";
@@ -18,10 +17,10 @@ export class TagAllCommand implements Command {
         const m1 = conversation.slice(this.key.length + 1)
 
         if (!m1) {
-            botwa.sendMentionedAll(groupChat.jid, '')
+            botwa.sendMentionedAll(groupChat!.jid, '')
             return
         }
-        await botwa.sendMentionedAll(groupChat.jid, m1)
+        await botwa.sendMentionedAll(groupChat!.jid, m1)
 
     }
 
@@ -37,7 +36,7 @@ export class GetGroupMetadataCommand implements Command {
     async run(args: RunArgs): Promise<void> {
         const { quotedMessage, receivedMessage, conversation, botwa, groupChat } = args
 
-        const metadata = await botwa.getGroupMetadata(groupChat.jid)
+        const metadata = await botwa.getGroupMetadata(groupChat!.jid)
 
         let desc = metadata.desc || ''
 
@@ -54,7 +53,7 @@ export class GetGroupMetadataCommand implements Command {
             msg += role + ' ' + 'wa.me/' + p.jid.split('@')[0] + '\n'
         })
         msg.slice(0, -1)
-        await botwa.sendMessage(groupChat.jid, msg)
+        await botwa.sendMessage(groupChat!.jid, msg)
 
     }
 
@@ -70,7 +69,7 @@ export class GetGroupParticipantsCommand implements Command {
     async run(args: RunArgs): Promise<void> {
         const { quotedMessage, receivedMessage, conversation, botwa, groupChat } = args
 
-        const jid = groupChat.jid
+        const jid = groupChat!.jid
         const participants = await botwa.getGroupParticipants(jid)
         const neatParticipants = participants.map(p => p.jid.split('@')[0])
 
@@ -98,7 +97,7 @@ export class OpenGroupSettingsCommand implements Command {
         const { quotedMessage, receivedMessage, conversation, botwa, groupChat } = args
 
 
-        botwa.openGroupSettings(groupChat.jid)
+        botwa.openGroupSettings(groupChat!.jid)
 
     }
 
@@ -115,7 +114,7 @@ export class CloseGroupSettingsCommand implements Command {
         const { quotedMessage, receivedMessage, conversation, botwa, groupChat } = args
 
 
-        botwa.closeGroupSettings(groupChat.jid)
+        botwa.closeGroupSettings(groupChat!.jid)
 
     }
 
@@ -132,7 +131,7 @@ export class OpenGroupChatCommand implements Command {
         const { quotedMessage, receivedMessage, conversation, botwa, groupChat } = args
 
 
-        botwa.openGroupChat(groupChat.jid)
+        botwa.openGroupChat(groupChat!.jid)
 
     }
 
@@ -148,7 +147,7 @@ export class CloseGroupChatCommand implements Command {
     async run(args: RunArgs): Promise<void> {
         const { quotedMessage, receivedMessage, conversation, botwa, groupChat } = args
 
-        botwa.closeGroupChat(groupChat.jid)
+        botwa.closeGroupChat(groupChat!.jid)
 
     }
 
@@ -178,7 +177,7 @@ export class JoinGroupCommand implements Command {
             })
             .catch(err => {
                 console.log(err)
-                botwa.sendMessage(groupChat.jid, 'bot gagal masuk grup link ' + m1)
+                botwa.sendMessage(groupChat!.jid, 'bot gagal masuk grup link ' + m1)
             })
 
     }

@@ -12,8 +12,8 @@ export enum CommandLevel {
 
 export interface RunArgs {
     botwa: BotWa
-    groupChat: GroupChatEntity
-    services: Services
+    groupChat?: GroupChatEntity
+    services?: Services
     conversation: string
     quotedMessage?: proto.IMessage
     receivedMessage?: proto.WebMessageInfo

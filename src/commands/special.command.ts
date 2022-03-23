@@ -15,8 +15,8 @@ export class RegisterGroupCommand implements Command {
     async run(args: RunArgs): Promise<void> {
         const { conversation, groupChat, botwa, services } = args
         const m1 = conversation.slice(this.key.length + 1)
-        const jid = groupChat.jid
-        const groupSubject = await botwa.getGroupSubject(groupChat.jid)
+        const jid = groupChat!.jid
+        const groupSubject = await botwa.getGroupSubject(groupChat!.jid)
 
         if (!m1) {
             botwa.sendMessage(jid, 'silakan hubungi \nwa.me/' + OcedBot.getPhoneNumber() + ' untuk mendapatkan key-aktivasi')
@@ -29,9 +29,9 @@ export class RegisterGroupCommand implements Command {
         if (activationKey) {
             botwa.sendMessage(jid, 'sedang mengaktivasi...')
 
-            services.serviceGroupChat.sewa(groupChat.jid, activationKey.botLevel)
+            services!.serviceGroupChat.sewa(groupChat!.jid, activationKey.botLevel)
                 .then(() => {
-                    botwa.sendMessage(jid, 'aktivasi sukses bot ' + groupChat.botLevel)
+                    botwa.sendMessage(jid, 'aktivasi sukses bot ' + groupChat!.botLevel)
                     LoggerOcedBot.log(botwa, 'aktivasi sukses dengan key \n\n' + JSON.stringify(activationKey) + '\n\n' + groupSubject + '\n\n' + jid)
                     Activation.generateActivationKey()
                 })
@@ -59,15 +59,15 @@ export class TrialCommand implements Command {
 
     async run(args: RunArgs): Promise<void> {
         const { botwa, groupChat, services } = args
-        const jid = groupChat.jid
+        const jid = groupChat!.jid
 
-        const groupSubject = await botwa.getGroupSubject(groupChat.jid)
+        const groupSubject = await botwa.getGroupSubject(groupChat!.jid)
 
         botwa.sendMessage(jid, 'sedang mengaktivasi trial...')
 
-        services.serviceGroupChat.trial(jid)
+        services!.serviceGroupChat.trial(jid)
             .then(() => {
-                botwa.sendMessage(jid, 'aktivasi trial sukses bot ' + groupChat.botLevel)
+                botwa.sendMessage(jid, 'aktivasi trial sukses bot ' + groupChat!.botLevel)
                 LoggerOcedBot.log(botwa, 'aktivasi trial sukses' + '\n\n' + groupSubject + '\n\n' + jid)
             })
             .catch(err => {
@@ -92,7 +92,7 @@ export class UnregCommand implements Command {
         const m1 = conversation.slice(this.key.length + 1)
         const targetJid = m1
 
-        const res = await services.serviceGroupChat.remove(targetJid)
+        const res = await services!.serviceGroupChat.remove(targetJid)
         if (res.affected! > 0) {
             LoggerOcedBot.log(botwa, 'unreg ' + targetJid)
         } else {
