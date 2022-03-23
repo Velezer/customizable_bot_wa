@@ -14,8 +14,8 @@ export class StickerCommand implements Command {
     async run(args: RunArgs): Promise<void> {
         const { botwa, groupChat, services, quotedMessage, receivedMessage } = args
         const jid = groupChat!.jid
-        let jpegFile = './storage/sticker/' + Helper.getRandomString(20) + '.jpeg'
-        let webpFile = './storage/sticker/' + Helper.getRandomString(20) + '.webp'
+        let jpegFile = './storage/' + Helper.getRandomString(20) + '.jpeg'
+        let webpFile = './storage/' + Helper.getRandomString(20) + '.webp'
         if (Helper.isExist(jpegFile)) fs.unlinkSync(jpegFile)
         if (Helper.isExist(webpFile)) fs.unlinkSync(webpFile)
 
