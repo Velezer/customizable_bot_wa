@@ -33,11 +33,11 @@ export class StickerCommand implements Command {
 
         const h512 = Math.round(h * 512 / w)
         const w512 = Math.round(w * 512 / h)
-
+        
         exec(`ffmpeg -i ${jpegFile} -vcodec libwebp -filter:v fps=fps=20 -lossless 1 -loop 0 -preset default -an -vsync 0 -s ${w512.toString()}:${h512.toString()} ${webpFile}`, async (err) => {
+            fs.unlinkSync(jpegFile)
             if (err) return console.log(err)
             await botwa.sendSticker(jid, fs.readFileSync(webpFile))
-            fs.unlinkSync(jpegFile)
             fs.unlinkSync(webpFile)
         })
 
