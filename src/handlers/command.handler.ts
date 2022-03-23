@@ -50,7 +50,8 @@ export class CommandHandler implements Handler<Command> {
             new UnregCommand()
                 .run({
                     botwa: this.botwa,
-                    conversation: conversation
+                    conversation: conversation, 
+                    services: this.services
                 })
                 .catch(err => console.error(err))
         }
@@ -72,13 +73,13 @@ export class CommandHandler implements Handler<Command> {
         if (level !== CommandLevel.MEMBER) {
             if (conversation.startsWith('/trial')) {
                 if (neverTrial) {
-                    return new TrialCommand().run({ botwa: this.botwa, groupChat: group, conversation })
+                    return new TrialCommand().run({ botwa: this.botwa, groupChat: group, conversation, services: this.services })
                         .catch(err => console.error(err))
                 }
             }
             if (conversation.startsWith('/sewa')) {
                 if (sewaExpired || neverSewa) {
-                    return new RegisterGroupCommand().run({ botwa: this.botwa, groupChat: group, conversation })
+                    return new RegisterGroupCommand().run({ botwa: this.botwa, groupChat: group, conversation, services: this.services })
                         .catch(err => console.error(err))
                 }
             }
@@ -117,7 +118,7 @@ export class CommandHandler implements Handler<Command> {
         if (commands.length < 1) return
 
         const command = commands[0]
-        command.run({botwa:this.botwa, groupChat:group, conversation, quotedMessage, receivedMessage})
+        command.run({ botwa: this.botwa, groupChat: group, conversation, quotedMessage, receivedMessage, services: this.services })
             .catch(err => {
                 console.error(err)
             })

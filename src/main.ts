@@ -22,12 +22,14 @@ async function main() {
     sock.browserDescription = ['velezer', 'Chrome', 'OcedBot']
     sock.autoReconnect = ReconnectMode.onAllErrors
 
-    if (Helper.isExist('auth.json')) {
-        sock.loadAuthInfo('auth.json')
+    const authName = 'ocedbot'
+    const foundAuth = await services.authService.findOne(authName)
+    if (foundAuth) {
+        sock.loadAuthInfo(foundAuth.authInfo)
     }
 
     await sock.connect()
-    Helper.saveJSON('auth.json', sock.base64EncodedAuthInfo())
+    services.authService.create(authName, JSON.stringify(sock.base64EncodedAuthInfo()))
 
 
     sock.on('close', async (data) => {
