@@ -3,7 +3,7 @@ import { AuthEntity } from "./entity/AuthEntity";
 import { GroupChatEntity } from "./entity/GroupChatEntity";
 import { GroupMenuEntity } from "./entity/GroupMenuEntity";
 
-const entities = [GroupChatEntity, GroupMenuEntity,AuthEntity]
+const entities = [GroupChatEntity, GroupMenuEntity, AuthEntity]
 
 export const DataSources = {
     betterSqlite3: new DataSource({
@@ -25,7 +25,7 @@ export const DataSources = {
         database: process.env.DB_DATABASE,
         synchronize: true,
         logging: false,
-        entities,
+        entities: [GroupChatEntity, GroupMenuEntity, AuthEntity],
         migrations: [],
         subscribers: [],
     })
