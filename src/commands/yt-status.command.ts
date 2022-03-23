@@ -36,16 +36,10 @@ export class YTStatusCommand implements Command {
         stream.on('end', () => {
             this.makeStatus(fs.createReadStream(downloadedName), videoDuration, durationPerVideo,
                 (output: string) => {
-                    botwa.sendVideoDocument(jid, fs.readFileSync(output), output)
+                    // botwa.sendVideoDocument(jid, fs.readFileSync(output), output)
+                    promiseRetry(botwa.sendVideoDocument, jid, fs.readFileSync(output), output)
                         .then(() => {
                             fs.unlinkSync(output)
-                        })
-                        .catch(err => {
-                            // botwa.sendVideoDocument(jid, fs.readFileSync(output), output)
-                            promiseRetry(botwa.sendVideoDocument, jid, fs.readFileSync(output), output)
-                                .then(() => {
-                                    fs.unlinkSync(output)
-                                })
                         })
                 },
                 (err: any) => {
@@ -65,9 +59,10 @@ export class YTStatusCommand implements Command {
         let startTime = 0
         for (let i = 0; i < videoDuration / durationPerVideo; i++) {
             const output = i + '-' + filename + '.mp4'
-            await this.cutVideo(stream, durationPerVideo, startTime, output)
+            // await this.cutVideo(stream, durationPerVideo, startTime, output)
+            await promiseRetry(this.cutVideo, stream, durationPerVideo, startTime, output)
                 .then(output => resolve(output))
-                .catch(err=>reject(err))
+                // .catch(err => reject(err))
             startTime += durationPerVideo
         }
     }
