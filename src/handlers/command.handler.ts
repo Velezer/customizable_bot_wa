@@ -90,13 +90,13 @@ export class CommandHandler implements Handler<Command> {
             if (conversation.startsWith('/')) return this.silakanSewa(jid)
         }
 
-        if (trialExpired && neverSewa) {
+        if (trialExpired && neverSewa && !neverTrial) {
             this.botwa.sendMessage(jid, 'trial sudah expired')
             this.silakanSewa(jid)
             return
         }
 
-        if (sewaExpired) {
+        if (sewaExpired && !neverSewa) {
             this.botwa.sendMessage(jid, 'sewa sudah expired')
             this.silakanSewa(jid)
             return
