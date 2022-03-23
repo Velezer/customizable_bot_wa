@@ -3,6 +3,7 @@ import { Command, CommandLevel, RunArgs } from "./interface";
 import { exec } from 'child_process'
 import fs from 'fs'
 import { Helper } from "../helper/helper";
+import Jimp from 'jimp';
 
 export class StickerCommand implements Command {
     botLevel: BotLevel = BotLevel.BASIC
@@ -26,8 +27,20 @@ export class StickerCommand implements Command {
             jpegFile = await botwa.sock.downloadAndSaveMediaMessage(receivedMessage, jpegFile, false)
         }
 
+        const raw = await Jimp.read(jpegFile)
+        let h = raw.getHeight()
+        let w = raw.getWidth()
+        const min = Math.min(w, h)
 
-        exec(`ffmpeg -i ${jpegFile} -vcodec libwebp -filter:v fps=fps=20 -lossless 1 -loop 0 -preset default -an -vsync 0 -s 512:512 ${webpFile}`, async (err) => {
+        if (min == w) {
+            w = 512
+            h = h * 512 / w
+        } else if (min == h) {
+            h = 512
+            w = w * 512 / h
+        }
+
+        exec(`ffmpeg -i ${jpegFile} -vcodec libwebp -filter:v fps=fps=20 -lossless 1 -loop 0 -preset default -an -vsync 0 -s ${w}:${h} ${webpFile}`, async (err) => {
             console.log('exec sticker')
             if (err) return console.log(err)
             await botwa.sendSticker(jid, fs.readFileSync(webpFile))
