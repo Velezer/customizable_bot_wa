@@ -26,7 +26,7 @@ async function main() {
     const authName = process.env.AUTH_NAME
     const foundAuth = await services.authService.findOne(authName!)
     if (foundAuth) {
-        sock.loadAuthInfo(foundAuth.authInfo)
+        sock.loadAuthInfo(JSON.parse(foundAuth.authInfo))
     }
 
     await sock.connect()
