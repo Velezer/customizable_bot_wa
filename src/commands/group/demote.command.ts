@@ -24,9 +24,9 @@ export class DemoteCommand implements Command {
                 m1 = m1.slice(1)
             }
         }
-        botwa.demote(groupChat.jid, m1)
+        botwa.demote(groupChat!.jid, m1)
             .catch(err => {
-                botwa.sendMessage(groupChat.jid, 'demote gagal')
+                botwa.sendMessage(groupChat!.jid, 'demote gagal')
             })
 
     }

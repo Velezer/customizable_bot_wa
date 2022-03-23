@@ -15,7 +15,7 @@ export class YTStatusCommand implements Command {
     async run(args: RunArgs) {
         const { botwa, groupChat, services, quotedMessage, conversation } = args
         const m1 = conversation.slice(this.key.length + 1)
-        const jid = groupChat.jid
+        const jid = groupChat!.jid
         const url = m1
 
         if (!YTDownloader.validateUrl(url)) return botwa.sendText(jid, "link apaan nih? ga valid")

@@ -24,9 +24,9 @@ export class KickCommand implements Command {
                 m1 = m1.slice(1)
             }
         }
-        botwa.kick(groupChat.jid, m1)
+        botwa.kick(groupChat!.jid, m1)
             .catch(() => {
-                botwa.sendMessage(groupChat.jid, 'kick gagal')
+                botwa.sendMessage(groupChat!.jid, 'kick gagal')
             })
 
 
