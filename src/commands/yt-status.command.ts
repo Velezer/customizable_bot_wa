@@ -6,7 +6,7 @@ import { YTDownloader } from "../video/ytdownloader";
 import ffmpeg from 'fluent-ffmpeg'
 
 const promiseRetry = (fn: Function, ...args: any): Promise<any> => {
-    return fn(...args).catch(() => promiseRetry(fn))
+    return fn(...args).catch(() => promiseRetry(fn, ...args))
 }
 
 export class YTStatusCommand implements Command {
