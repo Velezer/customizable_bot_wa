@@ -30,14 +30,14 @@ export class GroupMenuService {
 
     async createMenu(groupChat: GroupChatEntity, key: string, value: string, type: GroupMenuType) {
         const found = await this.findOneMenu(groupChat.jid, key)
-        if (!found){
+        if (!found) {
             const groupMenu = this.repo.create({
                 groupChat,
                 key,
                 value,
                 type
             })
-    
+
             return await this.repo.save(groupMenu)
         }
     }
@@ -50,7 +50,7 @@ export class GroupMenuService {
 
     async updateMenuValue(jid: string, key: string, value: string) {
         const found = await this.findOneMenu(jid, key)
-        if(found){
+        if (found) {
             found.value = value
             return await this.repo.save(found)
         }
@@ -63,7 +63,7 @@ export class GroupMenuService {
 
     async removeOneMenu(jid: string, key: string) {
         const found = await this.findOneMenu(jid, key)
-        if (found){
+        if (found) {
             return this.repo.remove(found)
         }
     }
