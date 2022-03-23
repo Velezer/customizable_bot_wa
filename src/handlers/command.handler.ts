@@ -50,7 +50,7 @@ export class CommandHandler implements Handler<Command> {
             new UnregCommand()
                 .run({
                     botwa: this.botwa,
-                    conversation: conversation, 
+                    conversation: conversation,
                     services: this.services
                 })
                 .catch(err => console.error(err))
@@ -86,9 +86,8 @@ export class CommandHandler implements Handler<Command> {
         }
 
 
-        if ((neverSewa || neverTrial) && conversation.startsWith('/')) {
-            this.silakanSewa(jid)
-            return
+        if (neverSewa && neverTrial) {
+            if (conversation.startsWith('/')) return this.silakanSewa(jid)
         }
 
         if (trialExpired && neverSewa) {
