@@ -30,6 +30,7 @@ async function main() {
     }
 
     await sock.connect()
+    await services.authService.remove(authName!)
     services.authService.create(authName!, JSON.stringify(sock.base64EncodedAuthInfo()))
 
 
