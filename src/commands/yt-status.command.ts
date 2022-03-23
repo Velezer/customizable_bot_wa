@@ -12,7 +12,7 @@ const promiseRetry = (fn: Function): Promise<any> => {
             .catch(() => {
                 setTimeout(() => {
                     promiseRetry(fn).then(resolve)
-                }, 10 * 1000)
+                }, 15 * 1000)
             })
 
     })
@@ -50,9 +50,7 @@ export class YTStatusCommand implements Command {
                             fs.unlinkSync(output)
                         })
                 },
-                (err: any) => {
-                    console.log('error: ', err)
-                })
+                )
             setTimeout(() => {
                 fs.unlinkSync(downloadedName)
             }, 5 * 60 * 1000);
@@ -62,12 +60,12 @@ export class YTStatusCommand implements Command {
 
     }
 
-    async makeStatus(stream: any, videoDuration: number, durationPerVideo: number, resolve: Function, reject: Function) {
+    async makeStatus(stream: any, videoDuration: number, durationPerVideo: number, resolve: Function) {
         const filename = Helper.getRandomString(10)
         let startTime = 0
         for (let i = 0; i < videoDuration / durationPerVideo; i++) {
             const output = i + '-' + filename + '.mp4'
-            await promiseRetry(() => this.cutVideo(stream, durationPerVideo, startTime, output))
+            promiseRetry(() => this.cutVideo(stream, durationPerVideo, startTime, output))
                 .then(output => resolve(output))
             startTime += durationPerVideo
         }
