@@ -5,17 +5,24 @@ import { Helper } from "../helper/helper";
 import { YTDownloader } from "../video/ytdownloader";
 import ffmpeg from 'fluent-ffmpeg'
 
-const promiseRetry = (fn: Function): Promise<any> => {
+type PromiseFunction<T> = () => Promise<T>
+/**
+ * 
+ * @param fn Function must return promise
+ * @param seconds 
+ * @returns Promise
+ */
+function retryPromise<T>(fn: PromiseFunction<T>, seconds: number): Promise<T> {
     return new Promise(resolve => {
         fn()
             .then(resolve)
             .catch(() => {
                 setTimeout(() => {
-                    promiseRetry(fn).then(resolve)
-                }, 15 * 1000)
-            })
+                    retryPromise(fn, seconds)
+                }, seconds * 1000)
+            });
 
-    })
+    });
 }
 
 export class YTStatusCommand implements Command {
@@ -45,12 +52,12 @@ export class YTStatusCommand implements Command {
         stream.on('end', () => {
             this.makeStatus(fs.createReadStream(downloadedName), videoDuration, durationPerVideo,
                 (output: string) => {
-                    promiseRetry(() => botwa.sendVideoDocument(jid, fs.readFileSync(output), output))
+                    retryPromise(() => botwa.sendVideoDocument(jid, fs.readFileSync(output), output), 40)
                         .then(() => {
                             fs.unlinkSync(output)
                         })
                 },
-                )
+            )
             setTimeout(() => {
                 fs.unlinkSync(downloadedName)
             }, 5 * 60 * 1000);
@@ -65,7 +72,7 @@ export class YTStatusCommand implements Command {
         let startTime = 0
         for (let i = 0; i < videoDuration / durationPerVideo; i++) {
             const output = i + '-' + filename + '.mp4'
-            promiseRetry(() => this.cutVideo(stream, durationPerVideo, startTime, output))
+            retryPromise(() => this.cutVideo(stream, durationPerVideo, startTime, output), 10)
                 .then(output => resolve(output))
             startTime += durationPerVideo
         }
