@@ -15,7 +15,7 @@ const promiseRetry = (fn: Function, ...args: any): Promise<any> => {
                 }, 10 * 1000)
             })
 
-    }
+    })
 }
 
 export class YTStatusCommand implements Command {
