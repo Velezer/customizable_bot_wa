@@ -4,25 +4,9 @@ import fs from 'fs'
 import { Helper } from "../helper/helper";
 import { YTDownloader } from "../video/ytdownloader";
 import ffmpeg from 'fluent-ffmpeg'
+import { retryPromise } from "../utils";
 
-type PromiseFunction<T> = () => Promise<T>
-/**
- * 
- * @param fn Function must return promise
- * @param seconds interval to run fn
- */
-function retryPromise<T>(fn: PromiseFunction<T>, seconds: number): Promise<T> {
-    return new Promise(resolve => {
-        fn()
-            .then(resolve)
-            .catch(() => {
-                setTimeout(() => {
-                    retryPromise(fn, seconds)
-                }, seconds * 1000)
-            });
 
-    });
-}
 
 export class YTStatusCommand implements Command {
     botLevel: BotLevel = BotLevel.BASIC
