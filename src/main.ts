@@ -2,7 +2,6 @@ require('dotenv').config()
 import { BotWa } from './botwa'
 import { ReconnectMode, WAConnection } from '@adiwajshing/baileys'
 import { Activation } from './activation/activation'
-import { Helper } from './helper/helper'
 import { BehaviorHandler } from './handlers/behavior.handler'
 import { CommandHandler } from './handlers/command.handler'
 import { LoggerOcedBot } from './logger'
@@ -15,6 +14,8 @@ import { DataSources } from './typeorm/data-source'
 async function main() {
     const db = new AppDatabase(DataSources.betterSqlite3)
     db.setup()
+        .then(() => console.log('db connected'))
+        .catch(err => console.log(err))
     const services = db.getServices()
     const sock: WAConnection = new WAConnection()
     sock.logger.level = 'debug' //''debug', 'fatal', 'error',  'trace'
@@ -22,14 +23,14 @@ async function main() {
     sock.browserDescription = ['velezer', 'Chrome', 'OcedBot']
     sock.autoReconnect = ReconnectMode.onAllErrors
 
-    const authName = 'ocedbot'
-    const foundAuth = await services.authService.findOne(authName)
+    const authName = process.env.AUTH_NAME
+    const foundAuth = await services.authService.findOne(authName!)
     if (foundAuth) {
         sock.loadAuthInfo(foundAuth.authInfo)
     }
 
     await sock.connect()
-    services.authService.create(authName, JSON.stringify(sock.base64EncodedAuthInfo()))
+    services.authService.create(authName!, JSON.stringify(sock.base64EncodedAuthInfo()))
 
 
     sock.on('close', async (data) => {
