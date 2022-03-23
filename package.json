@@ -4,6 +4,7 @@
    "description": "",
    "main": "main.js",
    "scripts": {
+      "start": "ts-node src/main.ts",
       "starts": "ts-node typeorm/index.ts",
       "test": "jest --coverage",
       "tdd": "jest --coverage --watch",
