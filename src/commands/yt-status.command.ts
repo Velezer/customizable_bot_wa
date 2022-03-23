@@ -29,25 +29,23 @@ export class YTStatusCommand implements Command {
         const stream = YTDownloader.download(url)
         stream.pipe(fs.createWriteStream(downloadedName))
 
-        process.setMaxListeners(15)
+        process.setMaxListeners(12)
         stream.on('end', () => {
+            this.makeStatus(fs.createReadStream(downloadedName), videoDuration, durationPerVideo,
+                (output: string) => {
+                    botwa.sendVideoDocument(jid, fs.readFileSync(output), output)
+                        .then(() => {
+                            fs.unlinkSync(output)
+                        })
+                },
+                (err: any, output: string) => {
+                    console.log('error: ', err)
+                    botwa.sendText(jid, 'error bos -- ' + output + '\nmerestart proses ini...')
+                })
             setTimeout(() => {
-                this.makeStatus(fs.createReadStream(downloadedName), videoDuration, durationPerVideo,
-                    (output: string) => {
-                        botwa.sendVideoDocument(jid, fs.readFileSync(output), output)
-                            .then(() => {
-                                fs.unlinkSync(output)
-                            })
-                    },
-                    (err: any, output: string) => {
-                        console.log('error: ', err)
-                        botwa.sendText(jid, 'error bos -- ' + output + '\nmerestart proses ini...')
-                    })
-                setTimeout(() => {
-                    fs.unlinkSync(downloadedName)
-                }, 5 * 60 * 1000);
+                fs.unlinkSync(downloadedName)
+            }, 5 * 60 * 1000);
 
-            }, 30 * 1000);
 
         })
 

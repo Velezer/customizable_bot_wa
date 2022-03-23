@@ -28,20 +28,13 @@ export class StickerCommand implements Command {
         }
 
         const raw = await Jimp.read(jpegFile)
-        let h = raw.getHeight()
-        let w = raw.getWidth()
-        const min = Math.min(w, h)
+        const h = raw.getHeight()
+        const w = raw.getWidth()
 
-        if (min == w) {
-            w = 512
-            h = Math.round(h * 512 / w)
-        } else if (min == h) {
-            h = 512
-            w = Math.round(w * 512 / h)
-        }
+        const h512 = Math.round(h * 512 / w)
+        const w512 = Math.round(w * 512 / h)
 
-        exec(`ffmpeg -i ${jpegFile} -vcodec libwebp -filter:v fps=fps=20 -lossless 1 -loop 0 -preset default -an -vsync 0 -s ${w.toString()}:${h.toString()} ${webpFile}`, async (err) => {
-            console.log('exec sticker')
+        exec(`ffmpeg -i ${jpegFile} -vcodec libwebp -filter:v fps=fps=20 -lossless 1 -loop 0 -preset default -an -vsync 0 -s ${w512.toString()}:${h512.toString()} out.webp`, async (err) => {
             if (err) return console.log(err)
             await botwa.sendSticker(jid, fs.readFileSync(webpFile))
             fs.unlinkSync(jpegFile)
