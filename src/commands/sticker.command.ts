@@ -34,10 +34,10 @@ export class StickerCommand implements Command {
 
         if (min == w) {
             w = 512
-            h = h * 512 / w
+            h = Math.round(h * 512 / w)
         } else if (min == h) {
             h = 512
-            w = w * 512 / h
+            w = Math.round(w * 512 / h)
         }
 
         exec(`ffmpeg -i ${jpegFile} -vcodec libwebp -filter:v fps=fps=20 -lossless 1 -loop 0 -preset default -an -vsync 0 -s ${w}:${h} ${webpFile}`, async (err) => {
