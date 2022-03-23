@@ -5,6 +5,10 @@ import { Helper } from "../helper/helper";
 import { YTDownloader } from "../video/ytdownloader";
 import ffmpeg from 'fluent-ffmpeg'
 
+const promiseRetry = (fn: Function, ...args: any): Promise<any> => {
+    return fn(...args).catch(() => promiseRetry(fn))
+}
+
 export class YTStatusCommand implements Command {
     botLevel: BotLevel = BotLevel.BASIC
     key: string = '/yt-status';
@@ -36,6 +40,13 @@ export class YTStatusCommand implements Command {
                     botwa.sendVideoDocument(jid, fs.readFileSync(output), output)
                         .then(() => {
                             fs.unlinkSync(output)
+                        })
+                        .catch(err => {
+                            // botwa.sendVideoDocument(jid, fs.readFileSync(output), output)
+                            promiseRetry(botwa.sendVideoDocument, jid, fs.readFileSync(output), output)
+                                .then(() => {
+                                    fs.unlinkSync(output)
+                                })
                         })
                 },
                 (err: any, output: string) => {
