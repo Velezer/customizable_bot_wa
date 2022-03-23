@@ -85,7 +85,7 @@ export class YTStatusCommand implements Command {
                 reject(err, output)
                 this.cutVideo(stream, durationPerVideo, startTime, output, resolve, reject)
             })
-            .setMaxListeners(9)
+            .setMaxListeners(7)
             .run()
     }
 
