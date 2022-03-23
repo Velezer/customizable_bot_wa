@@ -33,7 +33,6 @@ export class YTStatusCommand implements Command {
         const stream = YTDownloader.download(url)
         stream.pipe(fs.createWriteStream(downloadedName))
 
-        process.setMaxListeners(12)
         stream.on('end', () => {
             this.makeStatus(fs.createReadStream(downloadedName), videoDuration, durationPerVideo,
                 (output: string) => {
@@ -86,6 +85,7 @@ export class YTStatusCommand implements Command {
                 reject(err, output)
                 this.cutVideo(stream, durationPerVideo, startTime, output, resolve, reject)
             })
+            .setMaxListeners(9)
             .run()
     }
 
