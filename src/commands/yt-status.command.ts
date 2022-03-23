@@ -21,40 +21,38 @@ export class YTStatusCommand implements Command {
         const url = m1
 
         if (!YTDownloader.validateUrl(url)) return botwa.sendText(jid, "link apaan nih? ga valid")
+        botwa.sendText(jid, 'loading... sedang memproses video')
 
         const info = await YTDownloader.getInfo(url).catch(err => console.log(err))
         const videoDuration = +info!.videoDetails.lengthSeconds
-        const stream = YTDownloader.downloadFromInfo(info!)
-
         const durationPerVideo = 30
 
-        botwa.sendText(jid, 'loading... sedang memproses video')
+        const downloadedName = Helper.getRandomString(10) + '.mp4'
+        // const stream = YTDownloader.downloadFromInfo(info!)
+        const stream = YTDownloader.download(url)
+        stream.pipe(fs.createWriteStream(downloadedName))
 
 
-        setTimeout(() => {
-
-            this.cutVideoPromise(stream, videoDuration, durationPerVideo)
-                .then(output => {
-                    setTimeout(() => {
-                        botwa.sendText(jid, "loading... sedang mengirim "+ output)
-                        botwa.sendVideoDocument(jid, fs.readFileSync(output), output)
-                            .then(() => {
-                                fs.unlinkSync(output)
-                            })
-                    }, 10000);
-                })
-                .catch(err => {
+        stream.on('end', () => {
+            this.cutVideo(fs.createReadStream(downloadedName), videoDuration, durationPerVideo,
+                (output: string) => {
+                    botwa.sendVideoDocument(jid, fs.readFileSync(output), output)
+                        .then(() => {
+                            fs.unlinkSync(output)
+                        })
+                },
+                (err: any) => {
                     console.log('error: ', err)
                     botwa.sendText(jid, 'error bos')
                 })
-
-
-        }, 10000);
-
+            setTimeout(() => {
+                fs.unlinkSync(downloadedName)
+            }, 10 * 60 * 1000);
+        })
 
     }
 
-    async cutVideo(stream: any, videoDuration: number, durationPerVideo: number, cbSuccess: Function, cbError: Function) {
+    async cutVideo(stream: any, videoDuration: number, durationPerVideo: number, resolve: Function, reject: Function) {
         const filename = Helper.getRandomString(10)
         let startTime = 0
         for (let i = 0; i < videoDuration / durationPerVideo; i++) {
@@ -65,17 +63,17 @@ export class YTStatusCommand implements Command {
                 .output(output)
                 .on('end', async (err) => {
                     if (!err) {
-                        cbSuccess(output)
+                        resolve(output)
                     }
                 })
                 .on('error', async (err) => {
-                    cbError(err)
+                    reject(err)
                 })
                 .run()
             startTime += durationPerVideo
         }
     }
-    
+
     async cutVideoPromise(stream: any, videoDuration: number, durationPerVideo: number): Promise<string> {
         return new Promise((resolve, reject) => {
             this.cutVideo(stream, videoDuration, durationPerVideo, resolve, reject)

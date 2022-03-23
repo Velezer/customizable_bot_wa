@@ -1,6 +1,4 @@
 import ytdl from "ytdl-core"
-import { Helper } from "../helper/helper"
-import fs from 'fs'
 
 export class YTDownloader {
 
@@ -16,5 +14,9 @@ export class YTDownloader {
     static downloadFromInfo(info: ytdl.videoInfo) {
         const stream = ytdl.downloadFromInfo(info, { filter: format => format.container === 'mp4' })
         return stream
+    }
+
+    static download(url: string) {
+        return ytdl(url, { filter: format => format.container === 'mp4' })
     }
 }
