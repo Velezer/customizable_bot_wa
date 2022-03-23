@@ -48,9 +48,8 @@ export class YTStatusCommand implements Command {
                                 })
                         })
                 },
-                (err: any, output: string) => {
+                (err: any) => {
                     console.log('error: ', err)
-                    botwa.sendText(jid, 'error bos -- ' + output + '\nmerestart proses ini...')
                 })
             setTimeout(() => {
                 fs.unlinkSync(downloadedName)
@@ -66,27 +65,28 @@ export class YTStatusCommand implements Command {
         let startTime = 0
         for (let i = 0; i < videoDuration / durationPerVideo; i++) {
             const output = i + '-' + filename + '.mp4'
-            this.cutVideo(stream, durationPerVideo, startTime, output, resolve, reject)
+            await this.cutVideo(stream, durationPerVideo, startTime, output, resolve, reject)
             startTime += durationPerVideo
         }
     }
 
     async cutVideo(stream: any, durationPerVideo: number, startTime: number, output: string, resolve: Function, reject: Function) {
-        ffmpeg(stream)
-            .setStartTime(startTime)
-            .setDuration(durationPerVideo)
-            .output(output)
-            .on('end', async (err) => {
-                if (!err) {
-                    resolve(output)
-                }
-            })
-            .on('error', async (err) => {
-                reject(err, output)
-                this.cutVideo(stream, durationPerVideo, startTime, output, resolve, reject)
-            })
-            .setMaxListeners(7)
-            .run()
+        return new Promise((resolve, reject)=>{
+            ffmpeg(stream)
+                .setStartTime(startTime)
+                .setDuration(durationPerVideo)
+                .output(output)
+                .on('end', async (err) => {
+                    if (!err) {
+                        resolve(output)
+                    }
+                })
+                .on('error', async (err) => {
+                    reject(err)
+                    this.cutVideo(stream, durationPerVideo, startTime, output, resolve, reject)
+                })
+                .run()
+        })
     }
 
 }
