@@ -32,16 +32,16 @@ export class YTStatusCommand implements Command {
 
 
         stream.on('end', () => {
-            this.cutVideo(fs.createReadStream(downloadedName), videoDuration, durationPerVideo,
+            this.makeStatus(fs.createReadStream(downloadedName), videoDuration, durationPerVideo,
                 (output: string) => {
                     botwa.sendVideoDocument(jid, fs.readFileSync(output), output)
                         .then(() => {
                             fs.unlinkSync(output)
                         })
                 },
-                (err: any) => {
+                (err: any, output: string) => {
                     console.log('error: ', err)
-                    botwa.sendText(jid, 'error bos')
+                    botwa.sendText(jid, 'error bos -- ' + output + '\nrestart proses ini...')
                 })
             setTimeout(() => {
                 fs.unlinkSync(downloadedName)
@@ -50,31 +50,31 @@ export class YTStatusCommand implements Command {
 
     }
 
-    async cutVideo(stream: any, videoDuration: number, durationPerVideo: number, resolve: Function, reject: Function) {
+    async makeStatus(stream: any, videoDuration: number, durationPerVideo: number, resolve: Function, reject: Function) {
         const filename = Helper.getRandomString(10)
         let startTime = 0
         for (let i = 0; i < videoDuration / durationPerVideo; i++) {
             const output = i + '-' + filename + '.mp4'
-            ffmpeg(stream)
-                .setStartTime(startTime)
-                .setDuration(durationPerVideo)
-                .output(output)
-                .on('end', async (err) => {
-                    if (!err) {
-                        resolve(output)
-                    }
-                })
-                .on('error', async (err) => {
-                    reject(err)
-                })
-                .run()
+            this.cutVideo(stream, durationPerVideo, startTime, output, resolve, reject)
             startTime += durationPerVideo
         }
     }
 
-    // async cutVideoPromise(stream: any, videoDuration: number, durationPerVideo: number): Promise<string> {
-    //     return new Promise((resolve, reject) => {
-    //         this.cutVideo(stream, videoDuration, durationPerVideo, resolve, reject)
-    //     })
-    // }
+    async cutVideo(stream: any, durationPerVideo: number, startTime: number, output: string, resolve: Function, reject: Function) {
+        ffmpeg(stream)
+            .setStartTime(startTime)
+            .setDuration(durationPerVideo)
+            .output(output)
+            .on('end', async (err) => {
+                if (!err) {
+                    resolve(output)
+                }
+            })
+            .on('error', async (err) => {
+                reject(err, output)
+                this.cutVideo(stream, durationPerVideo, startTime, output, resolve, reject)
+            })
+            .run()
+    }
+
 }
