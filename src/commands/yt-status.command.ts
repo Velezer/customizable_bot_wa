@@ -6,7 +6,9 @@ import { YTDownloader } from "../video/ytdownloader";
 import ffmpeg from 'fluent-ffmpeg'
 
 const promiseRetry = (fn: Function, ...args: any): Promise<any> => {
-    return fn(...args).catch(() => promiseRetry(fn, ...args))
+    return fn(...args).catch(() => setTimeout(() => {
+        promiseRetry(fn, ...args)
+    }, 10 * 1000))
 }
 
 export class YTStatusCommand implements Command {
@@ -62,7 +64,7 @@ export class YTStatusCommand implements Command {
             // await this.cutVideo(stream, durationPerVideo, startTime, output)
             await promiseRetry(this.cutVideo, stream, durationPerVideo, startTime, output)
                 .then(output => resolve(output))
-                // .catch(err => reject(err))
+            // .catch(err => reject(err))
             startTime += durationPerVideo
         }
     }
