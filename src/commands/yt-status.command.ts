@@ -5,13 +5,13 @@ import { Helper } from "../helper/helper";
 import { YTDownloader } from "../video/ytdownloader";
 import ffmpeg from 'fluent-ffmpeg'
 
-const promiseRetry = (fn: Function, ...args: any): Promise<any> => {
+const promiseRetry = (fn: Function): Promise<any> => {
     return new Promise(resolve => {
-        fn(...args)
+        fn()
             .then(resolve)
             .catch(() => {
                 setTimeout(() => {
-                    promiseRetry(fn, ...args).then(resolve)
+                    promiseRetry(fn).then(resolve)
                 }, 10 * 1000)
             })
 
@@ -45,8 +45,7 @@ export class YTStatusCommand implements Command {
         stream.on('end', () => {
             this.makeStatus(fs.createReadStream(downloadedName), videoDuration, durationPerVideo,
                 (output: string) => {
-                    // botwa.sendVideoDocument(jid, fs.readFileSync(output), output)
-                    promiseRetry(botwa.sendVideoDocument, jid, fs.readFileSync(output), output)
+                    promiseRetry(() => botwa.sendVideoDocument(jid, fs.readFileSync(output), output))
                         .then(() => {
                             fs.unlinkSync(output)
                         })
@@ -68,10 +67,8 @@ export class YTStatusCommand implements Command {
         let startTime = 0
         for (let i = 0; i < videoDuration / durationPerVideo; i++) {
             const output = i + '-' + filename + '.mp4'
-            // await this.cutVideo(stream, durationPerVideo, startTime, output)
-            await promiseRetry(this.cutVideo, stream, durationPerVideo, startTime, output)
+            await promiseRetry(() => this.cutVideo(stream, durationPerVideo, startTime, output))
                 .then(output => resolve(output))
-            // .catch(err => reject(err))
             startTime += durationPerVideo
         }
     }
