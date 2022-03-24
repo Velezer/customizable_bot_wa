@@ -2,8 +2,9 @@ import { DataSource } from "typeorm";
 import { AuthEntity } from "./entity/AuthEntity";
 import { GroupChatEntity } from "./entity/GroupChatEntity";
 import { GroupMenuEntity } from "./entity/GroupMenuEntity";
+import { ImageStorageEntity } from './entity/ImageEntity';
 
-const entities = [GroupChatEntity, GroupMenuEntity, AuthEntity]
+const entities = [GroupChatEntity, GroupMenuEntity, AuthEntity, ImageStorageEntity]
 
 export const DataSources = {
 

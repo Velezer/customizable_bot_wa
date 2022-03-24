@@ -1,6 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, JoinTable } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, JoinTable, OneToOne } from "typeorm"
 import { GroupChatEntity } from './GroupChatEntity';
 import { LocalColumn } from './decorator/LocalColumn';
+import { ImageStorageEntity } from "./ImageEntity";
 
 export enum GroupMenuType {
     TEXT = 'text',
@@ -29,5 +30,7 @@ export class GroupMenuEntity {
     // @JoinColumn()
     groupChat!: GroupChatEntity;
 
-
+    @OneToOne(() => ImageStorageEntity, (img) => img.groupMenu, { onDelete: 'CASCADE' })
+    // @JoinColumn()
+    imageStorage!: ImageStorageEntity;
 }

@@ -6,6 +6,8 @@ import { GroupChatService } from "./service/GroupChatService"
 import { AuthService } from "./service/AuthService"
 import { AuthEntity } from './entity/AuthEntity';
 import { GroupMenuService } from "./service/GroupMenuService"
+import { ImageStorageService } from './service/ImageStorageService';
+import { ImageStorageEntity } from './entity/ImageEntity';
 
 
 export class AppDatabase {
@@ -25,7 +27,8 @@ export class AppDatabase {
         const serviceGroupChat = new GroupChatService(repoGroupChat)
 
         const authService = new AuthService(new Repository(AuthEntity, this.dataSource.manager))
-        return { serviceGroupMenu, serviceGroupChat, authService }
+        const imageStorageService = new ImageStorageService(new Repository(ImageStorageEntity, this.dataSource.manager))
+        return { serviceGroupMenu, serviceGroupChat, authService, imageStorageService }
     }
 
     down() {
