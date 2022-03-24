@@ -22,8 +22,8 @@ export class AppDatabase {
         const repoGroupMenu = new Repository(GroupMenuEntity, this.dataSource.manager)
         const serviceGroupMenu = new GroupMenuService(repoGroupMenu)
         const repoGroupChat = new Repository(GroupChatEntity, this.dataSource.manager)
-        const serviceGroupChat = new GroupChatService(repoGroupChat)
-        
+        const serviceGroupChat = new GroupChatService(repoGroupChat, this.dataSource.queryResultCache)
+
         const authService = new AuthService(new Repository(AuthEntity, this.dataSource.manager))
         return { serviceGroupMenu, serviceGroupChat, authService }
     }
