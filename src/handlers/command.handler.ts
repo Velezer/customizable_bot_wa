@@ -58,7 +58,7 @@ export class CommandHandler implements Handler<Command> {
     }
 
     async run(jid: string, conversation: string, level: CommandLevel, quotedMessage: proto.IMessage, receivedMessage: proto.WebMessageInfo) {
-        let group = await this.services.serviceGroupChat.findOneByJid(jid)
+        let group = await this.services.serviceGroupChat.findOneByJidCached(jid)
         if (!group) {
             group = await this.services.serviceGroupChat.create(jid)
         } else if (group.blacklist) {
