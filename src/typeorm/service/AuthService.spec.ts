@@ -31,8 +31,8 @@ describe('GroupChat with jid=jid', () => {
 
     it('findOne auth', async ()=>{
         const found = await service.findOne(name)
-        expect(found.name).toBe(name)
-        expect(found.authInfo).toBe(authInfo)
+        expect(found!.name).toBe(name)
+        expect(found!.authInfo).toBe(authInfo)
     })
 
 

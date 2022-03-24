@@ -1,6 +1,6 @@
 type PromiseFunction<T> = () => Promise<T>
 /**
- * 
+ * it doesn't support reject
  * @param fn Function must return promise
  * @param seconds interval to run fn
  */

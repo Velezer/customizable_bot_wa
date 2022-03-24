@@ -14,7 +14,17 @@ export class GroupChatService {
     }
 
     async findOneByJid(jid: string) {
-        const found = await this.repo.findOneBy({ jid })
+        const found = await this.repo.findOneBy({ jid})
+        return found
+    }
+
+    async findOneByJidCached(jid: string) {
+        const found = await this.repo.findOne(
+            {
+                where: { jid },
+                cache: true
+            },
+        )
         return found
     }
 
