@@ -14,8 +14,10 @@ export class AppDatabase {
         this.dataSource = dataSource
     }
 
-    setup() {
-        return this.dataSource.initialize()
+   async setup() {
+        await this.dataSource.initialize()
+        await this.dataSource.queryResultCache?.connect()
+        await this.dataSource.queryResultCache?.synchronize()
     }
 
     getServices() {

@@ -11,7 +11,7 @@ const dataSource = new DataSource({
 
 export class CacheProvider extends DbQueryResultCache {
     constructor() {
-        dataSource.initialize()
         super(dataSource)
+        dataSource.initialize()
     }
 }
