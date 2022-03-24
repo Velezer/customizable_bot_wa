@@ -31,7 +31,7 @@ export class RegisterGroupCommand implements Command {
 
             services!.serviceGroupChat.sewa(groupChat!.jid, activationKey.botLevel)
                 .then(() => {
-                    botwa.sendMessage(jid, 'aktivasi sukses bot ' + groupChat!.botLevel)
+                    botwa.sendMessage(jid, 'aktivasi sukses bot ' + activationKey.botLevel)
                     LoggerOcedBot.log(botwa, 'aktivasi sukses dengan key \n\n' + JSON.stringify(activationKey) + '\n\n' + groupSubject + '\n\n' + jid)
                     Activation.generateActivationKey()
                 })
