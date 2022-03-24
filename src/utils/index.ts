@@ -16,3 +16,9 @@ export function retryPromise<T>(fn: PromiseFunction<T>, seconds: number): Promis
 
     });
 }
+
+export async function sleep(ms: number) {
+    return new Promise(resolve => {
+        setTimeout(resolve, ms)
+    })
+}

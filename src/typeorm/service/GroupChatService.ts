@@ -1,33 +1,19 @@
 
-import { QueryFailedError, Repository } from 'typeorm'
-import { QueryResultCache } from 'typeorm/cache/QueryResultCache'
+import { Repository } from 'typeorm'
 import { BotLevel } from '../../groups/interface'
 import { GroupChatEntity } from '../entity/GroupChatEntity'
-import { GroupMenuEntity, GroupMenuType } from '../entity/GroupMenuEntity'
 import { futureDateFromNow } from '../helper/futureDate'
 
 
 
 export class GroupChatService {
-    private repo: Repository<GroupChatEntity>
-    private cache: QueryResultCache | undefined
-    constructor(repo: Repository<GroupChatEntity>, cache?: QueryResultCache) {
+    repo: Repository<GroupChatEntity>
+    constructor(repo: Repository<GroupChatEntity>) {
         this.repo = repo
-        this.cache = cache
     }
 
     async findOneByJid(jid: string) {
         const found = await this.repo.findOneBy({ jid })
-        return found
-    }
-
-    async findOneByJidCached(jid: string) {
-        const found = await this.repo.findOne(
-            {
-                where: { jid },
-                cache: true
-            },
-        )
         return found
     }
 

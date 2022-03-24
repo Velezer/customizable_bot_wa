@@ -2,7 +2,6 @@ import { DataSource } from "typeorm";
 import { AuthEntity } from "./entity/AuthEntity";
 import { GroupChatEntity } from "./entity/GroupChatEntity";
 import { GroupMenuEntity } from "./entity/GroupMenuEntity";
-import { CacheProvider } from './cache/provider';
 
 const entities = [GroupChatEntity, GroupMenuEntity, AuthEntity]
 
@@ -17,10 +16,6 @@ export const DataSources = {
         entities,
         migrations: [],
         subscribers: [],
-        cache: {
-            provider() { return new CacheProvider() },
-            duration: 2 * 1000
-        }
     }),
     postgres: new DataSource({
         type: "postgres",
@@ -34,10 +29,13 @@ export const DataSources = {
         entities,
         migrations: [],
         subscribers: [],
-        cache: {
-            provider() { return new CacheProvider() },
-            duration: 30 * 1000
-        }
-    })
+    }),
+    cache: new DataSource({
+        type: 'better-sqlite3',
+        database: ":memory:",
+        dropSchema: true,
+        synchronize: true,
+        logging: false,
+    }),
 
 }

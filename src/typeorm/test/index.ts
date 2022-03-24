@@ -1,4 +1,3 @@
-import "reflect-metadata"
 import { DataSource, Repository } from "typeorm"
 import { GroupChatEntity } from "../entity/GroupChatEntity"
 import { AppDatabase } from '../index';

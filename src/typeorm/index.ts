@@ -16,15 +16,13 @@ export class AppDatabase {
 
    async setup() {
         await this.dataSource.initialize()
-        await this.dataSource.queryResultCache?.connect()
-        await this.dataSource.queryResultCache?.synchronize()
     }
 
     getServices() {
         const repoGroupMenu = new Repository(GroupMenuEntity, this.dataSource.manager)
         const serviceGroupMenu = new GroupMenuService(repoGroupMenu)
         const repoGroupChat = new Repository(GroupChatEntity, this.dataSource.manager)
-        const serviceGroupChat = new GroupChatService(repoGroupChat, this.dataSource.queryResultCache)
+        const serviceGroupChat = new GroupChatService(repoGroupChat)
 
         const authService = new AuthService(new Repository(AuthEntity, this.dataSource.manager))
         return { serviceGroupMenu, serviceGroupChat, authService }
