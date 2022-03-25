@@ -76,8 +76,9 @@ export class UpdateCustomMenuCommand implements Command {
         if (receivedMessage?.message?.imageMessage) {
             const path = await botwa.sock.downloadAndSaveMediaMessage(receivedMessage, Helper.getRandomString(20))
 
-            services!.serviceGroupMenu.updateMenuImage(jid, m1, fs.readFileSync(path))
-            return botwa.sendMessage(jid, 'gambar ditambahkan')
+            const menu = await services!.serviceGroupMenu.findOneMenu(jid, m1)
+            services!.imageStorageService.updateOne(menu!.id, fs.readFileSync(path))
+            return botwa.sendMessage(jid, 'gambar diupdate')
         }
         // -------------------
 
