@@ -25,6 +25,15 @@ export class GroupMenuService {
         return found
     }
 
+    async findOneMenuImage(jid: string, key: string) {
+        const found = await this.repo.findOne(
+            {
+                where: { groupChat: { jid }, key, type: GroupMenuType.IMAGE },
+                relations: { imageStorage: true }
+            })
+        return found
+    }
+
     async createMenu(groupChat: GroupChatEntity, key: string, value: string, type: GroupMenuType, imageStorage?: ImageStorageEntity) {
         const found = await this.findOneMenu(groupChat.jid, key)
         if (!found) {
@@ -54,6 +63,14 @@ export class GroupMenuService {
         const found = await this.findOneMenu(jid, key)
         if (found) {
             found.value = value
+            return await this.repo.save(found)
+        }
+    }
+    
+    async updateMenuImage(jid: string, key: string, bufferImage: Uint8Array) {
+        const found = await this.findOneMenuImage(jid, key)
+        if (found) {
+            found.imageStorage.image = bufferImage
             return await this.repo.save(found)
         }
     }
