@@ -33,7 +33,7 @@ export const DataSources = {
     }),
     cache: new DataSource({
         type: 'better-sqlite3',
-        database: ":memory:",
+        database: "cache.db",
         dropSchema: true,
         synchronize: true,
         logging: false,

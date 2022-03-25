@@ -1,9 +1,7 @@
 import { TestDatabase } from '../test/index';
-import fs from 'fs'
-import path from 'path';
 
 const testDatabase = new TestDatabase()
-const { serviceGroupMenu, imageStorageService:storage } = testDatabase.getServices()
+const { serviceGroupChat, serviceGroupMenu: serviceMenu, imageStorageService: storage } = testDatabase.getServices()
 
 beforeAll(async () => {
     await testDatabase.setup()
@@ -14,8 +12,8 @@ afterAll(async () => {
 })
 
 describe('image service', () => {
-    const buffer: Uint8Array = new Uint8Array([1,2,3,4,5])
-    const bufferUpdated: Uint8Array = new Uint8Array([1,2,3,4,5,5,6,6,2])
+    const buffer: Uint8Array = new Uint8Array([1, 2, 3, 4, 5])
+    const bufferUpdated: Uint8Array = new Uint8Array([1, 2, 3, 4, 5, 5, 6, 6, 2])
     it('store image', async () => {
         const ent = await storage.store(buffer)
         expect(ent.id).toBe(1)
@@ -35,5 +33,21 @@ describe('image service', () => {
     })
 })
 
+describe('image menu service', () => {
+    const jid = 'jidmenustore'
+    const key = '/keyyymenustore'
+    const buffer: Uint8Array = new Uint8Array([1, 2, 3, 4, 5, 34, 2])
+    it('store image menu', async () => {
+        const gc = await serviceGroupChat.create(jid)
+        const img = await storage.store(buffer)
+        const menu = await serviceMenu.createMenuStoreImage(gc, key, img)
+        expect(menu?.groupChat.jid).toBe(jid)
+        expect(menu?.imageStorage.image).toBe(buffer)
+    })
+    it('found image menu from db as Uint8array', async () => {
+        const menu = await serviceMenu.findOneMenu(jid, key)
+        expect(menu?.imageStorage.image).toStrictEqual(Buffer.from(buffer))
+    })
+})
 
 

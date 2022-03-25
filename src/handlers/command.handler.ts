@@ -107,7 +107,7 @@ export class CommandHandler implements Handler<Command> {
         const groupMenu = await this.services.serviceGroupMenu.findOneMenu(jid, m0)
         if (groupMenu) {
             if (groupMenu.type === GroupMenuType.TEXT) return this.botwa.sendMessage(jid, groupMenu.value)
-            if (groupMenu.type === GroupMenuType.IMAGE) return this.botwa.sendImage(jid, fs.readFileSync(groupMenu.value))
+            if (groupMenu.type === GroupMenuType.IMAGE) return this.botwa.sendImage(jid, Buffer.from(groupMenu.imageStorage.image))
         }
 
         const commands = this.handlers

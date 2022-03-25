@@ -1,7 +1,7 @@
 import { BotLevel } from "../../groups/interface";
 import { Helper } from "../../helper/helper";
 import { Command, CommandLevel, RunArgs } from "../interface";
-
+import fs from 'fs'
 
 export class AddImageMenuCommand implements Command {
     botLevel: BotLevel = BotLevel.BASIC
@@ -31,7 +31,9 @@ export class AddImageMenuCommand implements Command {
 
 
         const path = await botwa.sock.downloadAndSaveMediaMessage(receivedMessage, Helper.getRandomString(20))
-        services!.serviceGroupMenu.createMenuImage(groupChat!, m1, path)
+    
+        const imgStore = await services!.imageStorage.store(fs.readFileSync(path))
+        services!.serviceGroupMenu.createMenuStoreImage(groupChat!, m1, imgStore!)
         botwa.sendMessage(jid, 'gambar ditambahkan')
 
 
