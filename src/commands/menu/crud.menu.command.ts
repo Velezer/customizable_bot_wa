@@ -56,7 +56,7 @@ export class UpdateCustomMenuCommand implements Command {
     description: string = 'mengupdate menu';
     level: CommandLevel = CommandLevel.ADMIN;
 
-    async run(args: RunArgs): Promise<void> {
+    async run(args: RunArgs){
         const { quotedMessage, receivedMessage, conversation, botwa, groupChat, services } = args
         const m12 = conversation.slice(this.key.length + 1)
         let m1 = m12.split(' ')[0]
@@ -65,14 +65,27 @@ export class UpdateCustomMenuCommand implements Command {
         const jid = groupChat!.jid
 
         if (!m1) {
-            botwa.sendMessage(jid, 'silakan tambahkan data terlebih dahulu')
+            botwa.sendMessage(jid, 'silakan tambahkan nama menu terlebih dahulu')
             return
         }
 
         if (!m1.startsWith('/')) {
             m1 = '/' + m1
         }
+        // -----------------
+        if (receivedMessage?.message?.imageMessage) {
+            const path = await botwa.sock.downloadAndSaveMediaMessage(receivedMessage, Helper.getRandomString(20))
 
+            const imgStore = await services!.imageStorageService.store(fs.readFileSync(path))
+            services!.serviceGroupMenu.createMenuStoreImage(groupChat!, m1, imgStore!)
+            return botwa.sendMessage(jid, 'gambar ditambahkan')
+        }
+        // -------------------
+
+        if (!m2) {
+            botwa.sendMessage(jid, 'silakan tambahkan data text terlebih dahulu')
+            return
+        }
         services!.serviceGroupMenu.updateMenuValue(groupChat!.jid, m1, m2)
 
         botwa.sendMessage(jid, 'menu diupdate')
