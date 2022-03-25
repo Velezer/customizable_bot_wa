@@ -12,14 +12,14 @@ export class CekCommand implements Command {
     async run(args: RunArgs): Promise<void> {
         const { quotedMessage, receivedMessage, conversation, botwa, groupChat } = args
 
-        const localDate = (date: Date) => date.toLocaleString('id-ID', { month: 'long', year: 'numeric', day: 'numeric' }) +
-            ' jam ' + date.toLocaleString('id-ID', { hour: 'numeric', minute: 'numeric' })
+        const localDate = (date: Date) => date.toLocaleString('id-ID', { month: 'long', year: 'numeric', day: 'numeric', timeZone: 'Asia/Jakarta' }) +
+            ' jam ' + date.toLocaleString('id-ID', { hour: 'numeric', minute: 'numeric', timeZone: 'Asia/Jakarta' })
 
-        if (new Date() < groupChat!.sewaExpiredAt){
-            await botwa.sendMessage(groupChat!.jid, groupChat!.botLevel + '\n\nsewa expired pada\n' + localDate(new Date(groupChat!.sewaExpiredAt)))
+        if (new Date() < groupChat!.sewaExpiredAt) {
+            await botwa.sendMessage(groupChat!.jid, groupChat!.botLevel + '\n\nsewa expired pada\n' + localDate(groupChat!.sewaExpiredAt))
         }
-        if (new Date() < groupChat!.trialExpiredAt){
-            await botwa.sendMessage(groupChat!.jid, groupChat!.botLevel + '\n\ntrial expired pada\n' + localDate(new Date(groupChat!.trialExpiredAt)))
+        if (new Date() < groupChat!.trialExpiredAt) {
+            await botwa.sendMessage(groupChat!.jid, groupChat!.botLevel + '\n\ntrial expired pada\n' + localDate(groupChat!.trialExpiredAt))
         }
 
     }
