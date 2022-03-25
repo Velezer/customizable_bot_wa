@@ -1,7 +1,6 @@
 import { proto } from "@adiwajshing/baileys";
 import { AddCustomMenuCommand } from "./crud.menu.command";
 import { BotLevel } from "../../groups/interface";
-import { AddImageMenuCommand } from "./crud.image.command";
 import { Command, CommandLevel, RunArgs } from "../interface";
 
 
@@ -35,9 +34,8 @@ export class GroupMenuElegantCommand implements Command {
             await botwa.sendListMessageSingleSelect(groupChat!.jid, 'Menu', sections);
         } else {
 
-            await botwa.sendMessage(groupChat!.jid, 'menu kosong silakan tambahkan menggunakan\n\n' + new AddCustomMenuCommand().example 
-            + '\n\n' + 'atau\n\n' + new AddImageMenuCommand().example
-            )
+            await botwa.sendMessage(groupChat!.jid, 'menu kosong silakan tambahkan menggunakan\n\n' +
+                new AddCustomMenuCommand().example)
 
         }
 
