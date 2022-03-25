@@ -28,13 +28,13 @@ export class GroupChatEntity {
     groupMenu!: GroupMenuEntity[]
 
     @LocalColumn(
-        { type: 'timestamp', default: null },
+        { type: 'timestamp with time zone', default: null },
         { type: 'datetime' }
     )
     trialExpiredAt!: Date
 
     @LocalColumn(
-        { type: 'timestamp', default: null },
+        { type: 'timestamp with time zone', default: null },
         { type: 'datetime' }
     )
     sewaExpiredAt!: Date
