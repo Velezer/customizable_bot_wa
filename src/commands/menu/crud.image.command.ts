@@ -32,7 +32,7 @@ export class AddImageMenuCommand implements Command {
 
         const path = await botwa.sock.downloadAndSaveMediaMessage(receivedMessage, Helper.getRandomString(20))
     
-        const imgStore = await services!.imageStorage.store(fs.readFileSync(path))
+        const imgStore = await services!.imageStorageService.store(fs.readFileSync(path))
         services!.serviceGroupMenu.createMenuStoreImage(groupChat!, m1, imgStore!)
         botwa.sendMessage(jid, 'gambar ditambahkan')
 
