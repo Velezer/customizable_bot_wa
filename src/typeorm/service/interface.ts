@@ -7,5 +7,5 @@ export interface Services {
     serviceGroupMenu: GroupMenuService
     serviceGroupChat: GroupChatService 
     authService: AuthService
-    imageStorage: ImageStorageService
+    imageStorageService: ImageStorageService
 }
