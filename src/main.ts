@@ -1,27 +1,37 @@
+require('dotenv').config()
 import { BotWa } from './botwa'
-import { proto, ReconnectMode, WAConnection } from '@adiwajshing/baileys'
+import { ReconnectMode, WAConnection } from '@adiwajshing/baileys'
 import { Activation } from './activation/activation'
-import { Helper } from './helper/helper'
 import { BehaviorHandler } from './handlers/behavior.handler'
 import { CommandHandler } from './handlers/command.handler'
 import { LoggerOcedBot } from './logger'
 import { CommandLevel } from './commands/interface'
+import { AppDatabase } from './typeorm'
+import { DataSources } from './typeorm/data-source'
 
 
 
 async function main() {
+    const db = new AppDatabase(DataSources.postgres)
+    await db.setup()
+        .then(() => console.log('db connected'))
+        .catch(err => console.log(err))
+    const services = db.getServices()
     const sock: WAConnection = new WAConnection()
     sock.logger.level = 'debug' //''debug', 'fatal', 'error',  'trace'
     sock.version = [2, 2143, 3]
     sock.browserDescription = ['velezer', 'Chrome', 'OcedBot']
     sock.autoReconnect = ReconnectMode.onAllErrors
 
-    if (Helper.isExist('auth.json')) {
-        sock.loadAuthInfo('auth.json')
+    const authName = process.env.AUTH_NAME
+    const foundAuth = await services.authService.findOne(authName!)
+    if (foundAuth) {
+        sock.loadAuthInfo(JSON.parse(foundAuth.authInfo))
     }
 
     await sock.connect()
-    Helper.saveJSON('auth.json', sock.base64EncodedAuthInfo())
+    await services.authService.remove(authName!)
+    services.authService.create(authName!, JSON.stringify(sock.base64EncodedAuthInfo()))
 
 
     sock.on('close', async (data) => {
@@ -78,7 +88,7 @@ async function main() {
 
         if (!conversation) return
 
-        const commander = new CommandHandler(botwa)
+        const commander = new CommandHandler(botwa, services)
         if (! await commander.isSentByGroupAdmin(receivedMessage, participants)) {
             await commander.run(jid, conversation, CommandLevel.MEMBER, quotedMessage!, receivedMessage).catch(err => console.error(err))
             return

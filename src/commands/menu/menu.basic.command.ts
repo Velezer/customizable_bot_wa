@@ -1,12 +1,8 @@
 
 import { proto } from "@adiwajshing/baileys";
-import { BotWa } from "../../botwa";
-import { GroupChat } from "../../groups/group.chat";
-import { Command, CommandLevel } from "../interface";
+import { Command, CommandLevel, RunArgs } from "../interface";
 import { AddCustomMenuCommand } from "./crud.menu.command";
 import { BotLevel } from "../../groups/interface";
-import { ImageStorage } from "../../groups/group.image.storage";
-import { AddImageMenuCommand } from "./crud.image.command";
 
 
 export class BotMenuBasicCommand implements Command {
@@ -21,13 +17,14 @@ export class BotMenuBasicCommand implements Command {
         this.allCommands = allCommands
     }
 
-    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
+    async run(args: RunArgs): Promise<void> {
+        const { quotedMessage, receivedMessage, conversation, botwa, groupChat, services } = args
 
-        if (groupChat.botLevel === BotLevel.ELEGANT) {
+        if (groupChat!.botLevel === BotLevel.ELEGANT) {
             const sections: proto.ISection[] = []
 
             const commandRows: proto.IRow[] = []
-            const filteredCommands = this.allCommands.filter(c => c.botLevel <= groupChat.botLevel)
+            const filteredCommands = this.allCommands.filter(c => c.botLevel <= groupChat!.botLevel)
 
             const setKeys = new Set(filteredCommands.map(c => c.key))
             setKeys.forEach(key => {
@@ -43,20 +40,20 @@ export class BotMenuBasicCommand implements Command {
             }
             sections.push(commandSection)
 
-            await botwa.sendListMessageSingleSelect(groupChat.jid, 'Commands', sections);
+            await botwa.sendListMessageSingleSelect(groupChat!.jid, 'Commands', sections);
 
-        } else if (groupChat.botLevel === BotLevel.BASIC) {
+        } else if (groupChat!.botLevel === BotLevel.BASIC) {
             let msg = ''
 
             msg += '_Commands_\n\n'
-            const filteredCommands = this.allCommands.filter(c => c.botLevel <= groupChat.botLevel)
+            const filteredCommands = this.allCommands.filter(c => c.botLevel <= groupChat!.botLevel)
             const setKeys = new Set(filteredCommands.map(c => c.key))
             setKeys.forEach(key => {
                 const c = filteredCommands.find(c => c.key === key)!
                 msg += `${c.example}\n${c.description}\n\n`
             })
             msg = msg.slice(0, -2)
-            await botwa.sendMessage(groupChat.jid, msg);
+            await botwa.sendMessage(groupChat!.jid, msg);
         }
 
     }
@@ -69,48 +66,21 @@ export class GroupMenuBasicCommand implements Command {
     example: string = this.key;
     level: CommandLevel = CommandLevel.MEMBER;
 
-    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
-
-        if (groupChat.groupMenu.length > 0) {
+    async run(args: RunArgs): Promise<void> {
+        const { quotedMessage, services, conversation, botwa, groupChat } = args
+        groupChat!.groupMenu = await services!.serviceGroupMenu.findAllMenu(groupChat!.jid)
+        if (groupChat!.groupMenu.length > 0) {
             let msg = ''
 
             msg += '_Menu_\n\n'
-            groupChat.groupMenu.forEach(m => {
+            groupChat!.groupMenu.forEach(m => {
                 msg += `${m.key}\n\n`
             })
             msg = msg.slice(0, -2)
-            await botwa.sendMessage(groupChat.jid, msg);
+            await botwa.sendMessage(groupChat!.jid, msg);
         } else {
 
-            await botwa.sendMessage(groupChat.jid, 'menu kosong silakan tambahkan menggunakan\n\n' + new AddCustomMenuCommand().example)
-
-        }
-
-
-    }
-}
-
-export class ImageMenuBasicCommand implements Command {
-    botLevel: BotLevel = BotLevel.BASIC
-    key: string = '/image';
-    description: string = 'nampilin image';
-    example: string = this.key;
-    level: CommandLevel = CommandLevel.MEMBER;
-
-    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
-        const groupImageData = ImageStorage.findByGroupJid(groupChat.jid)
-        if (groupImageData!.images.length > 0) {
-            let msg = ''
-
-            msg += '_Image_\n\n'
-            groupImageData!.images.forEach(img => {
-                msg += `${img.id}\n\n`
-            })
-            msg = msg.slice(0, -2)
-            await botwa.sendMessage(groupChat.jid, msg);
-        } else {
-
-            await botwa.sendMessage(groupChat.jid, 'image kosong silakan tambahkan menggunakan\n\n' + new AddImageMenuCommand().example)
+            await botwa.sendMessage(groupChat!.jid, 'menu kosong silakan tambahkan menggunakan\n\n' + new AddCustomMenuCommand().example)
 
         }
 

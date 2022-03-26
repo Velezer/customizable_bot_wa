@@ -1,11 +1,7 @@
 import { proto } from "@adiwajshing/baileys";
-import { BotWa } from "../../botwa";
-import { GroupChat } from "../../groups/group.chat";
-import { Command, CommandLevel } from "../interface";
 import { AddCustomMenuCommand } from "./crud.menu.command";
 import { BotLevel } from "../../groups/interface";
-import { ImageStorage } from "../../groups/group.image.storage";
-import { AddImageMenuCommand } from "./crud.image.command";
+import { Command, CommandLevel, RunArgs } from "../interface";
 
 
 
@@ -17,12 +13,14 @@ export class GroupMenuElegantCommand implements Command {
     example: string = this.key;
     level: CommandLevel = CommandLevel.MEMBER;
 
-    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
+    async run(args: RunArgs): Promise<void> {
+        const { quotedMessage, receivedMessage, services, botwa, groupChat } = args
         const sections: proto.ISection[] = []
 
-        if (groupChat.groupMenu.length > 0) {
+        groupChat!.groupMenu = await services!.serviceGroupMenu.findAllMenu(groupChat!.jid)
+        if (groupChat!.groupMenu.length > 0) {
             const menuRows: proto.IRow[] = []
-            groupChat.groupMenu.forEach(m => {
+            groupChat!.groupMenu.forEach(m => {
                 const row: proto.IRow = { rowId: m.key, title: m.key }
                 menuRows.push(row)
             })
@@ -33,45 +31,11 @@ export class GroupMenuElegantCommand implements Command {
             }
 
             sections.push(menuSection)
-            await botwa.sendListMessageSingleSelect(groupChat.jid, 'Menu', sections);
+            await botwa.sendListMessageSingleSelect(groupChat!.jid, 'Menu', sections);
         } else {
 
-            await botwa.sendMessage(groupChat.jid, 'menu kosong silakan tambahkan menggunakan\n\n' + new AddCustomMenuCommand().example)
-
-        }
-
-
-    }
-}
-
-export class ImageMenuElegantCommand implements Command {
-    botLevel: BotLevel = BotLevel.ELEGANT
-    key: string = '/image';
-    description: string = 'nampilin image';
-    example: string = this.key;
-    level: CommandLevel = CommandLevel.MEMBER;
-
-    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
-        const sections: proto.ISection[] = []
-
-        const groupImageData = ImageStorage.findByGroupJid(groupChat.jid)
-        if (groupImageData!.images.length > 0) {
-            const menuRows: proto.IRow[] = []
-            groupImageData!.images.forEach(img => {
-                const row: proto.IRow = { rowId: img.id, title: img.id }
-                menuRows.push(row)
-            })
-
-            const menuSection: proto.ISection = {
-                title: 'Image',
-                rows: menuRows,
-            }
-
-            sections.push(menuSection)
-            await botwa.sendListMessageSingleSelect(groupChat.jid, 'Image', sections);
-        } else if (groupImageData === undefined || groupImageData!.images.length === 0) {
-
-            await botwa.sendMessage(groupChat.jid, 'image kosong silakan tambahkan menggunakan\n\n' + new AddImageMenuCommand().example)
+            await botwa.sendMessage(groupChat!.jid, 'menu kosong silakan tambahkan menggunakan\n\n' +
+                new AddCustomMenuCommand().example)
 
         }
 

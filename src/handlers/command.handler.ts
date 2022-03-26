@@ -1,26 +1,25 @@
 import { proto, WAGroupParticipant } from "@adiwajshing/baileys";
-import { plainToClass } from "class-transformer";
 import { BotWa } from "../botwa";
 import { Command, CommandLevel } from "../commands/interface";
-import { allCommands } from "../commands/regular.command";
+import { allCommands } from "../commands";
 import { UnregCommand, TrialCommand, RegisterGroupCommand } from "../commands/special.command";
-import { GroupChat } from "../groups/group.chat";
-import { ImageStorage } from "../groups/group.image.storage";
-import { GroupManager } from "../groups/group.manager";
 import { BotLevel } from "../groups/interface";
 import { OcedBot } from "../ocedbot";
 import { Handler } from "./interface";
 import fs from 'fs'
+import { Services } from "../typeorm/service/interface";
+import { GroupMenuType } from "../typeorm/entity/GroupMenuEntity";
 
 
 export class CommandHandler implements Handler<Command> {
-    botwa: BotWa;
+    services: Services
+    botwa: BotWa
 
-    groupChats: GroupChat[] = GroupManager.getRegisteredGroup()
     handlers: Command[] = allCommands
 
-    constructor(botwa: BotWa) {
+    constructor(botwa: BotWa, services: Services) {
         this.botwa = botwa
+        this.services = services
     }
 
     async isSentByGroupAdmin(receivedMessage: proto.WebMessageInfo, participants: WAGroupParticipant[]) {
@@ -48,57 +47,56 @@ export class CommandHandler implements Handler<Command> {
 
     async unreg(conversation: string) {
         if (conversation.startsWith('/unreg')) {
-            const c = new UnregCommand()
-            c.run(this.botwa, new GroupChat('unused'), conversation).catch(err => console.error(err))
+            new UnregCommand()
+                .run({
+                    botwa: this.botwa,
+                    conversation: conversation,
+                    services: this.services
+                })
+                .catch(err => console.error(err))
         }
     }
 
     async run(jid: string, conversation: string, level: CommandLevel, quotedMessage: proto.IMessage, receivedMessage: proto.WebMessageInfo) {
-        let group = this.groupChats.find(g => g.jid === jid)
+        let group = await this.services.serviceGroupChat.findOneByJid(jid)
+        if (!group) {
+            group = await this.services.serviceGroupChat.create(jid)
+        } else if (group.blacklist) {
+            this.botwa.sendText(group.jid, 'group ini diblacklist')
+        }
+
+        const trialExpired = group.trialExpiredAt < new Date()
+        const sewaExpired = group.sewaExpiredAt < new Date()
+        const neverTrial = !group.trialExpiredAt
+        const neverSewa = !group.sewaExpiredAt
 
         if (level !== CommandLevel.MEMBER) {
             if (conversation.startsWith('/trial')) {
-                if (group) {
-                    this.botwa.sendMessage(jid, 'trial habis')
-                    return
+                if (neverTrial) {
+                    return new TrialCommand().run({ botwa: this.botwa, groupChat: group, conversation, services: this.services })
+                        .catch(err => console.error(err))
                 }
-
-                const c = new TrialCommand()
-                const groupChat: GroupChat = new GroupChat(jid)
-                c.run(this.botwa, groupChat, conversation).catch(err => console.error(err))
-                return
             }
             if (conversation.startsWith('/sewa')) {
-                if (group) {
-                    group = plainToClass(GroupChat, group)
-                    if (!group.isExpired() && !group.trial) {
-                        this.botwa.sendMessage(jid, 'bot masih dalam masa sewa')
-                        return
-                    }
+                if (sewaExpired || neverSewa) {
+                    return new RegisterGroupCommand().run({ botwa: this.botwa, groupChat: group, conversation, services: this.services })
+                        .catch(err => console.error(err))
                 }
-
-                const c = new RegisterGroupCommand()
-                const groupChat: GroupChat = new GroupChat(jid)
-                c.run(this.botwa, groupChat, conversation).catch(err => console.error(err))
-                return
             }
         }
 
 
-        if (!group && conversation.startsWith('/')) {
+        if (neverSewa && neverTrial) {
+            if (conversation.startsWith('/')) return this.silakanSewa(jid)
+        }
+
+        if (trialExpired && neverSewa && !neverTrial) {
+            this.botwa.sendMessage(jid, 'trial sudah expired')
             this.silakanSewa(jid)
             return
         }
 
-        group = plainToClass(GroupChat, group)
-        if (group?.trial) {
-            if (group.isTrialExpired()) {
-                this.botwa.sendMessage(jid, 'trial sudah expired')
-                this.silakanSewa(jid)
-                return
-            }
-        }
-        if (group?.isExpired()) {
+        if (sewaExpired && !neverSewa) {
             this.botwa.sendMessage(jid, 'sewa sudah expired')
             this.silakanSewa(jid)
             return
@@ -106,30 +104,23 @@ export class CommandHandler implements Handler<Command> {
 
 
         const m0 = conversation.split(' ')[0]
-        const groupMenu = group?.groupMenu.find(m => m0 === m.key)
+        const groupMenu = await this.services.serviceGroupMenu.findOneMenu(jid, m0)
         if (groupMenu) {
-            this.botwa.sendMessage(jid, groupMenu.value)
-            return
+            if (groupMenu.type === GroupMenuType.TEXT) return this.botwa.sendMessage(jid, groupMenu.value)
+            if (groupMenu.type === GroupMenuType.IMAGE) return this.botwa.sendImage(jid, Buffer.from(groupMenu.imageStorage.image))
         }
 
-        const imageMenu = ImageStorage.findImageById(jid, m0)
-        if(imageMenu){
-            this.botwa.sendImage(jid, fs.readFileSync(imageMenu.path))
-            return
-        }
-
-
-        const commands = this.handlers.filter(c => (m0 === c.key))
+        const commands = this.handlers
+            .filter(c => (m0 === c.key))
             .filter(c => c.level === level || c.level === CommandLevel.MEMBER)
             .filter(c => c.botLevel === group?.botLevel || c.botLevel === BotLevel.BASIC)
-        if (!(commands.length > 0)) return
+        if (commands.length < 1) return
 
         const command = commands[0]
-
-
-        command.run(this.botwa, group!, conversation, quotedMessage, receivedMessage).catch(err => {
-            console.error(err)
-        })
+        command.run({ botwa: this.botwa, groupChat: group, conversation, quotedMessage, receivedMessage, services: this.services })
+            .catch(err => {
+                console.error(err)
+            })
 
     }
 

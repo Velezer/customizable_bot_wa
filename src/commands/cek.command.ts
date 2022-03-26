@@ -1,8 +1,5 @@
-import { plainToClass } from "class-transformer";
-import { BotWa } from "../botwa";
-import { GroupChat } from "../groups/group.chat";
 import { BotLevel } from "../groups/interface";
-import { Command, CommandLevel } from "./interface";
+import { Command, CommandLevel, RunArgs } from "./interface";
 
 
 export class CekCommand implements Command {
@@ -12,12 +9,17 @@ export class CekCommand implements Command {
     description: string = 'cek masa aktif';
     level: CommandLevel = CommandLevel.MEMBER;
 
-    async run(botwa: BotWa, groupChat: GroupChat, conversation: string): Promise<void> {
-        groupChat = plainToClass(GroupChat, groupChat)
-        if (groupChat.trial === true) {
-            await botwa.sendMessage(groupChat.jid, groupChat.botLevel + '\n\ntrial pada\n' + groupChat.registeredAt() + '\n\ntrial expired pada\n' + groupChat.trialExpiredAt());
-        } else {
-            await botwa.sendMessage(groupChat.jid, groupChat.botLevel + '\n\nsewa pada\n' + groupChat.registeredAt() + '\n\nexpired pada\n' + groupChat.expiredAt());
+    async run(args: RunArgs): Promise<void> {
+        const { quotedMessage, receivedMessage, conversation, botwa, groupChat } = args
+
+        const localDate = (date: Date) => date.toLocaleString('id-ID', { month: 'long', year: 'numeric', day: 'numeric', timeZone: 'Asia/Jakarta' }) +
+            ' jam ' + date.toLocaleString('id-ID', { hour: 'numeric', minute: 'numeric', timeZone: 'Asia/Jakarta' })
+
+        if (new Date() < groupChat!.sewaExpiredAt) {
+            await botwa.sendMessage(groupChat!.jid, groupChat!.botLevel + '\n\nsewa expired pada\n' + localDate(groupChat!.sewaExpiredAt))
+        }
+        if (new Date() < groupChat!.trialExpiredAt) {
+            await botwa.sendMessage(groupChat!.jid, groupChat!.botLevel + '\n\ntrial expired pada\n' + localDate(groupChat!.trialExpiredAt))
         }
 
     }

@@ -1,8 +1,5 @@
-import { proto } from "@adiwajshing/baileys";
-import { BotWa } from "../../botwa";
-import { GroupChat } from "../../groups/group.chat";
 import { BotLevel } from "../../groups/interface";
-import { Command, CommandLevel } from "../interface";
+import { Command, CommandLevel, RunArgs } from "../interface";
 
 
 
@@ -13,10 +10,11 @@ export class KickCommand implements Command {
     description: string = 'kick beban grup';
     level: CommandLevel = CommandLevel.ADMIN;
 
-    async run(botwa: BotWa, groupChat: GroupChat, conversation: string, quotedMessage: proto.IMessage, receivedMessage: proto.WebMessageInfo): Promise<void> {
+    async run(args: RunArgs): Promise<void> {
+        const { quotedMessage, receivedMessage, conversation, botwa, groupChat } = args
         let m1: string = ''
         if (quotedMessage) {
-            const participant = receivedMessage.message?.extendedTextMessage?.contextInfo?.participant!
+            const participant = receivedMessage?.message?.extendedTextMessage?.contextInfo?.participant!
             m1 = participant.split('@')[0]
 
         } else {
@@ -26,9 +24,9 @@ export class KickCommand implements Command {
                 m1 = m1.slice(1)
             }
         }
-        botwa.kick(groupChat.jid, m1)
+        botwa.kick(groupChat!.jid, m1)
             .catch(() => {
-                botwa.sendMessage(groupChat.jid, 'kick gagal')
+                botwa.sendMessage(groupChat!.jid, 'kick gagal')
             })
 
 

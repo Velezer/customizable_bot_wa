@@ -1,12 +1,22 @@
 import { proto } from "@adiwajshing/baileys"
 import { BotWa } from "../botwa"
-import { GroupChat } from "../groups/group.chat"
 import { BotLevel } from "../groups/interface"
+import { GroupChatEntity } from "../typeorm/entity/GroupChatEntity"
+import { Services } from './../typeorm/service/interface';
 
 export enum CommandLevel {
     MEMBER,
     ADMIN,
     OCEDBOT
+}
+
+export interface RunArgs {
+    botwa: BotWa
+    groupChat?: GroupChatEntity
+    services?: Services
+    conversation: string
+    quotedMessage?: proto.IMessage
+    receivedMessage?: proto.WebMessageInfo
 }
 
 export interface Command {
@@ -16,6 +26,6 @@ export interface Command {
     level: CommandLevel
     botLevel: BotLevel
 
-    run(botwa: BotWa, groupChat: GroupChat, conversation: string, quotedMessage?: proto.IMessage, receivedMessage?: proto.WebMessageInfo): Promise<any>
+    run(args: RunArgs): Promise<any>
 }
 
