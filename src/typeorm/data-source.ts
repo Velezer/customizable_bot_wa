@@ -34,7 +34,7 @@ export const DataSources = {
     devpg: new DataSource({
         type: "postgres",
         url: process.env.DEVPG_URI,
-        synchronize: false,
+        synchronize: true,
         logging: false,
         entities,
         migrations: [],
