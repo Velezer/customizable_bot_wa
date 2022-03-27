@@ -11,6 +11,7 @@ import { DemoteCommand } from "./group/demote.command"
 import { PromoteCommand } from "./group/promote.command"
 import { YTStatusCommand } from './yt-status.command';
 import { SetWelcomeCommand } from "./group/setwelcome"
+import { TranslateCommand } from "./translate.command"
 
 
 export const allCommands: Command[] = [
@@ -20,6 +21,7 @@ export const allCommands: Command[] = [
     new KickCommand(),
     new StickerCommand(),
     new YTStatusCommand(),
+    new TranslateCommand(),
     new GetGroupMetadataCommand(),
     new OpenGroupSettingsCommand(),
     new SetWelcomeCommand(),

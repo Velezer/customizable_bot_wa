@@ -102,3 +102,19 @@ export class UnregCommand implements Command {
     }
 }
 
+export class BlacklistCommand implements Command {
+    botLevel: BotLevel = BotLevel.BASIC
+    key: string = '/blacklist';
+    example: string = '/blacklist jid';
+    description: string = 'blacklist group';
+    level: CommandLevel = CommandLevel.OCEDBOT;
+
+    async run(args: RunArgs): Promise<void> {
+        const { conversation, services, botwa } = args
+        const m1 = conversation.slice(this.key.length + 1)
+        const targetJid = m1
+
+        const res = await services!.serviceGroupChat.blacklist(targetJid)
+        LoggerOcedBot.log(botwa, 'blacklist s' + targetJid)
+    }
+}
