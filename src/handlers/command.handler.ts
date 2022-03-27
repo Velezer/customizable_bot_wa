@@ -2,7 +2,7 @@ import { proto, WAGroupParticipant } from "@adiwajshing/baileys";
 import { BotWa } from "../botwa";
 import { Command, CommandLevel } from "../commands/interface";
 import { allCommands } from "../commands";
-import { UnregCommand, TrialCommand, RegisterGroupCommand } from "../commands/special.command";
+import { UnregCommand, TrialCommand, RegisterGroupCommand, BlacklistCommand } from "../commands/special.command";
 import { BotLevel } from "../groups/interface";
 import { OcedBot } from "../ocedbot";
 import { Handler } from "./interface";
@@ -48,6 +48,17 @@ export class CommandHandler implements Handler<Command> {
     async unreg(conversation: string) {
         if (conversation.startsWith('/unreg')) {
             new UnregCommand()
+                .run({
+                    botwa: this.botwa,
+                    conversation: conversation,
+                    services: this.services
+                })
+                .catch(err => console.error(err))
+        }
+    }
+    async blacklist(conversation: string) {
+        if (conversation.startsWith('/blacklist')) {
+            new BlacklistCommand()
                 .run({
                     botwa: this.botwa,
                     conversation: conversation,
