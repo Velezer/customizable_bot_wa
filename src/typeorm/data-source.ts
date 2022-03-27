@@ -6,10 +6,9 @@ import { ImageStorageEntity } from './entity/ImageEntity';
 import * as UriParser from "pg-connection-string";
 
 const entities = [GroupChatEntity, GroupMenuEntity, AuthEntity, ImageStorageEntity]
-const uriDevpg = UriParser.parse(process.env.DEVPG_URI!)
+const pgUri = UriParser.parse(process.env.DEVPG_URI!)
 
 export const DataSources = {
-
     betterSqlite3: new DataSource({
         type: 'better-sqlite3',
         database: ":memory:",
@@ -22,12 +21,12 @@ export const DataSources = {
     }),
     postgres: new DataSource({
         type: "postgres",
-        host: process.env.DB_HOST || uriDevpg.host!,
-        port: +process.env.DB_PORT! || +uriDevpg.port!,
-        username: process.env.DB_USERNAME || uriDevpg.user,
-        password: process.env.DB_PASSWORD || uriDevpg.password,
-        database: process.env.DB_DATABASE || uriDevpg.database!,
-        synchronize: false,
+        host: process.env.DB_HOST || pgUri.host!,
+        port: +process.env.DB_PORT! || +pgUri.port!,
+        username: process.env.DB_USERNAME || pgUri.user,
+        password: process.env.DB_PASSWORD || pgUri.password,
+        database: process.env.DB_DATABASE || pgUri.database!,
+        synchronize: process.env.DB_SYNC === 'true' || false,
         logging: false,
         entities,
         migrations: [],
