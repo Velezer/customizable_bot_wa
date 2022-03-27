@@ -2,6 +2,7 @@ import { WAParticipantAction } from "@adiwajshing/baileys"
 import { WelcomeGroupParticipantAddBehavior, LeaveGroupParticipantBehavior, PromoteParticipantBehavior, DemoteParticipantBehavior } from "../behaviors/behaviors";
 import { Behavior } from "../behaviors/interface";
 import { BotWa } from "../botwa";
+import { Services } from "../typeorm/service/interface";
 import { Handler } from "./interface";
 
 
@@ -14,9 +15,11 @@ export class BehaviorHandler implements Handler<Behavior> {
         new PromoteParticipantBehavior(),
         new DemoteParticipantBehavior(),
     ]
+    services: Services
 
-    constructor(botwa: BotWa) {
+    constructor(botwa: BotWa, services: Services) {
         this.botwa = botwa
+        this.services = services
     }
 
 
@@ -26,7 +29,7 @@ export class BehaviorHandler implements Handler<Behavior> {
         this.handlers.forEach(async behavior => {
             if (behavior.action === action) {
                 try {
-                    behavior.run(this.botwa, groupJid, participantJid)
+                    behavior.run(this.botwa, groupJid, participantJid, this.services)
                 } catch (err) {
                     console.log(err)
                 }

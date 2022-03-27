@@ -1,15 +1,22 @@
 import { WAParticipantAction } from "@adiwajshing/baileys";
 import { BotWa } from "../botwa";
 import { Card } from "../images/card";
+import { AppDatabase } from "../typeorm";
+import { Services } from "../typeorm/service/interface";
 import { Behavior } from "./interface";
 
 
 export class WelcomeGroupParticipantAddBehavior implements Behavior {
     action: WAParticipantAction = 'add'
 
-    async run(botwa: BotWa, to: string, participantJid: string): Promise<void> {
-        const number = participantJid.split('@')[0]
-        const text = 'welcome @' + number
+    async run(botwa: BotWa, to: string, participantJid: string, services: Services): Promise<void> {
+        
+        const gc = await services.serviceGroupChat.findOneByJid(to)
+        const groupName = await botwa.getGroupSubject(to)
+        let welcome =  gc?.welcome.replace('[member_name]', `@${participantJid?.split('@')[0]}`)
+        welcome = welcome?.replace('[group_name]', groupName)
+
+        const text = welcome!
 
         try {
             const ppImg = await botwa.getProfilePictureBuffer(participantJid)

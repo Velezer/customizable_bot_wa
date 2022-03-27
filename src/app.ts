@@ -50,7 +50,7 @@ export async function app(dataSource: DataSource) {
         const participantJid = participants[0]
 
 
-        const behaviorer = new BehaviorHandler(botwa)
+        const behaviorer = new BehaviorHandler(botwa, services)
         behaviorer.run(action, groupJid, participantJid)
 
     })
