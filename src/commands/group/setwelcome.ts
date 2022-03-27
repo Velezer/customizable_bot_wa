@@ -18,7 +18,7 @@ export class SetWelcomeCommand implements Command {
         const gc = await services?.serviceGroupChat.setWelcome(jid!, m1)
         botwa.sendText(jid!, 'sukses /set-welcome\npreview nya nih...')
 
-        const participant = receivedMessage?.key.participant
+        const participant = receivedMessage?.participant
         const groupName = await botwa.getGroupSubject(jid!)
 
 
