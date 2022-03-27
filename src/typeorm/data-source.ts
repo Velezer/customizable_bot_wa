@@ -3,8 +3,10 @@ import { AuthEntity } from "./entity/AuthEntity";
 import { GroupChatEntity } from "./entity/GroupChatEntity";
 import { GroupMenuEntity } from "./entity/GroupMenuEntity";
 import { ImageStorageEntity } from './entity/ImageEntity';
+import * as UriParser from "pg-connection-string";
 
 const entities = [GroupChatEntity, GroupMenuEntity, AuthEntity, ImageStorageEntity]
+const uriDevpg = UriParser.parse(process.env.DEVPG_URI!)
 
 export const DataSources = {
 
@@ -33,7 +35,11 @@ export const DataSources = {
     }),
     devpg: new DataSource({
         type: "postgres",
-        url: process.env.DEVPG_URI,
+        host: uriDevpg.host!,
+        port: +uriDevpg.port!,
+        username: uriDevpg.user,
+        password: uriDevpg.password,
+        database: uriDevpg.database!,
         synchronize: true,
         logging: false,
         entities,
