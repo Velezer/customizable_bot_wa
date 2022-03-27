@@ -6,7 +6,16 @@ import { ImageStorageEntity } from './entity/ImageEntity';
 import * as UriParser from "pg-connection-string";
 
 const entities = [GroupChatEntity, GroupMenuEntity, AuthEntity, ImageStorageEntity]
-const pgUri = UriParser.parse(process.env.DB_PG_URI!)
+let pgUri: UriParser.ConnectionOptions = {
+    host: process.env.DB_HOST!,
+    port: process.env.DB_PORT,
+    user: process.env.DB_USERNAME,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE,
+}
+if (process.env.DB_PG_URI) {
+    pgUri = UriParser.parse(process.env.DB_PG_URI!)
+}
 
 export const DataSources = {
     betterSqlite3: new DataSource({
