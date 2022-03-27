@@ -1,4 +1,3 @@
-require('dotenv').config()
 import { BotWa } from './botwa'
 import { ReconnectMode, WAConnection } from '@adiwajshing/baileys'
 import { Activation } from './activation/activation'
