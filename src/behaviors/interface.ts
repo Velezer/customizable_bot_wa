@@ -9,5 +9,5 @@ export type StubType = proto.WebMessageInfo.WebMessageInfoStubType;
 export interface Behavior {
     action: WAParticipantAction
 
-    run(botwa: BotWa, groupJid: string, participantJid: string, services?: Services): Promise<void>
+    run(botwa: BotWa, groupJid: string, participant: string, services?: Services): Promise<void>
 }

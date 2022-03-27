@@ -47,11 +47,11 @@ export async function app(dataSource: DataSource) {
 
         const botwa = new BotWa(sock)
 
-        const participantJid = participants[0]
+        const participant = participants[0]
 
 
         const behaviorer = new BehaviorHandler(botwa, services)
-        behaviorer.run(action, groupJid, participantJid)
+        behaviorer.run(action, groupJid, participant)
 
     })
 

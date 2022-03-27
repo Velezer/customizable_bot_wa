@@ -5,7 +5,7 @@ import { Command, CommandLevel, RunArgs } from "../interface";
 export class SetWelcomeCommand implements Command {
     botLevel: BotLevel = BotLevel.BASIC
     key: string = '/set-welcome';
-    example: string = this.key + 'welcome [member_name] [group_name]';
+    example: string = this.key + ' welcome [member_name] di [group_name]';
     description: string = 'demote member grup';
     level: CommandLevel = CommandLevel.ADMIN;
 
@@ -18,13 +18,13 @@ export class SetWelcomeCommand implements Command {
         const gc = await services?.serviceGroupChat.setWelcome(jid!, m1)
         botwa.sendText(jid!, 'sukses /set-welcome\npreview nya nih...')
 
-        const participantJid = receivedMessage?.key.remoteJid
+        const participant = receivedMessage?.key.participant
         const groupName = await botwa.getGroupSubject(jid!)
 
 
-        let welcome = gc?.welcome.replace('[member_name]', `@${participantJid?.split('@')[0]}`)
+        let welcome = gc?.welcome.replace('[member_name]', `@${participant?.split('@')[0]}`)
         welcome = welcome?.replace('[group_name]', groupName)
-        botwa.sendMentioned(jid!, welcome!, [participantJid!])
+        botwa.sendMentioned(jid!, welcome!, [participant!])
     }
 
 }

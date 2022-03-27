@@ -24,12 +24,12 @@ export class BehaviorHandler implements Handler<Behavior> {
 
 
 
-    run(action: WAParticipantAction, groupJid: string, participantJid: string) {
+    run(action: WAParticipantAction, groupJid: string, participant: string) {
 
         this.handlers.forEach(async behavior => {
             if (behavior.action === action) {
                 try {
-                    behavior.run(this.botwa, groupJid, participantJid, this.services)
+                    behavior.run(this.botwa, groupJid, participant, this.services)
                 } catch (err) {
                     console.log(err)
                 }
