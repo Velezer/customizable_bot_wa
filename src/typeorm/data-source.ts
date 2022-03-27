@@ -25,18 +25,20 @@ export const DataSources = {
         username: process.env.DB_USERNAME,
         password: process.env.DB_PASSWORD,
         database: process.env.DB_DATABASE,
-        synchronize: true,
+        synchronize: false,
         logging: false,
         entities,
         migrations: [],
         subscribers: [],
     }),
-    cache: new DataSource({
-        type: 'better-sqlite3',
-        database: "cache.db",
-        dropSchema: true,
-        synchronize: true,
+    devpg: new DataSource({
+        type: "postgres",
+        url: process.env.DEVPG_URI,
+        synchronize: false,
         logging: false,
+        entities,
+        migrations: [],
+        subscribers: [],
     }),
 
 }
