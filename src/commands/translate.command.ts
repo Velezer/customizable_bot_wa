@@ -15,8 +15,7 @@ export class TranslateCommand implements Command {
         const jid = groupChat?.jid!
 
         const res = await translate(m1, { to: 'id', autoCorrect: true })
-        await botwa.sendText(jid, 'translate from: ' + res.from.language.iso)
-        await botwa.sendText(jid, 'corrected: ' + res.from.text.value)
-        await botwa.sendText(jid, res.text)
+        await botwa.sendText(jid, 'translated from: ' + res.from.language.iso + '\n\n' + res.text)
+            .catch(err => botwa.sendText(jid, 'pala gw pusing bos'))
     }
 }
