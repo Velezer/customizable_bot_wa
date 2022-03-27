@@ -10,6 +10,7 @@ import { KickCommand } from "./group/kick.command"
 import { DemoteCommand } from "./group/demote.command"
 import { PromoteCommand } from "./group/promote.command"
 import { YTStatusCommand } from './yt-status.command';
+import { SetWelcomeCommand } from "./group/setwelcome"
 
 
 export const allCommands: Command[] = [
@@ -21,6 +22,7 @@ export const allCommands: Command[] = [
     new YTStatusCommand(),
     new GetGroupMetadataCommand(),
     new OpenGroupSettingsCommand(),
+    new SetWelcomeCommand(),
     new CloseGroupSettingsCommand(),
     new OpenGroupChatCommand(),
     new CloseGroupChatCommand(),

@@ -67,7 +67,7 @@ export class TrialCommand implements Command {
 
         services!.serviceGroupChat.trial(jid)
             .then(() => {
-                botwa.sendMessage(jid, 'aktivasi trial sukses bot ' + groupChat!.botLevel)
+                botwa.sendMessage(jid, 'aktivasi trial sukses')
                 LoggerOcedBot.log(botwa, 'aktivasi trial sukses' + '\n\n' + groupSubject + '\n\n' + jid)
             })
             .catch(err => {
