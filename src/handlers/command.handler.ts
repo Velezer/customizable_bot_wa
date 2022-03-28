@@ -73,7 +73,7 @@ export class CommandHandler implements Handler<Command> {
         if (!group) {
             group = await this.services.serviceGroupChat.create(jid)
         } else if (group.blacklist) {
-            this.botwa.sendText(group.jid, 'group ini diblacklist')
+            return this.botwa.sendText(group.jid, 'group ini diblacklist')
         }
 
         const trialExpired = group.trialExpiredAt < new Date()
