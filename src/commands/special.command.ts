@@ -10,7 +10,7 @@ export class RegisterGroupCommand implements Command {
     key: string = '/sewa';
     example: string = '/sewa key-aktivasi';
     description: string = 'sewa bot 30 hari';
-    level: CommandLevel = CommandLevel.ADMIN;
+    level: CommandLevel = CommandLevel.MEMBER;
 
     async run(args: RunArgs): Promise<void> {
         const { conversation, groupChat, botwa, services } = args
