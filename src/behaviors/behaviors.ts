@@ -13,7 +13,9 @@ export class WelcomeGroupParticipantAddBehavior implements Behavior {
         
         const gc = await services.serviceGroupChat.findOneByJid(to)
         const groupName = await botwa.getGroupSubject(to)
-        let welcome =  gc?.welcome.replace('[member_name]', `@${participant?.split('@')[0]}`)
+        let welcome =  gc?.welcome
+        if (!welcome) welcome = 'welcome [member_name] di [group_name]'
+        welcome = welcome?.replace('[member_name]', `@${participant?.split('@')[0]}`)
         welcome = welcome?.replace('[group_name]', groupName)
 
         const text = welcome!
