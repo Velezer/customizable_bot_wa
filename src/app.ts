@@ -29,8 +29,13 @@ export async function app(dataSource: DataSource) {
     }
 
     await sock.connect()
-    await services.authService.remove(authName!)
-    services.authService.create(authName!, JSON.stringify(sock.base64EncodedAuthInfo()))
+    LoggerOcedBot.log(new BotWa(sock), "bot is started...");
+
+    (async () => {
+        await services.authService.remove(authName!)
+        services.authService.create(authName!, JSON.stringify(sock.base64EncodedAuthInfo()))
+    })()
+
 
 
     sock.on('close', async (data) => {
