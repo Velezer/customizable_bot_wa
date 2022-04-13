@@ -32,11 +32,12 @@ export class BotWa {
         return await this.sock.sendMessage(to, img, MessageType.image, { contextInfo: { mentionedJid } })
     }
 
-    async getProfilePictureURL(participantJid: string) {
-        return this.sock.getProfilePicture(participantJid)
-    }
-    async getProfilePictureBuffer(participantJid: string) {
-        const url = await this.getProfilePictureURL(participantJid)
+    /**
+     * Get the profile picture buffer of a person/group
+     * @param participantJid 
+     */
+    async getProfilePictureBuffer(participantJid: string): Promise<Buffer> {
+        const url = await this.sock.getProfilePicture(participantJid)
         const buffer = await this.getBufferFromUrl(url)
         return buffer
     }
@@ -66,21 +67,6 @@ export class BotWa {
         }
         return await this.sock.sendMessage(to, listMessage, MessageType.listMessage)
     }
-    async sendListMessageProductList(to: string, sections: proto.ISection[]) {
-        const listMessage: proto.ListMessage = {
-            buttonText: 'Pencet BOS!',
-            title: "Menu",
-            description: "silakan dipilih...",
-            listType: proto.ListMessage.ListMessageListType.PRODUCT_LIST,
-            sections,
-            footerText: "by oced-bot",
-            toJSON: function (): { [k: string]: any; } {
-                throw new Error("Function not implemented.");
-            }
-        }
-        return await this.sock.sendMessage(to, listMessage, MessageType.listMessage)
-    }
-
     async sendButtonMessage(to: string, contentText: string, imageMessage: proto.IImageMessage, messsages: string[] = [], mentionedJid: string[]) {
         const buttons: proto.IButton[] = []
         messsages.forEach(m => {
@@ -154,11 +140,6 @@ export class BotWa {
         this.sock.groupSettingChange(jidGroup, GroupSettingChange.messageSend, true)
     }
 
-
-    async joinGroup(link: string): Promise<string> {
-        const response = await this.sock.acceptInvite(link)
-        return response
-    }
 
     async reply(to: string, message: string, from: proto.WebMessageInfo) {
         await this.sock.sendMessage(to, message, MessageType.text, { quoted: from })

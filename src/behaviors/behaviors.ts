@@ -1,7 +1,6 @@
 import { WAParticipantAction } from "@adiwajshing/baileys";
 import { BotWa } from "../botwa";
-import { Card } from "../images/card";
-import { AppDatabase } from "../typeorm";
+import { GroupGreetingCard } from "../images/group-greeting.card";
 import { Services } from "../typeorm/service/interface";
 import { Behavior } from "./interface";
 
@@ -20,19 +19,14 @@ export class WelcomeGroupParticipantAddBehavior implements Behavior {
 
         const text = welcome!
 
+        const card = new GroupGreetingCard('welcome')
         try {
-            const ppImg = await botwa.getProfilePictureBuffer(participant)
-
-            const card = new Card('./storage/group-action-cards/OcedBot-welcome.jpg')
-            const cardBuffer = await card.make(ppImg)
-            const preparedImageMessage = await botwa.prepareImageMessage(cardBuffer)
-
-            await botwa.sendButtonMessage(to, text, preparedImageMessage.message?.imageMessage!, ['/menu'], [participant])
-
+            await botwa.getProfilePictureBuffer(to).then(gicon=>card.addGroupIcon(gicon))
+            await botwa.getProfilePictureBuffer(participant).then(pp=>card.addPP(pp))
         } catch (err) {
-            console.log(err)
-            const defaultCard = await new Card('./storage/group-action-cards/OcedBot-welcome-1.jpg').getBuffer()
-            const preparedImageMessage = await botwa.prepareImageMessage(defaultCard)
+        } finally{
+            const cardBuffer = await card.getBufferAsync()
+            const preparedImageMessage = await botwa.prepareImageMessage(cardBuffer)
             await botwa.sendButtonMessage(to, text, preparedImageMessage.message?.imageMessage!, ['/menu'], [participant])
         }
     }
@@ -48,19 +42,15 @@ export class LeaveGroupParticipantBehavior implements Behavior {
 
         const text = 'beban sana wus wus! @' + number
 
+
+        const card = new GroupGreetingCard('leave')
         try {
-            const ppImg = await botwa.getProfilePictureBuffer(participant)
-
-            const card = new Card('./storage/group-action-cards/OcedBot-leave.jpg')
-            const cardBuffer = await card.make(ppImg)
-            const preparedImageMessage = await botwa.prepareImageMessage(cardBuffer)
-
-            await botwa.sendButtonMessage(to, text, preparedImageMessage.message?.imageMessage!, ['Yay beban berkurang!!'], [participant])
-
+            await botwa.getProfilePictureBuffer(to).then(gicon=>card.addGroupIcon(gicon))
+            await botwa.getProfilePictureBuffer(participant).then(pp=>card.addPP(pp))
         } catch (err) {
-            console.log(err)
-            const defaultCard = await new Card('./storage/group-action-cards/OcedBot-leave-1.jpg').getBuffer()
-            const preparedImageMessage = await botwa.prepareImageMessage(defaultCard)
+        } finally{
+            const cardBuffer = await card.getBufferAsync()
+            const preparedImageMessage = await botwa.prepareImageMessage(cardBuffer)
             await botwa.sendButtonMessage(to, text, preparedImageMessage.message?.imageMessage!, ['Yay beban berkurang!!'], [participant])
         }
     }
