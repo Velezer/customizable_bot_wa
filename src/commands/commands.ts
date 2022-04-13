@@ -152,36 +152,3 @@ export class CloseGroupChatCommand implements Command {
     }
 
 }
-
-
-
-
-
-
-
-export class JoinGroupCommand implements Command {
-    botLevel: BotLevel = BotLevel.BASIC
-    key: string = '/join';
-    example: string = '/join link';
-    description: string = '/join grup pake link';
-    level: CommandLevel = CommandLevel.OCEDBOT;
-
-    async run(args: RunArgs): Promise<void> {
-        const { quotedMessage, receivedMessage, conversation, botwa, groupChat } = args
-
-        const m1 = conversation.slice(this.key.length + 1)
-
-        botwa.joinGroup(m1)
-            .then(() => {
-                LoggerOcedBot.log(botwa, 'bot masuk grup link ' + m1)
-            })
-            .catch(err => {
-                console.log(err)
-                botwa.sendMessage(groupChat!.jid, 'bot gagal masuk grup link ' + m1)
-            })
-
-    }
-}
-
-
-
