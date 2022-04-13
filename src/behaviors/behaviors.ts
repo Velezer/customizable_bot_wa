@@ -9,10 +9,10 @@ export class WelcomeGroupParticipantAddBehavior implements Behavior {
     action: WAParticipantAction = 'add'
 
     async run(botwa: BotWa, to: string, participant: string, services: Services): Promise<void> {
-        
+
         const gc = await services.serviceGroupChat.findOneByJid(to)
         const groupName = await botwa.getGroupSubject(to)
-        let welcome =  gc?.welcome
+        let welcome = gc?.welcome
         if (!welcome) welcome = 'welcome [member_name] di [group_name]'
         welcome = welcome?.replace('[member_name]', `@${participant?.split('@')[0]}`)
         welcome = welcome?.replace('[group_name]', groupName)
@@ -21,10 +21,11 @@ export class WelcomeGroupParticipantAddBehavior implements Behavior {
 
         const card = new GroupGreetingCard('welcome')
         try {
-            await botwa.getProfilePictureBuffer(to).then(gicon=>card.addGroupIcon(gicon))
-            await botwa.getProfilePictureBuffer(participant).then(pp=>card.addPP(pp))
+            await botwa.getGroupSubject(to).then(s => card.addGroupTitle(s))
+            await botwa.getProfilePictureBuffer(to).then(gicon => card.addGroupIcon(gicon))
+            await botwa.getProfilePictureBuffer(participant).then(pp => card.addPP(pp))
         } catch (err) {
-        } finally{
+        } finally {
             const cardBuffer = await card.getBufferAsync()
             const preparedImageMessage = await botwa.prepareImageMessage(cardBuffer)
             await botwa.sendButtonMessage(to, text, preparedImageMessage.message?.imageMessage!, ['/menu'], [participant])
@@ -45,10 +46,11 @@ export class LeaveGroupParticipantBehavior implements Behavior {
 
         const card = new GroupGreetingCard('leave')
         try {
-            await botwa.getProfilePictureBuffer(to).then(gicon=>card.addGroupIcon(gicon))
-            await botwa.getProfilePictureBuffer(participant).then(pp=>card.addPP(pp))
+            await botwa.getGroupSubject(to).then(s => card.addGroupTitle(s))
+            await botwa.getProfilePictureBuffer(to).then(gicon => card.addGroupIcon(gicon))
+            await botwa.getProfilePictureBuffer(participant).then(pp => card.addPP(pp))
         } catch (err) {
-        } finally{
+        } finally {
             const cardBuffer = await card.getBufferAsync()
             const preparedImageMessage = await botwa.prepareImageMessage(cardBuffer)
             await botwa.sendButtonMessage(to, text, preparedImageMessage.message?.imageMessage!, ['Yay beban berkurang!!'], [participant])
@@ -72,8 +74,6 @@ export class DemoteParticipantBehavior implements Behavior {
 
     async run(botwa: BotWa, to: string, participant: string): Promise<void> {
         const number = participant.split('@')[0]
-
-
 
         botwa.sendMentioned(to, 'demote @' + number, [participant])
     }
