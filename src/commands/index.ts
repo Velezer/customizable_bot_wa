@@ -13,11 +13,13 @@ import { YTStatusCommand } from './yt-status.command';
 import { SetWelcomeCommand } from "./group/setwelcome"
 import { TranslateCommand } from "./translate.command"
 import { SetLeaveCommand } from './group/setleave';
+import { CalcCommand } from './calc.command';
 
 
 export const allCommands: Command[] = [
     new CekCommand(),
     new TagAllCommand(),
+    new CalcCommand(),
     new DeleteBotTypoCommand(),
     new KickCommand(),
     new StickerCommand(),
