@@ -5,7 +5,7 @@ import { Command, CommandLevel, RunArgs } from "../interface";
 export class SetLeaveCommand implements Command {
     botLevel: BotLevel = BotLevel.BASIC
     key: string = '/set-leave';
-    example: string = this.key + ' left [member_name] from [group_name]';
+    example: string = this.key + ' [member_name] leave from [group_name]';
     description: string = 'set leave message';
     level: CommandLevel = CommandLevel.ADMIN;
 

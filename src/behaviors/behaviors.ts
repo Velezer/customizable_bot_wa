@@ -44,7 +44,7 @@ export class LeaveGroupParticipantBehavior implements Behavior {
         const gc = await services.serviceGroupChat.findOneByJid(to)
         const groupName = await botwa.getGroupSubject(to)
         let leave = gc?.leave
-        if (!leave) leave = 'left [member_name] from [group_name]'
+        if (!leave) leave = '[member_name] leave from [group_name]'
         leave = leave?.replace('[member_name]', `@${participant?.split('@')[0]}`)
         leave = leave?.replace('[group_name]', groupName)
 
@@ -59,7 +59,7 @@ export class LeaveGroupParticipantBehavior implements Behavior {
         } finally {
             const cardBuffer = await card.getBufferAsync()
             const preparedImageMessage = await botwa.prepareImageMessage(cardBuffer)
-            await botwa.sendButtonMessage(to, text, preparedImageMessage.message?.imageMessage!, ['Yay beban berkurang!!'], [participant])
+            await botwa.sendButtonMessage(to, text, preparedImageMessage.message?.imageMessage!, ['--------------'], [participant])
         }
     }
 
