@@ -6,7 +6,7 @@ export class SetWelcomeCommand implements Command {
     botLevel: BotLevel = BotLevel.BASIC
     key: string = '/set-welcome';
     example: string = this.key + ' welcome [member_name] di [group_name]';
-    description: string = 'demote member grup';
+    description: string = 'set welcome message';
     level: CommandLevel = CommandLevel.ADMIN;
 
 

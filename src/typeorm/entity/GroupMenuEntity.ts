@@ -27,7 +27,6 @@ export class GroupMenuEntity {
     type!: GroupMenuType
 
     @ManyToOne(() => GroupChatEntity, (gc) => gc.groupMenu, { onDelete: 'CASCADE' })
-    // @JoinColumn()
     groupChat!: GroupChatEntity;
 
     @OneToOne(() => ImageStorageEntity, (img) => img.groupMenu, { onDelete: 'CASCADE' })

@@ -37,12 +37,18 @@ export class WelcomeGroupParticipantAddBehavior implements Behavior {
 export class LeaveGroupParticipantBehavior implements Behavior {
     action: WAParticipantAction = 'remove'
 
-    async run(botwa: BotWa, to: string, participant: string): Promise<void> {
+    async run(botwa: BotWa, to: string, participant: string,services: Services): Promise<void> {
         console.log(participant)
         const number = participant.split('@')[0]
 
-        const text = 'beban sana wus wus! @' + number
+        const gc = await services.serviceGroupChat.findOneByJid(to)
+        const groupName = await botwa.getGroupSubject(to)
+        let leave = gc?.leave
+        if (!leave) leave = 'left [member_name] from [group_name]'
+        leave = leave?.replace('[member_name]', `@${participant?.split('@')[0]}`)
+        leave = leave?.replace('[group_name]', groupName)
 
+        const text = leave
 
         const card = new GroupGreetingCard('leave')
         try {
