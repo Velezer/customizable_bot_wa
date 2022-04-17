@@ -15,6 +15,9 @@ export class GroupChatEntity {
     @Column({ nullable: true })
     welcome!: string
 
+    @Column({ nullable: true })
+    leave!: string
+
     @LocalColumn(
         { type: 'enum', enum: BotLevel, default: BotLevel.BASIC },
         { type: 'simple-enum' }
