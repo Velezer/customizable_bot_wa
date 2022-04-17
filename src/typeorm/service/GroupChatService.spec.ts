@@ -24,6 +24,7 @@ describe('GroupChat with jid=jid', () => {
         expect(res.trialExpiredAt).toBe(null)
         expect(res.sewaExpiredAt).toBe(null)
         expect(res.welcome).toBe(null)
+        expect(res.leave).toBe(null)
     })
     it('error duplicate unique jid GroupChat', async () => {
         try {
@@ -38,11 +39,8 @@ describe('GroupChat with jid=jid', () => {
     it('trial GroupChat', async () => {
         const res = await service.trial(jid)
         expect(res.jid).toBe(jid)
-        expect(res.blacklist).toBe(false)
         expect(res.botLevel).toBe(BotLevel.ELEGANT)
         expect(res.trialExpiredAt.getDate()).toBe(futureDateFromNow(1).getDate())
-        expect(res.sewaExpiredAt).toBe(null)
-        expect(res.welcome).toBe(null)
     })
 
     it('sewa GroupChat', async () => {
@@ -50,19 +48,19 @@ describe('GroupChat with jid=jid', () => {
         expect(res.jid).toBe(jid)
         expect(res.blacklist).toBe(false)
         expect(res.botLevel).toBe(BotLevel.BASIC)
-        expect(res.trialExpiredAt.getDate()).toBe(futureDateFromNow(1).getDate())
         expect(res.sewaExpiredAt.getDate()).toBe(futureDateFromNow(30).getDate())
-        expect(res.welcome).toBe(null)
     })
     it('setWelcome GroupChat', async () => {
         const welcome = 'welcome comrades'
         const res = await service.setWelcome(jid, welcome)
         expect(res.jid).toBe(jid)
-        expect(res.blacklist).toBe(false)
-        expect(res.botLevel).toBe(BotLevel.BASIC)
-        expect(res.trialExpiredAt.getDate()).toBe(futureDateFromNow(1).getDate())
-        expect(res.sewaExpiredAt.getDate()).toBe(futureDateFromNow(30).getDate())
         expect(res.welcome).toBe(welcome)
+    })
+    it('setLeave GroupChat', async () => {
+        const leave = 'leave comrades'
+        await service.setLeave(jid, leave)
+        const found = await service.findOneByJid(jid)
+        expect(found!.leave).toBe(leave)
     })
     it('blacklist GroupChat', async () => {
         const res = await service.blacklist(jid)

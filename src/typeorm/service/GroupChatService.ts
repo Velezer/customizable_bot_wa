@@ -64,6 +64,13 @@ export class GroupChatService {
 
         return await this.repo.save(found!)
     }
+    
+    async setLeave(jid: string, leave: string) {
+        const found = await this.findOneByJid(jid)
+        found!.leave = leave
+
+        return await this.repo.save(found!)
+    }
 
     async remove(jid: string) {
         return this.repo.delete({ jid })
