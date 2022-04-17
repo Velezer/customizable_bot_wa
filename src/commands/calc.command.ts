@@ -13,12 +13,6 @@ export class CalcCommand implements Command {
         const { botwa, groupChat, services, quotedMessage, conversation } = args
         const m1 = conversation.slice(this.key.length + 1)
 
-        try {
-            await botwa.sendText(groupChat?.jid!, Number(Function(m1)).toString())
-        } catch (error) {
-            botwa.sendText(groupChat?.jid!, 'kalkulatornya rusak bos')
-        }
-
-
+        botwa.sendText(groupChat?.jid!, Number(Function('return '+ m1)).toString())
     }
 }
