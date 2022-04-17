@@ -1,5 +1,3 @@
-import { DataSource, Repository } from "typeorm"
-import { GroupChatEntity } from "../entity/GroupChatEntity"
 import { AppDatabase } from '../index';
 import { DataSources } from '../data-source';
 
