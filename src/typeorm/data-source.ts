@@ -40,7 +40,10 @@ export const DataSources = {
         synchronize: process.env.DB_SYNC === 'true' || false,
         logging: false,
         entities,
-        migrations: [BeforeSetLeave1650118480668, GroupChatLeave1650165115316],
+        migrations: [
+            // BeforeSetLeave1650118480668, 
+            GroupChatLeave1650165115316
+        ],
         subscribers: [],
     }),
 }
