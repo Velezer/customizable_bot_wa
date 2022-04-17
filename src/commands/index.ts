@@ -12,6 +12,7 @@ import { PromoteCommand } from "./group/promote.command"
 import { YTStatusCommand } from './yt-status.command';
 import { SetWelcomeCommand } from "./group/setwelcome"
 import { TranslateCommand } from "./translate.command"
+import { SetLeaveCommand } from './group/setleave';
 
 
 export const allCommands: Command[] = [
@@ -25,6 +26,7 @@ export const allCommands: Command[] = [
     new GetGroupMetadataCommand(),
     new OpenGroupSettingsCommand(),
     new SetWelcomeCommand(),
+    new SetLeaveCommand(),
     new CloseGroupSettingsCommand(),
     new OpenGroupChatCommand(),
     new CloseGroupChatCommand(),
@@ -38,4 +40,3 @@ export const allCommands: Command[] = [
 ]
 
 allCommands.push(new BotMenuBasicCommand(allCommands))
-// allCommands.push(new BotMenuElegantCommand(allCommands))

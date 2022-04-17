@@ -7,9 +7,10 @@
       "start": "ts-node src/main.ts",
       "clear-jest": "jest --clearCache",
       "test": "jest --coverage",
-      "tdd": "jest --coverage --watch",
-      "tdd:card": "jest card --coverage --watch",
-      "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js"
+      "tdd": "jest --watch",
+      "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js",
+      "migrate:up": "npm run typeorm -- migration:run -d ./src/typeorm/data-source.ts",
+      "migration:gen": "npm run typeorm -- migration:generate -d ./src/typeorm/data-source.ts"
    },
    "author": "Velezer",
    "license": "ISC",

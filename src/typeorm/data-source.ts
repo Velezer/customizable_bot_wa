@@ -1,9 +1,12 @@
+require('dotenv').config()
 import { DataSource } from "typeorm";
 import { AuthEntity } from "./entity/AuthEntity";
 import { GroupChatEntity } from "./entity/GroupChatEntity";
 import { GroupMenuEntity } from "./entity/GroupMenuEntity";
 import { ImageStorageEntity } from './entity/ImageEntity';
 import * as UriParser from "pg-connection-string";
+import { BeforeSetLeave1650118480668 } from './../../migrations/1650118480668-BeforeSetLeave';
+import { GroupChatLeave1650165115316 } from "../../migrations/1650165115316-GroupChatLeave";
 
 const entities = [GroupChatEntity, GroupMenuEntity, AuthEntity, ImageStorageEntity]
 let pgUri: UriParser.ConnectionOptions = {
@@ -25,7 +28,6 @@ export const DataSources = {
         synchronize: true,
         logging: false,
         entities,
-        migrations: [],
         subscribers: [],
     }),
     postgres: new DataSource({
@@ -38,7 +40,9 @@ export const DataSources = {
         synchronize: process.env.DB_SYNC === 'true' || false,
         logging: false,
         entities,
-        migrations: [],
+        migrations: [BeforeSetLeave1650118480668, GroupChatLeave1650165115316],
         subscribers: [],
     }),
 }
+
+export default DataSources.postgres
