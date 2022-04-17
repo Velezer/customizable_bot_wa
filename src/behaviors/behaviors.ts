@@ -59,7 +59,7 @@ export class LeaveGroupParticipantBehavior implements Behavior {
         } finally {
             const cardBuffer = await card.getBufferAsync()
             const preparedImageMessage = await botwa.prepareImageMessage(cardBuffer)
-            await botwa.sendButtonMessage(to, text, preparedImageMessage.message?.imageMessage!, ['--------------'], [participant])
+            await botwa.sendButtonMessage(to, text, preparedImageMessage.message?.imageMessage!, ['Bye~~'], [participant])
         }
     }
 
