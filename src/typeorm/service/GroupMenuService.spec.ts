@@ -45,10 +45,6 @@ describe('GroupMenu with jid=jidmenu', () => {
     it('findAllMenu', async () => {
         const allMenu = await serviceGroupMenu.findAllMenu(jid)
         expect(allMenu.length).toBe(2)
-        const gcWithMenu = await serviceGroupChat.findOneByJidWithMenu(jid)
-        expect(gcWithMenu?.jid).toBe(jid)
-        expect(gcWithMenu?.groupMenu).toStrictEqual(allMenu)
-
     })
     it('update menu', async () => {
         m.value = 'value updated'

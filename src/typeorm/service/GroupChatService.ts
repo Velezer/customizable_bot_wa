@@ -24,14 +24,6 @@ export class GroupChatService {
         return found
     }
 
-    async findOneByJidWithMenu(jid: string) {
-        const found = await this.repo.findOne({
-            where: { jid },
-            relations: { groupMenu: true}
-        })
-        return found
-    }
-
     async create(jid: string) {
         const groupChat = this.repo.create({
             jid,
