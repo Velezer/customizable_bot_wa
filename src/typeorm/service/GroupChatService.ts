@@ -3,24 +3,31 @@ import { Repository } from 'typeorm'
 import { BotLevel } from '../../groups/interface'
 import { GroupChatEntity } from '../entity/GroupChatEntity'
 import { futureDateFromNow } from '../helper/futureDate'
+import { FileCacheService } from './FileCacheService'
 
 
 
 export class GroupChatService {
     repo: Repository<GroupChatEntity>
-    constructor(repo: Repository<GroupChatEntity>) {
+    private cache: FileCacheService
+    constructor(repo: Repository<GroupChatEntity>, cache: FileCacheService) {
         this.repo = repo
+        this.cache = cache
     }
 
     async findOneByJid(jid: string) {
+        const cache = this.cache.get("findOneByJid" + jid)
+        if (cache) return cache
+
         const found = await this.repo.findOneBy({ jid })
+        this.cache.set("findOneByJid" + jid, found, 1000)
         return found
     }
 
     async findOneByJidWithMenu(jid: string) {
         const found = await this.repo.findOne({
             where: { jid },
-            relations: { groupMenu: true }
+            relations: { groupMenu: true}
         })
         return found
     }
@@ -69,6 +76,7 @@ export class GroupChatService {
         const found = await this.findOneByJid(jid)
         found!.leave = leave
 
+        this.cache.clearAll()
         return await this.repo.save(found!)
     }
 

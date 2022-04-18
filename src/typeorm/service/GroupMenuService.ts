@@ -3,16 +3,23 @@ import { Repository } from 'typeorm';
 import { GroupMenuEntity, GroupMenuType } from '../entity/GroupMenuEntity';
 import { GroupChatEntity } from '../entity/GroupChatEntity';
 import { ImageStorageEntity } from '../entity/ImageEntity';
+import { FileCacheService } from './FileCacheService';
 
 
 export class GroupMenuService {
     private repo: Repository<GroupMenuEntity>;
-    constructor(repo: Repository<GroupMenuEntity>) {
+    private cache: FileCacheService;
+    constructor(repo: Repository<GroupMenuEntity>, cache: FileCacheService) {
         this.repo = repo
+        this.cache = cache
     }
 
     async findAllMenu(jid: string): Promise<GroupMenuEntity[]> {
+        const cache = this.cache.get("findallmenu" + jid)
+        if (cache) return cache
+
         const founds = await this.repo.findBy({ groupChat: { jid } })
+        this.cache.set("findallmenu" + jid, founds, 1000)
         return founds
     }
 
@@ -57,9 +64,11 @@ export class GroupMenuService {
             return await this.repo.save(found)
         }
     }
-    
+
     async removeAllMenu(jid: string) {
         const founds = await this.findAllMenu(jid)
+
+        this.cache.clearAll()
         return this.repo.remove(founds)
     }
 
