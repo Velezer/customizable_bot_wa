@@ -6,9 +6,9 @@ import { LoggerOcedBot } from './logger'
 import { CommandLevel } from './commands/interface'
 import { AppDatabase } from './typeorm'
 import { DataSource } from 'typeorm';
-import makeWASocket, { DisconnectReason, useSingleFileAuthState } from '@adiwajshing/baileys'
+import makeWASocket, { AuthenticationState, DisconnectReason, WASocket } from '@adiwajshing/baileys'
 import { Boom } from '@hapi/boom'
-import { MDSocket } from './md'
+
 
 
 export async function app(dataSource: DataSource) {
@@ -18,22 +18,20 @@ export async function app(dataSource: DataSource) {
         .catch(err => console.log(err))
     const services = db.getServices()
 
-    let { state, saveState } = useSingleFileAuthState('./auth_info_multi.json')
+    let state: AuthenticationState | undefined = undefined
     const authName = process.env.AUTH_NAME!
     const foundAuth = await services.authService.findOne(authName)
-    if (foundAuth?.authInfo) {
+    if (foundAuth) {
         state = JSON.parse(foundAuth?.authInfo)
     }
 
-    let sock: MDSocket = makeWASocket({
+    let sock: WASocket = makeWASocket({
         auth: state,
         printQRInTerminal: true,
     })
 
 
     sock.ev.on('creds.update', async (creds) => {
-        saveState()
-        const { state } = useSingleFileAuthState('./auth_info_multi.json')
         await services.authService.remove(authName)
         services.authService.create(authName, JSON.stringify(state))
     })
@@ -120,6 +118,3 @@ export async function app(dataSource: DataSource) {
     })
 
 }
-
-
-

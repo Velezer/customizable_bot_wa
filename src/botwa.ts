@@ -1,12 +1,11 @@
-import { downloadContentFromMessage, MiscMessageGenerationOptions, proto } from "@adiwajshing/baileys";
+import { downloadContentFromMessage, MiscMessageGenerationOptions, proto, WASocket } from "@adiwajshing/baileys";
 import axios from "axios";
-import { MDSocket } from "./md";
 
 
 export class BotWa {
-    sock: MDSocket;
+    sock: WASocket;
 
-    constructor(sock: MDSocket) {
+    constructor(sock: WASocket) {
         this.sock = sock
     }
     async downloadContentFromImgMsg(imgMsg: proto.IImageMessage): Promise<Buffer> {
