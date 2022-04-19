@@ -18,23 +18,23 @@ export async function app(dataSource: DataSource) {
         .catch(err => console.log(err))
     const services = db.getServices()
 
-    let state: AuthenticationState | undefined = undefined
-    const authName = process.env.AUTH_NAME!
-    const foundAuth = await services.authService.findOne(authName)
-    if (foundAuth) {
-        state = JSON.parse(foundAuth?.authInfo)
-    }
+    // let state: AuthenticationState | undefined = undefined
+    // const authName = process.env.AUTH_NAME!
+    // const foundAuth = await services.authService.findOne(authName)
+    // if (foundAuth) {
+    //     state = JSON.parse(foundAuth?.authInfo)
+    // }
 
     let sock: WASocket = makeWASocket({
-        auth: state,
+        // auth: state,
         printQRInTerminal: true,
     })
 
 
-    sock.ev.on('creds.update', async (creds) => {
-        await services.authService.remove(authName)
-        services.authService.create(authName, JSON.stringify(state))
-    })
+    // sock.ev.on('creds.update', async (creds) => {
+    //     await services.authService.remove(authName)
+    //     services.authService.create(authName, JSON.stringify(state))
+    // })
 
     sock.ev.on('connection.update', (update) => {
         const { connection, lastDisconnect } = update
