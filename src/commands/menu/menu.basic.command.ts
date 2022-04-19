@@ -40,7 +40,7 @@ export class BotMenuBasicCommand implements Command {
             }
             sections.push(commandSection)
 
-            await botwa.sendListMessageSingleSelect(groupChat!.jid, 'Commands', sections);
+            await botwa.sendSections(groupChat!.jid, 'Commands', sections);
 
         } else if (groupChat!.botLevel === BotLevel.BASIC) {
             let msg = ''
@@ -53,7 +53,7 @@ export class BotMenuBasicCommand implements Command {
                 msg += `${c.example}\n${c.description}\n\n`
             })
             msg = msg.slice(0, -2)
-            await botwa.sendMessage(groupChat!.jid, msg);
+            await botwa.sendText(groupChat!.jid, msg);
         }
 
     }
@@ -77,10 +77,10 @@ export class GroupMenuBasicCommand implements Command {
                 msg += `${m.key}\n\n`
             })
             msg = msg.slice(0, -2)
-            await botwa.sendMessage(groupChat!.jid, msg);
+            await botwa.sendText(groupChat!.jid, msg);
         } else {
 
-            await botwa.sendMessage(groupChat!.jid, 'menu kosong silakan tambahkan menggunakan\n\n' + new AddCustomMenuCommand().example)
+            await botwa.sendText(groupChat!.jid, 'menu kosong silakan tambahkan menggunakan\n\n' + new AddCustomMenuCommand().example)
 
         }
 

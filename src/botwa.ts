@@ -1,35 +1,35 @@
-import { GroupSettingChange, MessageOptions, MessageType, Mimetype, proto, WAConnection, WAMediaUpload } from "@adiwajshing/baileys";
+import { downloadContentFromMessage, MiscMessageGenerationOptions, proto } from "@adiwajshing/baileys";
 import axios from "axios";
-
+import { MDSocket } from "./md";
 
 
 export class BotWa {
-    sock: WAConnection;
+    sock: MDSocket;
 
-    constructor(sock: WAConnection) {
+    constructor(sock: MDSocket) {
         this.sock = sock
     }
-
-    async sendVideoDocument(jid: string, videoBuffer: Buffer, filename:string) {
-        return this.sock.sendMessage(jid, videoBuffer, MessageType.document, { mimetype: Mimetype.mp4, filename})
-    }
-    async sendSticker(to: string, sticker: Buffer) {
-        return this.sock.sendMessage(to, sticker, MessageType.sticker)
-    }
-    async prepareImageMessage(imgBuffer: Buffer) {
-        return this.sock.prepareMessage('id', imgBuffer, MessageType.image)
+    async downloadContentFromImgMsg(imgMsg: proto.IImageMessage): Promise<Buffer> {
+        const stream = await downloadContentFromMessage({ mediaKey: imgMsg.mediaKey!, directPath: imgMsg.directPath!, url: imgMsg.url! }, 'image')
+        let buffer = Buffer.from([])
+        for await (const chunk of stream) {
+            buffer = Buffer.concat([buffer, chunk])
+        }
+        return buffer
     }
 
-    async deleteMessage(msgKey: proto.IMessageKey) {
-        return this.sock.deleteMessage(msgKey)
+    sendVideoDocument(jid: string, video: Buffer, fileName: string) {
+        return this.sock.sendMessage(jid, { document: video, mimetype: 'video/mp4', fileName })
+    }
+    sendSticker(jid: string, sticker: Buffer) {
+        return this.sock.sendMessage(jid, { sticker })
+    }
+    sendImage(jid: string, image: Buffer, mentionedJid?: string[]) {
+        return this.sock.sendMessage(jid, { image, mentions: mentionedJid })
     }
 
-    async kick(groupJid: string, phoneNumber: string) {
-        return this.sock.groupRemove(groupJid, [phoneNumber + '@s.whatsapp.net'])
-    }
-
-    async sendImage(to: string, img: Buffer, mentionedJid?: string[]) {
-        return await this.sock.sendMessage(to, img, MessageType.image, { contextInfo: { mentionedJid } })
+    deleteMessage(jid: string, msgKey: proto.IMessageKey) {
+        return this.sock.sendMessage(jid, { delete: msgKey })
     }
 
     /**
@@ -37,7 +37,7 @@ export class BotWa {
      * @param participantJid 
      */
     async getProfilePictureBuffer(participantJid: string): Promise<Buffer> {
-        const url = await this.sock.getProfilePicture(participantJid)
+        const url = await this.sock.profilePictureUrl(participantJid, 'image')
         const buffer = await this.getBufferFromUrl(url)
         return buffer
     }
@@ -53,58 +53,36 @@ export class BotWa {
         })
         return res.data
     }
-    async sendListMessageSingleSelect(to: string, title: string, sections: proto.ISection[]) {
-        const listMessage: proto.ListMessage = {
-            buttonText: 'Pencet BOS!',
-            title,
-            description: "silakan dipilih...",
-            listType: proto.ListMessage.ListMessageListType.SINGLE_SELECT,
-            sections,
-            footerText: "by oced-bot",
-            toJSON: function (): { [k: string]: any; } {
-                throw new Error("Function not implemented.");
-            }
-        }
-        return await this.sock.sendMessage(to, listMessage, MessageType.listMessage)
+    async sendSections(jid: string, title: string, sections: proto.ISection[]) {
+        return this.sock.sendMessage(jid, { title, sections, text: '' })
     }
-    async sendButtonMessage(to: string, contentText: string, imageMessage: proto.IImageMessage, messsages: string[] = [], mentionedJid: string[]) {
+
+    sendButtonMessage(jid: string, image: Buffer, text: string, messsages: string[] = [], mentionedJid: string[]) {
         const buttons: proto.IButton[] = []
         messsages.forEach(m => {
             buttons.push(
                 { buttonId: m + 'id', buttonText: { displayText: m }, type: proto.Button.ButtonType.RESPONSE },
             )
         })
-        const buttonsMessage: proto.ButtonsMessage = {
-            imageMessage,
-            contentText,
-            footerText: '',
-            buttons,
-            headerType: proto.ButtonsMessage.ButtonsMessageHeaderType.IMAGE,
-            toJSON: function (): { [k: string]: any; } {
-                throw new Error("Function not implemented.");
-            }
-        }
-        this.sock.sendMessage(to, buttonsMessage, MessageType.buttonsMessage, { contextInfo: { mentionedJid } })
+        return this.sock.sendMessage(jid, { buttons, text, document: image, mimetype: 'image/jpeg', mentions: mentionedJid })
     }
 
     async getUserInfo() {
         return this.sock.user
     }
 
-    async sendMessage(to: string, message: string, options?: MessageOptions) {
-        return await this.sock.sendMessage(to, message, MessageType.text, options)
-    }
-    async sendText(to: string, message: string, options?: MessageOptions) {
-        return await this.sock.sendMessage(to, message, MessageType.text, options)
-    }
-    async sendMentioned(to: string, message: string, mentionedJid: string[]) {
-        return await this.sock.sendMessage(to, message, MessageType.text, { contextInfo: { mentionedJid } })
+    sendText(jid: string, text: string, options?: MiscMessageGenerationOptions) {
+        return this.sock.sendMessage(jid, { text }, options)
     }
 
-    async sendMentionedAll(to: string, m1: string) {
-        const participants = await this.getGroupParticipants(to)
-        const contacts = participants.map(p => p.jid)
-        return await this.sock.sendMessage(to, m1, MessageType.extendedText, { contextInfo: { "mentionedJid": contacts } })
+    sendMentioned(jid: string, text: string, mentionedJid: string[]) {
+        return this.sock.sendMessage(jid, { text, mentions: mentionedJid })
+    }
+
+    async sendMentionedAll(jid: string, m1: string) {
+        const participants = await this.getGroupParticipants(jid)
+        const contacts = participants.map(p => p.id)
+        return await this.sock.sendMessage(jid, { text: m1, mentions: contacts })
             .catch(err => console.log(err))
     }
 
@@ -125,33 +103,32 @@ export class BotWa {
         return participants
     }
 
-    async openGroupSettings(jidGroup: string) {
-        this.sock.groupSettingChange(jidGroup, GroupSettingChange.settingsChange, false)
+    openGroupSettings(jidGroup: string) {
+        return this.sock.groupSettingUpdate(jidGroup, 'unlocked')
     }
 
-    async closeGroupSettings(jidGroup: string) {
-        this.sock.groupSettingChange(jidGroup, GroupSettingChange.settingsChange, true)
+    closeGroupSettings(jidGroup: string) {
+        return this.sock.groupSettingUpdate(jidGroup, 'locked')
     }
 
-    async openGroupChat(jidGroup: string) {
-        this.sock.groupSettingChange(jidGroup, GroupSettingChange.messageSend, false)
+    openGroupChat(jidGroup: string) {
+        return this.sock.groupSettingUpdate(jidGroup, 'not_announcement')
     }
-    async closeGroupChat(jidGroup: string) {
-        this.sock.groupSettingChange(jidGroup, GroupSettingChange.messageSend, true)
+    closeGroupChat(jidGroup: string) {
+        return this.sock.groupSettingUpdate(jidGroup, 'announcement')
     }
 
 
-    async reply(to: string, message: string, from: proto.WebMessageInfo) {
-        await this.sock.sendMessage(to, message, MessageType.text, { quoted: from })
-
+    async reply(jid: string, text: string, from: proto.IWebMessageInfo) {
+        await this.sock.sendMessage(jid, { text }, { quoted: from })
     }
 
     async demote(jidGroup: string, phoneNumber: string) {
         phoneNumber += '@s.whatsapp.net'
         const participants = await this.getGroupParticipants(jidGroup)
         for (const p of participants) {
-            if (p.jid.includes(phoneNumber)) {
-                return await this.sock.groupDemoteAdmin(jidGroup, [p.jid])
+            if (p.id.includes(phoneNumber)) {
+                return await this.sock.groupParticipantsUpdate(jidGroup, [p.id], 'demote')
             }
         }
     }
@@ -159,9 +136,13 @@ export class BotWa {
         phoneNumber += '@s.whatsapp.net'
         const participants = await this.getGroupParticipants(jidGroup)
         for (const p of participants) {
-            if (p.jid.includes(phoneNumber)) {
-                return await this.sock.groupMakeAdmin(jidGroup, [p.jid])
+            if (p.id.includes(phoneNumber)) {
+                return await this.sock.groupParticipantsUpdate(jidGroup, [p.id], 'promote')
             }
         }
+    }
+
+    kick(jidGroup: string, phoneNumber: string) {
+        return this.sock.groupParticipantsUpdate(jidGroup, [phoneNumber + '@s.whatsapp.net'], 'remove')
     }
 }

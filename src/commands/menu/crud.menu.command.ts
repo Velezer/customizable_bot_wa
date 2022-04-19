@@ -1,7 +1,5 @@
 import { BotLevel } from "../../groups/interface";
-import { Helper } from "../../helper/helper";
 import { Command, CommandLevel, RunArgs } from "../interface";
-import fs from 'fs'
 
 
 
@@ -20,7 +18,7 @@ export class AddCustomMenuCommand implements Command {
 
         const jid = groupChat!.jid
         if (!m1) {
-            botwa.sendMessage(jid, 'silakan tambahkan nama menu terlebih dahulu')
+            botwa.sendText(jid, 'silakan tambahkan nama menu terlebih dahulu')
             return
         }
 
@@ -29,21 +27,21 @@ export class AddCustomMenuCommand implements Command {
         }
 
         // ---------------------
-        if (receivedMessage?.message?.imageMessage) {
-            const path = await botwa.sock.downloadAndSaveMediaMessage(receivedMessage, Helper.getRandomString(20))
-
-            const imgStore = await services!.imageStorageService.store(fs.readFileSync(path))
+        const imgMessage = receivedMessage?.message?.imageMessage
+        if (imgMessage) {
+            const buffer = await botwa.downloadContentFromImgMsg(imgMessage)
+            const imgStore = await services!.imageStorageService.store(buffer)
             services!.serviceGroupMenu.createMenuStoreImage(groupChat!, m1, imgStore!)
-            return botwa.sendMessage(jid, 'gambar ditambahkan')
+            return botwa.sendText(jid, 'gambar ditambahkan')
         }
         // -------------------------
         if (!m2) {
-            botwa.sendMessage(jid, 'silakan tambahkan data text terlebih dahulu')
+            botwa.sendText(jid, 'silakan tambahkan data text terlebih dahulu')
             return
         }
 
         services!.serviceGroupMenu.createMenuText(groupChat!, m1, m2)
-        botwa.sendMessage(jid, 'menu ditambahkan')
+        botwa.sendText(jid, 'menu ditambahkan')
 
     }
 }
@@ -65,7 +63,7 @@ export class UpdateCustomMenuCommand implements Command {
         const jid = groupChat!.jid
 
         if (!m1) {
-            botwa.sendMessage(jid, 'silakan tambahkan nama menu terlebih dahulu')
+            botwa.sendText(jid, 'silakan tambahkan nama menu terlebih dahulu')
             return
         }
 
@@ -73,22 +71,22 @@ export class UpdateCustomMenuCommand implements Command {
             m1 = '/' + m1
         }
         // -----------------
-        if (receivedMessage?.message?.imageMessage) {
-            const path = await botwa.sock.downloadAndSaveMediaMessage(receivedMessage, Helper.getRandomString(20))
-
+        const imgMessage = receivedMessage?.message?.imageMessage
+        if (imgMessage) {
+            const buffer = await botwa.downloadContentFromImgMsg(imgMessage)
             const menu = await services!.serviceGroupMenu.findOneMenu(jid, m1)
-            await services!.imageStorageService.updateOne(menu!.imageStorage.id, fs.readFileSync(path))
-            return botwa.sendMessage(jid, 'gambar diupdate')
+            await services!.imageStorageService.updateOne(menu!.imageStorage.id, buffer)
+            return botwa.sendText(jid, 'gambar diupdate')
         }
         // -------------------
 
         if (!m2) {
-            botwa.sendMessage(jid, 'silakan tambahkan data text terlebih dahulu')
+            botwa.sendText(jid, 'silakan tambahkan data text terlebih dahulu')
             return
         }
         services!.serviceGroupMenu.updateMenuValue(groupChat!.jid, m1, m2)
 
-        botwa.sendMessage(jid, 'menu diupdate')
+        botwa.sendText(jid, 'menu diupdate')
 
 
     }
@@ -108,7 +106,7 @@ export class RemoveCustomMenuCommand implements Command {
         const jid = groupChat!.jid
 
         if (!m1) {
-            botwa.sendMessage(jid, 'kasi nama menunya bos')
+            botwa.sendText(jid, 'kasi nama menunya bos')
             return
         }
 
@@ -118,7 +116,7 @@ export class RemoveCustomMenuCommand implements Command {
 
         services!.serviceGroupMenu.removeOneMenu(groupChat!.jid, m1)
 
-        botwa.sendMessage(jid, 'menu dihapus')
+        botwa.sendText(jid, 'menu dihapus')
 
 
     }

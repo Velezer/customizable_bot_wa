@@ -20,14 +20,14 @@ export class StickerCommand implements Command {
         if (Helper.isExist(jpegFile)) fs.unlinkSync(jpegFile)
         if (Helper.isExist(webpFile)) fs.unlinkSync(webpFile)
 
+        let buffer: Buffer = Buffer.from([])
         if (quotedMessage) {
-            const m = await botwa.sock.loadMessage(jid, receivedMessage?.message?.extendedTextMessage?.contextInfo?.stanzaId!!)
-            jpegFile = await botwa.sock.downloadAndSaveMediaMessage(m, jpegFile, false)
+            buffer = await botwa.downloadContentFromImgMsg(quotedMessage.imageMessage!)
         } else if (receivedMessage?.message?.imageMessage) {
-            jpegFile = await botwa.sock.downloadAndSaveMediaMessage(receivedMessage, jpegFile, false)
+            buffer = await botwa.downloadContentFromImgMsg(receivedMessage.message.imageMessage)
         }
 
-        const raw = await Jimp.read(jpegFile)
+        const raw = await Jimp.read(buffer)
         const h = raw.getHeight()
         const w = raw.getWidth()
 

@@ -16,10 +16,10 @@ export class CekCommand implements Command {
             ' jam ' + date.toLocaleString('id-ID', { hour: 'numeric', minute: 'numeric', timeZone: 'Asia/Jakarta' })
 
         if (new Date() < groupChat!.sewaExpiredAt) {
-            await botwa.sendMessage(groupChat!.jid, groupChat!.botLevel + '\n\nsewa expired pada\n' + localDate(groupChat!.sewaExpiredAt))
+            await botwa.sendText(groupChat!.jid, groupChat!.botLevel + '\n\nsewa expired pada\n' + localDate(groupChat!.sewaExpiredAt))
         }
         if (new Date() < groupChat!.trialExpiredAt) {
-            await botwa.sendMessage(groupChat!.jid, groupChat!.botLevel + '\n\ntrial expired pada\n' + localDate(groupChat!.trialExpiredAt))
+            await botwa.sendText(groupChat!.jid, groupChat!.botLevel + '\n\ntrial expired pada\n' + localDate(groupChat!.trialExpiredAt))
         }
 
     }

@@ -31,10 +31,10 @@ export class GroupMenuElegantCommand implements Command {
             }
 
             sections.push(menuSection)
-            await botwa.sendListMessageSingleSelect(groupChat!.jid, 'Menu', sections);
+            await botwa.sendSections(groupChat!.jid, 'Menu', sections);
         } else {
 
-            await botwa.sendMessage(groupChat!.jid, 'menu kosong silakan tambahkan menggunakan\n\n' +
+            await botwa.sendText(groupChat!.jid, 'menu kosong silakan tambahkan menggunakan\n\n' +
                 new AddCustomMenuCommand().example)
 
         }

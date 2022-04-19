@@ -12,21 +12,23 @@ export class DeleteBotTypoCommand implements Command {
 
     async run(args: RunArgs): Promise<void> {
         const { quotedMessage, receivedMessage, conversation, botwa, groupChat } = args
+        const jid = groupChat?.jid!
+
         const quotedMessageString = quotedMessage?.extendedTextMessage?.text || quotedMessage?.conversation
-        await botwa.sock.findMessage(groupChat!.jid, 50, (m) => {
-            const foundMessageString = m.message?.conversation || m.message?.extendedTextMessage?.text
-            if (m.key.fromMe === true) {
-                if (quotedMessageString === foundMessageString) {
-                    botwa.deleteMessage(m.key).catch(err => {
-                        botwa.sendMessage(groupChat!.jid, 'delete gagal')
-                    })
-                    return true
+
+        botwa.sock.ev.on('messages.upsert', m => {
+            for (const msg of m.messages) {
+                const foundMessageString = msg.message!.conversation || msg.message!.extendedTextMessage?.text
+                if (msg.key.fromMe === true) {
+                    if (quotedMessageString === foundMessageString) {
+                        botwa.deleteMessage(jid, msg.key).catch(err => {
+                            botwa.sendText(groupChat!.jid, 'delete gagal')
+                        })
+                        return true
+                    }
                 }
             }
-
-            return false
         })
-
     }
 
 }

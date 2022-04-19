@@ -1,5 +1,4 @@
 import { BotWa } from './botwa'
-import { ReconnectMode, WAConnection } from '@adiwajshing/baileys'
 import { Activation } from './activation/activation'
 import { BehaviorHandler } from './handlers/behavior.handler'
 import { CommandHandler } from './handlers/command.handler'
@@ -7,7 +6,9 @@ import { LoggerOcedBot } from './logger'
 import { CommandLevel } from './commands/interface'
 import { AppDatabase } from './typeorm'
 import { DataSource } from 'typeorm';
-
+import makeWASocket, { DisconnectReason, useSingleFileAuthState } from '@adiwajshing/baileys'
+import { Boom } from '@hapi/boom'
+import { MDSocket } from './md'
 
 
 export async function app(dataSource: DataSource) {
@@ -16,38 +17,44 @@ export async function app(dataSource: DataSource) {
         .then(() => console.log('db connected'))
         .catch(err => console.log(err))
     const services = db.getServices()
-    const sock: WAConnection = new WAConnection()
-    sock.logger.level = 'debug' //''debug', 'fatal', 'error',  'trace'
-    sock.version = [2, 2143, 3]
-    sock.browserDescription = ['velezer', 'Chrome', 'OcedBot']
-    sock.autoReconnect = ReconnectMode.onAllErrors
 
-    const authName = process.env.AUTH_NAME
-    const foundAuth = await services.authService.findOne(authName!)
-    if (foundAuth) {
-        sock.loadAuthInfo(JSON.parse(foundAuth.authInfo))
+    let { state, saveState } = useSingleFileAuthState('./auth_info_multi.json')
+    const authName = process.env.AUTH_NAME!
+    const foundAuth = await services.authService.findOne(authName)
+    if (foundAuth?.authInfo) {
+        state = JSON.parse(foundAuth?.authInfo)
     }
 
-    await sock.connect()
-    LoggerOcedBot.log(new BotWa(sock), "bot is started...");
-
-    (async () => {
-        await services.authService.remove(authName!)
-        services.authService.create(authName!, JSON.stringify(sock.base64EncodedAuthInfo()))
-    })()
-
-
-    sock.on('close', async (data) => {
-        if (data.isReconnecting === false) {
-            setTimeout(() => {
-                console.log('reconnect in 10 seconds')
-                app(dataSource)
-            }, 10000)
-        }
-
+    let sock: MDSocket = makeWASocket({
+        auth: state,
+        printQRInTerminal: true,
     })
-    sock.on('group-participants-update', async (groupUpdate) => {
-        const groupJid = groupUpdate.jid
+
+
+    sock.ev.on('creds.update', async (creds) => {
+        saveState()
+        const { state } = useSingleFileAuthState('./auth_info_multi.json')
+        await services.authService.remove(authName)
+        services.authService.create(authName, JSON.stringify(state))
+    })
+
+    sock.ev.on('connection.update', (update) => {
+        const { connection, lastDisconnect } = update
+        if (connection === 'close') {
+            const shouldReconnect = (lastDisconnect?.error as Boom)?.output?.statusCode !== DisconnectReason.loggedOut
+            console.log('connection closed due to ', lastDisconnect?.error, ', reconnecting ', shouldReconnect)
+            // reconnect if not logged out
+            if (shouldReconnect) {
+                app(dataSource)
+            }
+        } else if (connection === 'open') {
+            LoggerOcedBot.log(new BotWa(sock), "bot is started...");
+        }
+    })
+
+
+    sock.ev.on('group-participants.update', async (groupUpdate) => {
+        const groupJid = groupUpdate.id
         const action = groupUpdate.action
         const participants = groupUpdate.participants
 
@@ -61,9 +68,8 @@ export async function app(dataSource: DataSource) {
 
     })
 
-    sock.on('chat-update', async (chatUpdate) => {
-        if (!chatUpdate.hasNewMessage) return
-        const receivedMessage = chatUpdate.messages?.all()[0]!
+    sock.ev.on('messages.upsert', async (m) => {
+        const receivedMessage = m.messages[0]!
         // console.log(receivedMessage)
         if (receivedMessage.key.fromMe === true || !receivedMessage?.message) return
 

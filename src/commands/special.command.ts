@@ -19,7 +19,7 @@ export class RegisterGroupCommand implements Command {
         const groupSubject = await botwa.getGroupSubject(groupChat!.jid)
 
         if (!m1) {
-            botwa.sendMessage(jid, 'silakan hubungi \nwa.me/' + OcedBot.getPhoneNumber() + ' untuk mendapatkan key-aktivasi')
+            botwa.sendText(jid, 'silakan hubungi \nwa.me/' + OcedBot.getPhoneNumber() + ' untuk mendapatkan key-aktivasi')
             return
         }
 
@@ -27,23 +27,23 @@ export class RegisterGroupCommand implements Command {
         const activationKey = activationKeys.find(k => k.key === m1)
 
         if (activationKey) {
-            botwa.sendMessage(jid, 'sedang mengaktivasi...')
+            botwa.sendText(jid, 'sedang mengaktivasi...')
 
             services!.serviceGroupChat.sewa(groupChat!.jid, activationKey.botLevel)
                 .then(() => {
-                    botwa.sendMessage(jid, 'aktivasi sukses bot ' + activationKey.botLevel)
+                    botwa.sendText(jid, 'aktivasi sukses bot ' + activationKey.botLevel)
                     LoggerOcedBot.log(botwa, 'aktivasi sukses dengan key \n\n' + JSON.stringify(activationKey) + '\n\n' + groupSubject + '\n\n' + jid)
                     Activation.generateActivationKey()
                 })
                 .catch(err => {
                     console.error(err)
-                    botwa.sendMessage(jid, 'aktivasi gagal, mohon hubungi \nwa.me/' + OcedBot.getPhoneNumber())
+                    botwa.sendText(jid, 'aktivasi gagal, mohon hubungi \nwa.me/' + OcedBot.getPhoneNumber())
                     LoggerOcedBot.log(botwa, 'aktivasi gagal dengan key ' + activationKey + '\n\n' + groupSubject)
 
                 })
 
         } else {
-            botwa.sendMessage(jid, 'aktivasi gagal, mohon periksa key-aktivasi anda')
+            botwa.sendText(jid, 'aktivasi gagal, mohon periksa key-aktivasi anda')
             LoggerOcedBot.log(botwa, 'upaya aktivasi gagal, diperkirakan ada kesalahan key' + '\n\n' + groupSubject)
         }
 
@@ -63,16 +63,16 @@ export class TrialCommand implements Command {
 
         const groupSubject = await botwa.getGroupSubject(groupChat!.jid)
 
-        botwa.sendMessage(jid, 'sedang mengaktivasi trial...')
+        botwa.sendText(jid, 'sedang mengaktivasi trial...')
 
         services!.serviceGroupChat.trial(jid)
             .then(() => {
-                botwa.sendMessage(jid, 'aktivasi trial sukses')
+                botwa.sendText(jid, 'aktivasi trial sukses')
                 LoggerOcedBot.log(botwa, 'aktivasi trial sukses' + '\n\n' + groupSubject + '\n\n' + jid)
             })
             .catch(err => {
                 console.error(err)
-                botwa.sendMessage(jid, 'aktivasi trial gagal, mohon hubungi \nwa.me/' + OcedBot.getPhoneNumber())
+                botwa.sendText(jid, 'aktivasi trial gagal, mohon hubungi \nwa.me/' + OcedBot.getPhoneNumber())
                 LoggerOcedBot.log(botwa, 'aktivasi trial gagal ' + '\n\n' + groupSubject)
 
             })
