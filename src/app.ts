@@ -37,11 +37,12 @@ export async function app(dataSource: DataSource) {
     })()
 
 
-
     sock.on('close', async (data) => {
-        console.log(data)
         if (data.isReconnecting === false) {
-            app(dataSource)
+            setTimeout(() => {
+                console.log('reconnect in 10 seconds')
+                app(dataSource)
+            }, 10000)
         }
 
     })
