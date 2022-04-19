@@ -6,16 +6,17 @@ import { LoggerOcedBot } from './logger'
 import { CommandLevel } from './commands/interface'
 import { AppDatabase } from './typeorm'
 import { DataSource } from 'typeorm';
-import makeWASocket, { AuthenticationState, DisconnectReason, WASocket } from '@adiwajshing/baileys'
+import makeWASocket, { AuthenticationState, DisconnectReason, fetchLatestBaileysVersion, WASocket } from '@adiwajshing/baileys'
 import { Boom } from '@hapi/boom'
 
 
 
 export async function app(dataSource: DataSource) {
+    const { version, isLatest } = await fetchLatestBaileysVersion()
+    
     const db = new AppDatabase(dataSource)
     await db.setup()
         .then(() => console.log('db connected'))
-        .catch(err => console.log(err))
     const services = db.getServices()
 
     // let state: AuthenticationState | undefined = undefined
@@ -26,6 +27,7 @@ export async function app(dataSource: DataSource) {
     // }
 
     let sock: WASocket = makeWASocket({
+        version,
         // auth: state,
         printQRInTerminal: true,
     })
