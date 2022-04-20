@@ -15,7 +15,7 @@ export class GroupChatService {
         this.cache = cache
     }
 
-    async findOneByJid(jid: string) {
+    async findOneByJid(jid: string): Promise<GroupChatEntity | null> {
         const cache = this.cache.get("findOneByJid" + jid)
         if (cache) return cache
 
@@ -63,7 +63,7 @@ export class GroupChatService {
 
         return await this.repo.save(found!)
     }
-    
+
     async setLeave(jid: string, leave: string) {
         const found = await this.findOneByJid(jid)
         found!.leave = leave

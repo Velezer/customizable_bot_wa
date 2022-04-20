@@ -105,8 +105,12 @@ export async function app(dataSource: DataSource) {
         const sentByAdmin = await commander.isSentByGroupAdmin(receivedMessage, participants)
         const commandLevel = sentByAdmin ? CommandLevel.ADMIN : CommandLevel.MEMBER
 
+        console.log(conversation)
+        console.log(commandLevel)
+        console.log(receivedMessage)
+
         try {
-            commander.run(jid, conversation, commandLevel, quotedMessage!, receivedMessage).catch(err => console.error(err))
+            commander.run(jid, conversation, commandLevel, quotedMessage!, receivedMessage)
         } catch (err) {
             console.log(err)
         }
