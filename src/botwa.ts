@@ -23,8 +23,8 @@ export class BotWa {
     sendSticker(jid: string, sticker: Buffer) {
         return this.sock.sendMessage(jid, { sticker })
     }
-    sendImage(jid: string, image: Buffer, mentionedJid?: string[]) {
-        return this.sock.sendMessage(jid, { image, mentions: mentionedJid })
+    sendImage(jid: string, image: Buffer, caption?: string, mentions?: string[]) {
+        return this.sock.sendMessage(jid, { image, caption, mentions })
     }
 
     deleteMessage(jid: string, msgKey: proto.IMessageKey) {
@@ -56,14 +56,14 @@ export class BotWa {
         return this.sock.sendMessage(jid, { title, sections, text: '' })
     }
 
-    sendButtonMessage(jid: string, image: Buffer, text: string, messsages: string[] = [], mentionedJid: string[]) {
+    sendButtons(jid: string, messsages: string[]) {
         const buttons: proto.IButton[] = []
         messsages.forEach(m => {
             buttons.push(
                 { buttonId: m + 'id', buttonText: { displayText: m }, type: proto.Button.ButtonType.RESPONSE },
             )
         })
-        return this.sock.sendMessage(jid, { buttons, text, image, mentions: mentionedJid })
+        return this.sock.sendMessage(jid, { buttons, text: '' })
     }
 
     async getUserInfo() {
@@ -74,8 +74,8 @@ export class BotWa {
         return this.sock.sendMessage(jid, { text }, options)
     }
 
-    sendMentioned(jid: string, text: string, mentionedJid: string[]) {
-        return this.sock.sendMessage(jid, { text, mentions: mentionedJid })
+    sendMentioned(jid: string, text: string, mentions: string[]) {
+        return this.sock.sendMessage(jid, { text, mentions })
     }
 
     async sendMentionedAll(jid: string, m1: string) {
