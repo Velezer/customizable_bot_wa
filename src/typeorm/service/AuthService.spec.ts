@@ -15,18 +15,9 @@ describe('GroupChat with jid=jid', () => {
     const name = 'botwa'
     const authInfo = 'authinfo'
     it('create auth', async () => {
-        const res = await service.create(name, authInfo)
+        const res = await service.set(name, authInfo)
         expect(res.name).toBe(name)
         expect(res.authInfo).toBe(authInfo)
-    })
-    it('error duplicate unique auth name', async () => {
-        try {
-            const res = await service.create(name, authInfo)
-        } catch (err) {
-            if (err instanceof Error) {
-                expect(err.message.toLowerCase()).toContain('unique')
-            }
-        }
     })
 
     it('findOne auth', async ()=>{

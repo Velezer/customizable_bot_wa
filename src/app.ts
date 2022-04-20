@@ -6,9 +6,14 @@ import { LoggerOcedBot } from './logger'
 import { CommandLevel } from './commands/interface'
 import { AppDatabase } from './typeorm'
 import { DataSource } from 'typeorm';
-import makeWASocket, { AuthenticationState, DisconnectReason, fetchLatestBaileysVersion, useSingleFileAuthState, WASocket } from '@adiwajshing/baileys'
+import makeWASocket, { DisconnectReason, fetchLatestBaileysVersion, useSingleFileAuthState, WASocket } from '@adiwajshing/baileys'
 import { Boom } from '@hapi/boom'
 import fs from 'fs'
+
+import MAIN_LOGGER from '@adiwajshing/baileys/lib/Utils/logger'
+
+const logger = MAIN_LOGGER.child({ })
+logger.level = 'warn'
 
 
 export async function app(dataSource: DataSource) {
@@ -23,21 +28,23 @@ export async function app(dataSource: DataSource) {
         fs.writeFileSync('./auth_info_multi.json', foundAuth.authInfo);
     }
 
+    const {state, saveState} = useSingleFileAuthState('./auth_info_multi.json')
+
     let sock: WASocket = makeWASocket({
         version: (await fetchLatestBaileysVersion()).version,
-        auth: useSingleFileAuthState('./auth_info_multi.json').state,
+        auth: state,
         printQRInTerminal: true,
+        logger,
         getMessage: async key => { return { conversation: 'ocedbot' } }
     })
 
 
     sock.ev.on('creds.update', async (creds) => {
-        console.log(sock.authState)
-        await services.authService.remove(authName)
-        services.authService.create(authName, JSON.stringify(sock.authState))
+        saveState()
+        services.authService.set(authName, JSON.stringify(useSingleFileAuthState('./auth_info_multi.json').state))
     })
 
-    sock.ev.on('connection.update', (update) => {
+    sock.ev.on('connection.update', async (update) => {
         const { connection, lastDisconnect } = update
         if (connection === 'close') {
             const shouldReconnect = (lastDisconnect?.error as Boom)?.output?.statusCode !== DisconnectReason.loggedOut
