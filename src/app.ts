@@ -12,12 +12,11 @@ import { Boom } from '@hapi/boom'
 
 
 export async function app(dataSource: DataSource) {
-    const { version, isLatest } = await fetchLatestBaileysVersion()
-    
     const db = new AppDatabase(dataSource)
-    await db.setup()
+    db.setup()
         .then(() => console.log('db connected'))
     const services = db.getServices()
+
 
     // let state: AuthenticationState | undefined = undefined
     // const authName = process.env.AUTH_NAME!
@@ -26,10 +25,14 @@ export async function app(dataSource: DataSource) {
     //     state = JSON.parse(foundAuth?.authInfo)
     // }
 
+    const { version, isLatest } = await fetchLatestBaileysVersion()
+    console.log(`using WA v${version.join('.')}, isLatest: ${isLatest}`)
+
     let sock: WASocket = makeWASocket({
         version,
         // auth: state,
         printQRInTerminal: true,
+        getMessage: async key => { return { conversation: 'ocedbot' } }
     })
 
 
