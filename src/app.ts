@@ -41,8 +41,10 @@ export async function app(dataSource: DataSource) {
 
     sock.ev.on('creds.update', async (creds) => {
         saveState()
-        await services.authService.remove(authName)
-        services.authService.create(authName, JSON.stringify(useSingleFileAuthState('./auth_info_multi.json').state))
+        try {
+            await services.authService.remove(authName)
+            services.authService.create(authName, JSON.stringify(useSingleFileAuthState('./auth_info_multi.json').state))
+        } catch (error) {}
     })
 
     sock.ev.on('connection.update', (update) => {
