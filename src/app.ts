@@ -12,7 +12,7 @@ import fs from 'fs'
 
 import MAIN_LOGGER from '@adiwajshing/baileys/lib/Utils/logger'
 
-const logger = MAIN_LOGGER.child({ })
+const logger = MAIN_LOGGER.child({})
 logger.level = 'warn'
 
 
@@ -28,7 +28,7 @@ export async function app(dataSource: DataSource) {
         fs.writeFileSync('./auth_info_multi.json', foundAuth.authInfo);
     }
 
-    const {state, saveState} = useSingleFileAuthState('./auth_info_multi.json')
+    const { state, saveState } = useSingleFileAuthState('./auth_info_multi.json')
 
     let sock: WASocket = makeWASocket({
         version: (await fetchLatestBaileysVersion()).version,
@@ -66,7 +66,6 @@ export async function app(dataSource: DataSource) {
 
         const participant = participants[0]
 
-
         const behaviorer = new BehaviorHandler(botwa, services)
         behaviorer.run(action, groupJid, participant)
 
@@ -74,12 +73,9 @@ export async function app(dataSource: DataSource) {
 
     sock.ev.on('messages.upsert', async (m) => {
         const receivedMessage = m.messages[0]!
-        // console.log(receivedMessage)
         if (receivedMessage.key.fromMe === true || !receivedMessage?.message) return
 
-
         const botwa = new BotWa(sock)
-
 
         const jid = receivedMessage.key.remoteJid!
         const isNotGroup = jid.split('@')[1] !== 'g.us'
@@ -96,28 +92,26 @@ export async function app(dataSource: DataSource) {
 
         if (!conversation) return
 
-        const commander = new CommandHandler(botwa, services)
-        const sentByAdmin = await commander.isSentByGroupAdmin(receivedMessage, participants)
-        if (!sentByAdmin) {
-            await commander.run(jid, conversation, CommandLevel.MEMBER, quotedMessage!, receivedMessage).catch(err => console.error(err))
+        if (jid === LoggerOcedBot.jid && conversation.startsWith('/key')) {
+            const activation = new Activation()
+            activation.getActivationKey().forEach(async k => {
+                await LoggerOcedBot.log(botwa, k.botLevel)
+                await LoggerOcedBot.log(botwa, '/sewa ' + k.key)
+            })
             return
         }
 
+        const commander = new CommandHandler(botwa, services)
+        const sentByAdmin = await commander.isSentByGroupAdmin(receivedMessage, participants)
+        const commandLevel = sentByAdmin ? CommandLevel.ADMIN : CommandLevel.MEMBER
+
         try {
-            commander.run(jid, conversation, CommandLevel.ADMIN, quotedMessage!, receivedMessage).catch(err => console.error(err))
+            commander.run(jid, conversation, commandLevel, quotedMessage!, receivedMessage).catch(err => console.error(err))
         } catch (err) {
             console.log(err)
         }
 
         if (jid === LoggerOcedBot.jid) {
-            if (receivedMessage.message?.conversation?.startsWith('/key')) {
-                Activation.getActivationKey().forEach(async k => {
-                    await LoggerOcedBot.log(botwa, k.botLevel)
-                    await LoggerOcedBot.log(botwa, '/sewa ' + k.key)
-                })
-                return
-            }
-
             commander.unreg(conversation)
             commander.blacklist(conversation)
         }
