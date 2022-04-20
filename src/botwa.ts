@@ -63,7 +63,7 @@ export class BotWa {
                 { buttonId: m + 'id', buttonText: { displayText: m }, type: proto.Button.ButtonType.RESPONSE },
             )
         })
-        return this.sock.sendMessage(jid, { buttons, text, document: image, mimetype: 'image/jpeg', mentions: mentionedJid })
+        return this.sock.sendMessage(jid, { buttons, text, image, mentions: mentionedJid })
     }
 
     async getUserInfo() {
