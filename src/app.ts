@@ -6,7 +6,7 @@ import { LoggerOcedBot } from './logger'
 import { CommandLevel } from './commands/interface'
 import { AppDatabase } from './typeorm'
 import { DataSource } from 'typeorm';
-import makeWASocket, { AuthenticationState, DisconnectReason, fetchLatestBaileysVersion, WASocket } from '@adiwajshing/baileys'
+import makeWASocket, { AuthenticationState, DisconnectReason, fetchLatestBaileysVersion, useSingleFileAuthState, WASocket } from '@adiwajshing/baileys'
 import MAIN_LOGGER from '@adiwajshing/baileys/lib/Utils/logger'
 import { Boom } from '@hapi/boom'
 
@@ -30,20 +30,23 @@ export async function app(dataSource: DataSource) {
     const { version, isLatest } = await fetchLatestBaileysVersion()
     console.log(`using WA v${version.join('.')}, isLatest: ${isLatest}`)
 
+    const { state, saveState } = useSingleFileAuthState('./auth_info_multi.json')
+
     let sock: WASocket = makeWASocket({
         version,
         logger,
-        // auth: state,
+        auth: state,
         printQRInTerminal: true,
         getMessage: async key => { return { conversation: 'ocedbot' } }
     })
 
 
+    sock.ev.on('creds.update', saveState)
     // sock.ev.on('creds.update', async (creds) => {
     //     await services.authService.remove(authName)
     //     services.authService.create(authName, JSON.stringify(state))
     // })
-
+    
     sock.ev.on('connection.update', (update) => {
         const { connection, lastDisconnect } = update
         if (connection === 'close') {
