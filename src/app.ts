@@ -80,13 +80,6 @@ export async function app(dataSource: DataSource) {
 
         const botwa = new BotWa(sock)
 
-        if (receivedMessage.message?.conversation?.startsWith('/key')) {
-            Activation.getActivationKey().forEach(k => {
-                LoggerOcedBot.log(botwa, k.botLevel)
-                LoggerOcedBot.log(botwa, '/sewa ' + k.key)
-            })
-            return
-        }
 
         const jid = receivedMessage.key.remoteJid!
         const isNotGroup = jid.split('@')[1] !== 'g.us'
@@ -104,11 +97,11 @@ export async function app(dataSource: DataSource) {
         if (!conversation) return
 
         const commander = new CommandHandler(botwa, services)
-        if (! await commander.isSentByGroupAdmin(receivedMessage, participants)) {
+        const sentByAdmin = await commander.isSentByGroupAdmin(receivedMessage, participants)
+        if (!sentByAdmin) {
             await commander.run(jid, conversation, CommandLevel.MEMBER, quotedMessage!, receivedMessage).catch(err => console.error(err))
             return
         }
-
 
         try {
             commander.run(jid, conversation, CommandLevel.ADMIN, quotedMessage!, receivedMessage).catch(err => console.error(err))
@@ -117,6 +110,14 @@ export async function app(dataSource: DataSource) {
         }
 
         if (jid === LoggerOcedBot.jid) {
+            if (receivedMessage.message?.conversation?.startsWith('/key')) {
+                Activation.getActivationKey().forEach(async k => {
+                    await LoggerOcedBot.log(botwa, k.botLevel)
+                    await LoggerOcedBot.log(botwa, '/sewa ' + k.key)
+                })
+                return
+            }
+
             commander.unreg(conversation)
             commander.blacklist(conversation)
         }
