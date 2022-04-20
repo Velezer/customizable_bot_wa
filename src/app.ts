@@ -94,10 +94,10 @@ export async function app(dataSource: DataSource) {
 
         if (jid === LoggerOcedBot.jid && conversation.startsWith('/key')) {
             const activation = new Activation()
-            activation.getActivationKey().forEach(async k => {
+            for (const k of activation.getActivationKey()) {
                 await LoggerOcedBot.log(botwa, k.botLevel)
                 await LoggerOcedBot.log(botwa, '/sewa ' + k.key)
-            })
+            }
             return
         }
 
