@@ -7,52 +7,40 @@ import { CommandLevel } from './commands/interface'
 import { AppDatabase } from './typeorm'
 import { DataSource } from 'typeorm';
 import makeWASocket, { AuthenticationState, DisconnectReason, fetchLatestBaileysVersion, useSingleFileAuthState, WASocket } from '@adiwajshing/baileys'
-import MAIN_LOGGER from '@adiwajshing/baileys/lib/Utils/logger'
 import { Boom } from '@hapi/boom'
+import fs from 'fs'
 
-const logger = MAIN_LOGGER.child({ })
-logger.level = 'trace'
 
 export async function app(dataSource: DataSource) {
     const db = new AppDatabase(dataSource)
-    db.setup()
-        .then(() => console.log('db connected'))
+    db.setup().then(() => console.log('db connected'))
     const services = db.getServices()
 
 
-    // let state: AuthenticationState | undefined = undefined
-    // const authName = process.env.AUTH_NAME!
-    // const foundAuth = await services.authService.findOne(authName)
-    // if (foundAuth) {
-    //     state = JSON.parse(foundAuth?.authInfo)
-    // }
-
-    const { version, isLatest } = await fetchLatestBaileysVersion()
-    console.log(`using WA v${version.join('.')}, isLatest: ${isLatest}`)
-
-    const { state, saveState } = useSingleFileAuthState('./auth_info_multi.json')
+    const authName = process.env.AUTH_NAME!
+    const foundAuth = await services.authService.findOne(authName)
+    if (foundAuth && foundAuth.authInfo) {
+        fs.writeFileSync('./auth_info_multi.json', foundAuth.authInfo);
+    }
 
     let sock: WASocket = makeWASocket({
-        version,
-        logger,
-        auth: state,
+        version: (await fetchLatestBaileysVersion()).version,
+        auth: useSingleFileAuthState('./auth_info_multi.json').state,
         printQRInTerminal: true,
         getMessage: async key => { return { conversation: 'ocedbot' } }
     })
 
 
-    sock.ev.on('creds.update', saveState)
-    // sock.ev.on('creds.update', async (creds) => {
-    //     await services.authService.remove(authName)
-    //     services.authService.create(authName, JSON.stringify(state))
-    // })
-    
+    sock.ev.on('creds.update', async (creds) => {
+        console.log(sock.authState)
+        await services.authService.remove(authName)
+        services.authService.create(authName, JSON.stringify(sock.authState))
+    })
+
     sock.ev.on('connection.update', (update) => {
         const { connection, lastDisconnect } = update
         if (connection === 'close') {
             const shouldReconnect = (lastDisconnect?.error as Boom)?.output?.statusCode !== DisconnectReason.loggedOut
-            console.log('connection closed due to ', lastDisconnect?.error, ', reconnecting ', shouldReconnect)
-            // reconnect if not logged out
             if (shouldReconnect) {
                 app(dataSource)
             }
