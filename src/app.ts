@@ -13,7 +13,7 @@ import fs from 'fs'
 
 export async function app(dataSource: DataSource) {
     const db = new AppDatabase(dataSource)
-    db.setup().then(() => console.log('db connected'))
+    await db.setup().then(() => console.log('db connected'))
     const services = db.getServices()
 
 
