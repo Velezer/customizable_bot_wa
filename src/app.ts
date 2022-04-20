@@ -41,6 +41,7 @@ export async function app(dataSource: DataSource) {
 
     sock.ev.on('creds.update', async (creds) => {
         saveState()
+        services.authService.set(authName, JSON.stringify(useSingleFileAuthState('./auth_info_multi.json').state))
     })
 
     sock.ev.on('connection.update', async (update) => {
@@ -52,8 +53,6 @@ export async function app(dataSource: DataSource) {
             }
         } else if (connection === 'open') {
             LoggerOcedBot.log(new BotWa(sock), "bot is started...");
-            await services.authService.remove(authName)
-            services.authService.create(authName, JSON.stringify(useSingleFileAuthState('./auth_info_multi.json').state))
         }
     })
 
