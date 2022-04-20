@@ -23,9 +23,11 @@ export class CommandHandler implements Handler<Command> {
 
     async isSentByGroupAdmin(receivedMessage: proto.IWebMessageInfo, participants: GroupParticipant[]) {
         const sender = receivedMessage.participant
+        console.log(sender)
+        console.log(participants)
 
         for (const p of participants) {
-            if (p.id === sender && p.admin?.includes('admin')) return true
+            if (p.id === sender && (p.admin?.includes('admin') || p.isAdmin || p.isSuperAdmin)) return true
         }
         return false
     }
