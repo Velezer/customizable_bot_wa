@@ -25,7 +25,7 @@ export class CommandHandler implements Handler<Command> {
         const sender = receivedMessage.participant
 
         for (const p of participants) {
-            if (p.id === sender && p.isAdmin) return true
+            if (p.id === sender && p.admin?.includes('admin')) return true
         }
         return false
     }

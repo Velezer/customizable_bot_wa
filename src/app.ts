@@ -107,7 +107,6 @@ export async function app(dataSource: DataSource) {
 
         console.log(conversation)
         console.log(commandLevel)
-        console.log(receivedMessage)
 
         try {
             commander.run(jid, conversation, commandLevel, quotedMessage!, receivedMessage)
