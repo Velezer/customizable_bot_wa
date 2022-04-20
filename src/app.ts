@@ -10,6 +10,11 @@ import makeWASocket, { AuthenticationState, DisconnectReason, fetchLatestBaileys
 import { Boom } from '@hapi/boom'
 import fs from 'fs'
 
+import MAIN_LOGGER from '@adiwajshing/baileys/lib/Utils/logger'
+
+const logger = MAIN_LOGGER.child({ })
+logger.level = 'debug'
+
 
 export async function app(dataSource: DataSource) {
     const db = new AppDatabase(dataSource)
@@ -27,12 +32,12 @@ export async function app(dataSource: DataSource) {
         version: (await fetchLatestBaileysVersion()).version,
         auth: useSingleFileAuthState('./auth_info_multi.json').state,
         printQRInTerminal: true,
+        logger,
         getMessage: async key => { return { conversation: 'ocedbot' } }
     })
 
 
     sock.ev.on('creds.update', async (creds) => {
-        console.log(sock.authState)
         await services.authService.remove(authName)
         services.authService.create(authName, JSON.stringify(sock.authState))
     })
