@@ -28,9 +28,12 @@ export async function app(dataSource: DataSource) {
         fs.writeFileSync('./auth_info_multi.json', foundAuth.authInfo);
     }
 
+    const state = useSingleFileAuthState('./auth_info_multi.json').state
+    console.log(state)
+
     let sock: WASocket = makeWASocket({
         version: (await fetchLatestBaileysVersion()).version,
-        auth: useSingleFileAuthState('./auth_info_multi.json').state,
+        auth: state,
         printQRInTerminal: true,
         logger,
         getMessage: async key => { return { conversation: 'ocedbot' } }
