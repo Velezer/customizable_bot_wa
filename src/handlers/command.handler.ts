@@ -22,7 +22,7 @@ export class CommandHandler implements Handler<Command> {
     }
 
     async isSentByGroupAdmin(receivedMessage: proto.IWebMessageInfo, participants: GroupParticipant[]) {
-        const sender = receivedMessage.participant
+        const sender = receivedMessage.participant || receivedMessage.key.participant
         console.log(sender)
         console.log(participants)
 
