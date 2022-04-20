@@ -41,13 +41,9 @@ export async function app(dataSource: DataSource) {
 
     sock.ev.on('creds.update', async (creds) => {
         saveState()
-        try {
-            await services.authService.remove(authName)
-            services.authService.create(authName, JSON.stringify(useSingleFileAuthState('./auth_info_multi.json').state))
-        } catch (error) {}
     })
 
-    sock.ev.on('connection.update', (update) => {
+    sock.ev.on('connection.update', async (update) => {
         const { connection, lastDisconnect } = update
         if (connection === 'close') {
             const shouldReconnect = (lastDisconnect?.error as Boom)?.output?.statusCode !== DisconnectReason.loggedOut
@@ -56,6 +52,8 @@ export async function app(dataSource: DataSource) {
             }
         } else if (connection === 'open') {
             LoggerOcedBot.log(new BotWa(sock), "bot is started...");
+            await services.authService.remove(authName)
+            services.authService.create(authName, JSON.stringify(useSingleFileAuthState('./auth_info_multi.json').state))
         }
     })
 
