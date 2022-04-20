@@ -4,6 +4,9 @@
    "description": "",
    "main": "main.js",
    "scripts": {
+      "prepush": "npm run typecheck && npm run test",
+      "typecheck": "tsc",
+      "typecheck:watch": "tsc -w",
       "start": "ts-node src/main.ts",
       "clear-jest": "jest --clearCache",
       "test": "jest --coverage",

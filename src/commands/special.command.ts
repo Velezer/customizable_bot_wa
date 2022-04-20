@@ -23,7 +23,8 @@ export class RegisterGroupCommand implements Command {
             return
         }
 
-        const activationKeys = Activation.getActivationKey()
+        const activation = new Activation()
+        const activationKeys = activation.getActivationKey()
         const activationKey = activationKeys.find(k => k.key === m1)
 
         if (activationKey) {
@@ -33,13 +34,10 @@ export class RegisterGroupCommand implements Command {
                 .then(() => {
                     botwa.sendText(jid, 'aktivasi sukses bot ' + activationKey.botLevel)
                     LoggerOcedBot.log(botwa, 'aktivasi sukses dengan key \n\n' + JSON.stringify(activationKey) + '\n\n' + groupSubject + '\n\n' + jid)
-                    Activation.generateActivationKey()
                 })
                 .catch(err => {
-                    console.error(err)
                     botwa.sendText(jid, 'aktivasi gagal, mohon hubungi \nwa.me/' + OcedBot.getPhoneNumber())
                     LoggerOcedBot.log(botwa, 'aktivasi gagal dengan key ' + activationKey + '\n\n' + groupSubject)
-
                 })
 
         } else {
