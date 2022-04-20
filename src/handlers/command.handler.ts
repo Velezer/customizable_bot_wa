@@ -79,6 +79,8 @@ export class CommandHandler implements Handler<Command> {
         const sewaExpired = group.sewaExpiredAt < new Date()
         const neverTrial = !group.trialExpiredAt
         const neverSewa = !group.sewaExpiredAt
+        const pernahTrial = !neverTrial
+        const pernahSewa = !neverSewa
 
         if (level !== CommandLevel.MEMBER) {
             if (conversation.startsWith('/trial')) {
@@ -100,16 +102,9 @@ export class CommandHandler implements Handler<Command> {
             if (conversation.startsWith('/')) return this.silakanSewa(jid)
         }
 
-        if (trialExpired && neverSewa && !neverTrial) {
-            this.botwa.sendText(jid, 'trial sudah expired')
-            this.silakanSewa(jid)
-            return
-        }
-
-        if (sewaExpired && !neverSewa) {
-            this.botwa.sendText(jid, 'sewa sudah expired')
-            this.silakanSewa(jid)
-            return
+        if ((sewaExpired && pernahSewa) || (trialExpired && neverSewa && pernahTrial)) {
+            this.botwa.sendText(jid, 'trial/sewa sudah expired')
+            return this.silakanSewa(jid)
         }
 
 
