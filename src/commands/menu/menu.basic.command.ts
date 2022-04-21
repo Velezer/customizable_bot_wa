@@ -40,7 +40,7 @@ export class BotMenuBasicCommand implements Command {
             }
             sections.push(commandSection)
 
-            await botwa.sendSections(groupChat!.jid, 'Commands', 'silakan dipilih', sections);
+            await botwa.sendList(groupChat!.jid, 'Commands', 'silakan dipilih', sections);
 
         } else if (groupChat!.botLevel === BotLevel.BASIC) {
             let msg = ''

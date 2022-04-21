@@ -11,7 +11,6 @@ import { Boom } from '@hapi/boom'
 import fs from 'fs'
 
 import MAIN_LOGGER from '@adiwajshing/baileys/lib/Utils/logger'
-import { ddd } from './commands/delete.command';
 
 const logger = MAIN_LOGGER.child({})
 logger.level = 'warn'
@@ -73,7 +72,6 @@ export async function app(dataSource: DataSource) {
     })
 
     sock.ev.on('messages.upsert', async (m) => {
-        ddd.messages.push(...m.messages)   
         const receivedMessage = m.messages[0]!
         if (receivedMessage.key.fromMe === true || !receivedMessage?.message) return
 
@@ -106,9 +104,6 @@ export async function app(dataSource: DataSource) {
         const commander = new CommandHandler(botwa, services)
         const sentByAdmin = await commander.isSentByGroupAdmin(receivedMessage, participants)
         const commandLevel = sentByAdmin ? CommandLevel.ADMIN : CommandLevel.MEMBER
-
-        console.log(conversation)
-        console.log(commandLevel)
 
         try {
             commander.run(jid, conversation, commandLevel, quotedMessage!, receivedMessage)

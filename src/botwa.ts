@@ -52,8 +52,8 @@ export class BotWa {
         })
         return res.data
     }
-    async sendSections(jid: string, title: string, text: string, sections: proto.ISection[]) {
-        return this.sock.sendMessage(jid, { title, sections, text })
+    async sendList(jid: string, title: string, text: string, sections: proto.ISection[]) {
+        return this.sock.sendMessage(jid, { title, text, buttonText: 'Click!!', footer: 'by oced-bot', sections })
     }
 
     sendButtons(jid: string, text: string, messsages: string[]) {

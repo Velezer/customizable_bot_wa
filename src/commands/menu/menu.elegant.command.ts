@@ -31,7 +31,7 @@ export class GroupMenuElegantCommand implements Command {
             }
 
             sections.push(menuSection)
-            await botwa.sendSections(groupChat!.jid, 'Menu', 'Silakan dipilih', sections);
+            await botwa.sendList(groupChat!.jid, 'Menu', 'Silakan dipilih', sections);
         } else {
 
             await botwa.sendText(groupChat!.jid, 'menu kosong silakan tambahkan menggunakan\n\n' +
