@@ -74,7 +74,9 @@ export async function app(dataSource: DataSource) {
     sock.ev.on('messages.upsert', async (m) => {
         const receivedMessage = m.messages[0]!
         if (receivedMessage.key.fromMe === true || !receivedMessage?.message) return
-
+        console.log('=============================================')
+        console.log(m.messages)
+        console.log('=============================================')
         const botwa = new BotWa(sock)
 
         const jid = receivedMessage.key.remoteJid!
