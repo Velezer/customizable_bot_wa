@@ -14,17 +14,20 @@ export class DeleteBotTypoCommand implements Command {
 
         const quotedMessageString = quotedMessage?.extendedTextMessage?.text || quotedMessage?.conversation
 
-        for (const msg of messages!) {
-            const foundMessageString = msg.message!.conversation || msg.message!.extendedTextMessage?.text
-            if (msg.key.fromMe === true) {
-                if (quotedMessageString === foundMessageString) {
-                    botwa.deleteMessage(jid, msg.key).catch(err => {
-                        botwa.sendText(groupChat!.jid, 'delete gagal')
-                    })
-                    break
+        botwa.sock.ev.on('messages.upsert', m => {
+            m.messages.shift() // remove first msg
+            for (const msg of m.messages) {
+                const foundMessageString = msg.message!.conversation || msg.message!.extendedTextMessage?.text
+                if (msg.key.fromMe === true) {
+                    if (quotedMessageString === foundMessageString) {
+                        botwa.deleteMessage(jid, msg.key).catch(err => {
+                            botwa.sendText(groupChat!.jid, 'delete gagal')
+                        })
+                        break
+                    }
                 }
             }
-        }
+        })
     }
 
 }
