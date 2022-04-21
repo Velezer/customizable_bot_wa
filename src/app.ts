@@ -106,7 +106,7 @@ export async function app(dataSource: DataSource) {
         const commandLevel = sentByAdmin ? CommandLevel.ADMIN : CommandLevel.MEMBER
 
         try {
-            commander.run(jid, conversation, commandLevel, quotedMessage!, receivedMessage)
+            commander.run(jid, conversation, commandLevel, quotedMessage!, receivedMessage, m.messages)
         } catch (err) {
             console.log(err)
         }

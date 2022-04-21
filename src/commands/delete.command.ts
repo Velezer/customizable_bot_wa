@@ -9,30 +9,22 @@ export class DeleteBotTypoCommand implements Command {
     level: CommandLevel = CommandLevel.ADMIN;
 
     async run(args: RunArgs): Promise<void> {
-        const { quotedMessage, receivedMessage, conversation, botwa, groupChat } = args
+        const { quotedMessage, receivedMessage, conversation, botwa, groupChat, messages } = args
         const jid = groupChat?.jid!
 
         const quotedMessageString = quotedMessage?.extendedTextMessage?.text || quotedMessage?.conversation
 
-
-        await botwa.sock.chatModify(
-            { clear: { messages: [{ id: quotedMessage?.extendedTextMessage?.contextInfo?.stanzaId!, fromMe: true }] } },
-            jid
-        )
-
-        // botwa.sock.ev.on('messages.upsert', m => {
-        //     for (const msg of m.messages) {
-        //         const foundMessageString = msg.message!.conversation || msg.message!.extendedTextMessage?.text
-        //         if (msg.key.fromMe === true) {
-        //             if (quotedMessageString === foundMessageString) {
-        //                 botwa.deleteMessage(jid, msg.key).catch(err => {
-        //                     botwa.sendText(groupChat!.jid, 'delete gagal')
-        //                 })
-        //                 break
-        //             }
-        //         }
-        //     }
-        // })
+        for (const msg of messages!) {
+            const foundMessageString = msg.message!.conversation || msg.message!.extendedTextMessage?.text
+            if (msg.key.fromMe === true) {
+                if (quotedMessageString === foundMessageString) {
+                    botwa.deleteMessage(jid, msg.key).catch(err => {
+                        botwa.sendText(groupChat!.jid, 'delete gagal')
+                    })
+                    break
+                }
+            }
+        }
     }
 
 }
