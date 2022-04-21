@@ -14,7 +14,7 @@ export class DeleteBotTypoCommand implements Command {
 
         const quotedMessageString = quotedMessage?.extendedTextMessage?.text || quotedMessage?.conversation
 
-        botwa.sock.ev.once('messages.upsert', m => {
+        botwa.sock.ev.on('messages.upsert', m => {
             for (const msg of m.messages) {
                 const foundMessageString = msg.message!.conversation || msg.message!.extendedTextMessage?.text
                 if (msg.key.fromMe === true) {
@@ -26,7 +26,7 @@ export class DeleteBotTypoCommand implements Command {
                     }
                 }
             }
-        })
+        }).off('messages.upsert', ()=>{})
     }
 
 }
