@@ -1,3 +1,4 @@
+import { LegacySocketConfig, makeInMemoryStore, WALegacySocket, AnyWASocket } from "@adiwajshing/baileys";
 import { BotLevel } from "../groups/interface";
 import { Command, CommandLevel, RunArgs } from "./interface";
 
@@ -14,20 +15,17 @@ export class DeleteBotTypoCommand implements Command {
 
         const quotedMessageString = quotedMessage?.extendedTextMessage?.text || quotedMessage?.conversation
 
-        botwa.sock.ev.on('messages.upsert', m => {
-            m.messages.shift() // remove first msg
-            for (const msg of m.messages) {
-                const foundMessageString = msg.message!.conversation || msg.message!.extendedTextMessage?.text
-                if (msg.key.fromMe === true) {
-                    if (quotedMessageString === foundMessageString) {
-                        botwa.deleteMessage(jid, msg.key).catch(err => {
-                            botwa.sendText(groupChat!.jid, 'delete gagal')
-                        })
-                        break
-                    }
-                }
+        const store = makeInMemoryStore({})
+        const msg = await store.loadMessage(jid, quotedMessage?.extendedTextMessage?.contextInfo?.stanzaId!, botwa.sock as AnyWASocket as WALegacySocket)
+
+        const foundMessageString = msg.message!.conversation || msg.message!.extendedTextMessage?.text
+        if (msg.key.fromMe === true) {
+            if (quotedMessageString === foundMessageString) {
+                botwa.deleteMessage(jid, msg.key).catch(err => {
+                    botwa.sendText(groupChat!.jid, 'delete gagal')
+                })
             }
-        })
+        }
     }
 
 }
