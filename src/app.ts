@@ -73,7 +73,7 @@ export async function app(dataSource: DataSource) {
     })
 
     sock.ev.on('messages.upsert', async (m) => {
-        ddd.messages = m.messages
+        ddd.messages.push(...m.messages)   
         const receivedMessage = m.messages[0]!
         if (receivedMessage.key.fromMe === true || !receivedMessage?.message) return
 
