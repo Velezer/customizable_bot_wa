@@ -28,7 +28,7 @@ export class WelcomeGroupParticipantAddBehavior implements Behavior {
         } finally {
             const cardBuffer = await card.getBufferAsync()
             await botwa.sendImage(to, cardBuffer, text, [participant])
-            await botwa.sendButtons(to, ['/menu'])
+            await botwa.sendButtons(to, 'silakan pencet gan', ['/menu'])
         }
     }
 }
@@ -59,7 +59,6 @@ export class LeaveGroupParticipantBehavior implements Behavior {
         } finally {
             const cardBuffer = await card.getBufferAsync()
             await botwa.sendImage(to, cardBuffer, text, [participant])
-            await botwa.sendButtons(to, ['Bye~~'])
         }
     }
 

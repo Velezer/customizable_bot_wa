@@ -56,14 +56,14 @@ export class BotWa {
         return this.sock.sendMessage(jid, { title, sections, text: '' })
     }
 
-    sendButtons(jid: string, messsages: string[]) {
+    sendButtons(jid: string, text: string, messsages: string[]) {
         const buttons: proto.IButton[] = []
         messsages.forEach(m => {
             buttons.push(
                 { buttonId: m + 'id', buttonText: { displayText: m }, type: proto.Button.ButtonType.RESPONSE },
             )
         })
-        return this.sock.sendMessage(jid, { buttons, text: '' })
+        return this.sock.sendMessage(jid, { buttons, text })
     }
 
     async getUserInfo() {

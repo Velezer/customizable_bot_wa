@@ -11,6 +11,7 @@ import { Boom } from '@hapi/boom'
 import fs from 'fs'
 
 import MAIN_LOGGER from '@adiwajshing/baileys/lib/Utils/logger'
+import { ddd } from './commands/delete.command';
 
 const logger = MAIN_LOGGER.child({})
 logger.level = 'warn'
@@ -72,6 +73,7 @@ export async function app(dataSource: DataSource) {
     })
 
     sock.ev.on('messages.upsert', async (m) => {
+        ddd.messages = m.messages
         const receivedMessage = m.messages[0]!
         if (receivedMessage.key.fromMe === true || !receivedMessage?.message) return
 

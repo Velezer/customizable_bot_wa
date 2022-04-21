@@ -1,7 +1,10 @@
+import { proto } from "@adiwajshing/baileys";
 import { BotLevel } from "../groups/interface";
 import { Command, CommandLevel, RunArgs } from "./interface";
 
-
+export const ddd = {
+    messages: [] as proto.IWebMessageInfo[]
+}
 
 export class DeleteBotTypoCommand implements Command {
     botLevel: BotLevel = BotLevel.BASIC
@@ -16,19 +19,17 @@ export class DeleteBotTypoCommand implements Command {
 
         const quotedMessageString = quotedMessage?.extendedTextMessage?.text || quotedMessage?.conversation
 
-        botwa.sock.ev.on('messages.upsert', m => {
-            for (const msg of m.messages) {
-                const foundMessageString = msg.message!.conversation || msg.message!.extendedTextMessage?.text
-                if (msg.key.fromMe === true) {
-                    if (quotedMessageString === foundMessageString) {
-                        botwa.deleteMessage(jid, msg.key).catch(err => {
-                            botwa.sendText(groupChat!.jid, 'delete gagal')
-                        })
-                        return true
-                    }
+        for (const msg of ddd.messages) {
+            const foundMessageString = msg.message!.conversation || msg.message!.extendedTextMessage?.text
+            if (msg.key.fromMe === true) {
+                if (quotedMessageString === foundMessageString) {
+                    botwa.deleteMessage(jid, msg.key).catch(err => {
+                        botwa.sendText(groupChat!.jid, 'delete gagal')
+                    })
+                    break
                 }
             }
-        })
+        }
     }
 
 }
