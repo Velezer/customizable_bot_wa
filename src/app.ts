@@ -74,9 +74,7 @@ export async function app(dataSource: DataSource) {
     sock.ev.on('messages.upsert', async (m) => {
         const receivedMessage = m.messages[0]!
         if (receivedMessage.key.fromMe === true || !receivedMessage?.message) return
-        console.log('=============================================')
-        console.log(m.messages)
-        console.log('=============================================')
+
         const botwa = new BotWa(sock)
 
         const jid = receivedMessage.key.remoteJid!
@@ -86,6 +84,11 @@ export async function app(dataSource: DataSource) {
         const participants = await botwa.getGroupParticipants(jid)
 
         const quotedMessage = receivedMessage.message?.extendedTextMessage?.contextInfo?.quotedMessage
+        console.log('=============================================')
+        console.log(receivedMessage.key.id)
+        console.log(receivedMessage.message.extendedTextMessage?.contextInfo?.stanzaId)
+        console.log(quotedMessage?.extendedTextMessage?.contextInfo?.stanzaId)
+        console.log('=============================================')
         const conversation = receivedMessage.message?.conversation ||
             receivedMessage.message?.extendedTextMessage?.text ||
             receivedMessage.message?.listResponseMessage?.title ||
