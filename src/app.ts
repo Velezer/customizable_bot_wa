@@ -1,5 +1,4 @@
 import { BotWa } from './botwa'
-import { ReconnectMode, WAConnection } from '@adiwajshing/baileys'
 import { Activation } from './activation/activation'
 import { BehaviorHandler } from './handlers/behavior.handler'
 import { CommandHandler } from './handlers/command.handler'
@@ -7,47 +6,59 @@ import { LoggerOcedBot } from './logger'
 import { CommandLevel } from './commands/interface'
 import { AppDatabase } from './typeorm'
 import { DataSource } from 'typeorm';
+import makeWASocket, { DisconnectReason, fetchLatestBaileysVersion, useSingleFileAuthState, WASocket } from '@adiwajshing/baileys'
+import { Boom } from '@hapi/boom'
+import fs from 'fs'
 
+import MAIN_LOGGER from '@adiwajshing/baileys/lib/Utils/logger'
+
+const logger = MAIN_LOGGER.child({})
+logger.level = 'warn'
 
 
 export async function app(dataSource: DataSource) {
     const db = new AppDatabase(dataSource)
-    await db.setup()
-        .then(() => console.log('db connected'))
-        .catch(err => console.log(err))
+    await db.setup().then(() => console.log('db connected'))
     const services = db.getServices()
-    const sock: WAConnection = new WAConnection()
-    sock.logger.level = 'debug' //''debug', 'fatal', 'error',  'trace'
-    sock.version = [2, 2143, 3]
-    sock.browserDescription = ['velezer', 'Chrome', 'OcedBot']
-    sock.autoReconnect = ReconnectMode.onAllErrors
 
-    const authName = process.env.AUTH_NAME
-    const foundAuth = await services.authService.findOne(authName!)
-    if (foundAuth) {
-        sock.loadAuthInfo(JSON.parse(foundAuth.authInfo))
+
+    const authName = process.env.AUTH_NAME!
+    const foundAuth = await services.authService.findOne(authName)
+    if (foundAuth && foundAuth.authInfo) {
+        fs.writeFileSync('./auth_info_multi.json', foundAuth.authInfo);
     }
 
-    await sock.connect()
-    LoggerOcedBot.log(new BotWa(sock), "bot is started...");
+    const { state, saveState } = useSingleFileAuthState('./auth_info_multi.json')
 
-    (async () => {
-        await services.authService.remove(authName!)
-        services.authService.create(authName!, JSON.stringify(sock.base64EncodedAuthInfo()))
-    })()
-
-
-    sock.on('close', async (data) => {
-        if (data.isReconnecting === false) {
-            setTimeout(() => {
-                console.log('reconnect in 10 seconds')
-                app(dataSource)
-            }, 10000)
-        }
-
+    let sock: WASocket = makeWASocket({
+        version: (await fetchLatestBaileysVersion()).version,
+        auth: state,
+        printQRInTerminal: true,
+        logger,
+        getMessage: async key => { return { conversation: 'ocedbot' } }
     })
-    sock.on('group-participants-update', async (groupUpdate) => {
-        const groupJid = groupUpdate.jid
+
+
+    sock.ev.on('creds.update', async (creds) => {
+        saveState()
+        services.authService.set(authName, JSON.stringify(useSingleFileAuthState('./auth_info_multi.json').state))
+    })
+
+    sock.ev.on('connection.update', async (update) => {
+        const { connection, lastDisconnect } = update
+        if (connection === 'close') {
+            const shouldReconnect = (lastDisconnect?.error as Boom)?.output?.statusCode !== DisconnectReason.loggedOut
+            if (shouldReconnect) {
+                app(dataSource)
+            }
+        } else if (connection === 'open') {
+            LoggerOcedBot.log(new BotWa(sock), "bot is started...");
+        }
+    })
+
+
+    sock.ev.on('group-participants.update', async (groupUpdate) => {
+        const groupJid = groupUpdate.id
         const action = groupUpdate.action
         const participants = groupUpdate.participants
 
@@ -55,28 +66,16 @@ export async function app(dataSource: DataSource) {
 
         const participant = participants[0]
 
-
         const behaviorer = new BehaviorHandler(botwa, services)
         behaviorer.run(action, groupJid, participant)
 
     })
 
-    sock.on('chat-update', async (chatUpdate) => {
-        if (!chatUpdate.hasNewMessage) return
-        const receivedMessage = chatUpdate.messages?.all()[0]!
-        // console.log(receivedMessage)
+    sock.ev.on('messages.upsert', async (m) => {
+        const receivedMessage = m.messages[0]!
         if (receivedMessage.key.fromMe === true || !receivedMessage?.message) return
 
-
         const botwa = new BotWa(sock)
-
-        if (receivedMessage.message?.conversation?.startsWith('/key')) {
-            Activation.getActivationKey().forEach(k => {
-                LoggerOcedBot.log(botwa, k.botLevel)
-                LoggerOcedBot.log(botwa, '/sewa ' + k.key)
-            })
-            return
-        }
 
         const jid = receivedMessage.key.remoteJid!
         const isNotGroup = jid.split('@')[1] !== 'g.us'
@@ -93,15 +92,21 @@ export async function app(dataSource: DataSource) {
 
         if (!conversation) return
 
-        const commander = new CommandHandler(botwa, services)
-        if (! await commander.isSentByGroupAdmin(receivedMessage, participants)) {
-            await commander.run(jid, conversation, CommandLevel.MEMBER, quotedMessage!, receivedMessage).catch(err => console.error(err))
+        if (jid === LoggerOcedBot.jid && conversation.startsWith('/key')) {
+            const activation = new Activation()
+            for (const k of activation.getActivationKey()) {
+                await LoggerOcedBot.log(botwa, k.botLevel)
+                await LoggerOcedBot.log(botwa, '/sewa ' + k.key)
+            }
             return
         }
 
+        const commander = new CommandHandler(botwa, services)
+        const sentByAdmin = await commander.isSentByGroupAdmin(receivedMessage, participants)
+        const commandLevel = sentByAdmin ? CommandLevel.ADMIN : CommandLevel.MEMBER
 
         try {
-            commander.run(jid, conversation, CommandLevel.ADMIN, quotedMessage!, receivedMessage).catch(err => console.error(err))
+            commander.run(jid, conversation, commandLevel, quotedMessage!, receivedMessage, m.messages)
         } catch (err) {
             console.log(err)
         }
@@ -114,6 +119,3 @@ export async function app(dataSource: DataSource) {
     })
 
 }
-
-
-

@@ -27,7 +27,7 @@ export class PromoteCommand implements Command {
 
         botwa.promote(groupChat!.jid, m1)
             .catch(err => {
-                botwa.sendMessage(groupChat!.jid, 'promote gagal')
+                botwa.sendText(groupChat!.jid, 'promote gagal')
             })
 
     }

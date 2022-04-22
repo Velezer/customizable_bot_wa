@@ -1,4 +1,4 @@
-import { proto, WAGroupParticipant } from "@adiwajshing/baileys";
+import { GroupParticipant, proto } from "@adiwajshing/baileys";
 import { BotWa } from "../botwa";
 import { Command, CommandLevel } from "../commands/interface";
 import { allCommands } from "../commands";
@@ -6,7 +6,6 @@ import { UnregCommand, TrialCommand, RegisterGroupCommand, BlacklistCommand } fr
 import { BotLevel } from "../groups/interface";
 import { OcedBot } from "../ocedbot";
 import { Handler } from "./interface";
-import fs from 'fs'
 import { Services } from "../typeorm/service/interface";
 import { GroupMenuType } from "../typeorm/entity/GroupMenuEntity";
 
@@ -22,25 +21,25 @@ export class CommandHandler implements Handler<Command> {
         this.services = services
     }
 
-    async isSentByGroupAdmin(receivedMessage: proto.WebMessageInfo, participants: WAGroupParticipant[]) {
-        const sender = receivedMessage.participant
+    async isSentByGroupAdmin(receivedMessage: proto.IWebMessageInfo, participants: GroupParticipant[]) {
+        const sender = receivedMessage.participant || receivedMessage.key.participant
 
         for (const p of participants) {
-            if (p.jid === sender && p.isAdmin) return true
+            if (p.id === sender && (p.admin?.includes('admin') || p.isAdmin || p.isSuperAdmin)) return true
         }
         return false
     }
 
     async silakanSewa(jid: string) {
-        this.botwa.sendMessage(jid, 'silakan hubungi dahulu \nwa.me/' + OcedBot.getPhoneNumber() + '\nuntuk sewa bot' +
+        this.botwa.sendText(jid, 'silakan hubungi dahulu \nwa.me/' + OcedBot.getPhoneNumber() + '\nuntuk sewa bot' +
             '\n\njika sudah silakan gunakan command \n/sewa')
     }
 
-    async isBotAdmin(participants: WAGroupParticipant[]) {
+    async isBotAdmin(participants: GroupParticipant[]) {
         const userInfo = await this.botwa.getUserInfo()
 
         for (const p of participants) {
-            if (p.jid === userInfo.jid && p.isAdmin) return true
+            if (p.id === userInfo.id && p.isAdmin) return true
         }
         return false
     }
@@ -68,7 +67,7 @@ export class CommandHandler implements Handler<Command> {
         }
     }
 
-    async run(jid: string, conversation: string, level: CommandLevel, quotedMessage: proto.IMessage, receivedMessage: proto.WebMessageInfo) {
+    async run(jid: string, conversation: string, level: CommandLevel, quotedMessage: proto.IMessage, receivedMessage: proto.IWebMessageInfo, messages: proto.IWebMessageInfo[]) {
         let group = await this.services.serviceGroupChat.findOneByJid(jid)
         if (!group) {
             group = await this.services.serviceGroupChat.create(jid)
@@ -80,44 +79,32 @@ export class CommandHandler implements Handler<Command> {
         const sewaExpired = group.sewaExpiredAt < new Date()
         const neverTrial = !group.trialExpiredAt
         const neverSewa = !group.sewaExpiredAt
+        const pernahTrial = !neverTrial
+        const pernahSewa = !neverSewa
 
         if (level !== CommandLevel.MEMBER) {
-            if (conversation.startsWith('/trial')) {
-                if (neverTrial) {
-                    return new TrialCommand().run({ botwa: this.botwa, groupChat: group, conversation, services: this.services })
-                        .catch(err => console.error(err))
-                }
+            if (conversation.startsWith('/trial') && neverTrial) {
+                return new TrialCommand().run({ botwa: this.botwa, groupChat: group, conversation, services: this.services })
             }
-            if (conversation.startsWith('/sewa')) {
-                if (sewaExpired || neverSewa) {
-                    return new RegisterGroupCommand().run({ botwa: this.botwa, groupChat: group, conversation, services: this.services })
-                        .catch(err => console.error(err))
-                }
+            if (conversation.startsWith('/sewa') && (sewaExpired || neverSewa)) {
+                return new RegisterGroupCommand().run({ botwa: this.botwa, groupChat: group, conversation, services: this.services })
             }
         }
-
 
         if (neverSewa && neverTrial) {
             if (conversation.startsWith('/')) return this.silakanSewa(jid)
         }
 
-        if (trialExpired && neverSewa && !neverTrial) {
-            this.botwa.sendMessage(jid, 'trial sudah expired')
-            this.silakanSewa(jid)
-            return
-        }
-
-        if (sewaExpired && !neverSewa) {
-            this.botwa.sendMessage(jid, 'sewa sudah expired')
-            this.silakanSewa(jid)
-            return
+        if ((sewaExpired && pernahSewa) || (trialExpired && neverSewa && pernahTrial)) {
+            this.botwa.sendText(jid, 'trial/sewa sudah expired')
+            return this.silakanSewa(jid)
         }
 
 
         const m0 = conversation.split(' ')[0]
         const groupMenu = await this.services.serviceGroupMenu.findOneMenu(jid, m0)
         if (groupMenu) {
-            if (groupMenu.type === GroupMenuType.TEXT) return this.botwa.sendMessage(jid, groupMenu.value)
+            if (groupMenu.type === GroupMenuType.TEXT) return this.botwa.sendText(jid, groupMenu.value)
             if (groupMenu.type === GroupMenuType.IMAGE) return this.botwa.sendImage(jid, Buffer.from(groupMenu.imageStorage.image))
         }
 
@@ -128,11 +115,7 @@ export class CommandHandler implements Handler<Command> {
         if (commands.length < 1) return
 
         const command = commands[0]
-        command.run({ botwa: this.botwa, groupChat: group, conversation, quotedMessage, receivedMessage, services: this.services })
-            .catch(err => {
-                console.error(err)
-            })
-
+        command.run({ botwa: this.botwa, groupChat: group, conversation, quotedMessage, receivedMessage, services: this.services, messages })
     }
 
 

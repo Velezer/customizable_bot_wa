@@ -16,7 +16,8 @@ export interface RunArgs {
     services?: Services
     conversation: string
     quotedMessage?: proto.IMessage
-    receivedMessage?: proto.WebMessageInfo
+    receivedMessage?: proto.IWebMessageInfo
+    messages?: proto.IWebMessageInfo[]
 }
 
 export interface Command {

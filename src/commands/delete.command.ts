@@ -1,7 +1,6 @@
+import { LegacySocketConfig, makeInMemoryStore, WALegacySocket, AnyWASocket, proto } from "@adiwajshing/baileys";
 import { BotLevel } from "../groups/interface";
 import { Command, CommandLevel, RunArgs } from "./interface";
-
-
 
 export class DeleteBotTypoCommand implements Command {
     botLevel: BotLevel = BotLevel.BASIC
@@ -11,22 +10,19 @@ export class DeleteBotTypoCommand implements Command {
     level: CommandLevel = CommandLevel.ADMIN;
 
     async run(args: RunArgs): Promise<void> {
-        const { quotedMessage, receivedMessage, conversation, botwa, groupChat } = args
-        const quotedMessageString = quotedMessage?.extendedTextMessage?.text || quotedMessage?.conversation
-        await botwa.sock.findMessage(groupChat!.jid, 50, (m) => {
-            const foundMessageString = m.message?.conversation || m.message?.extendedTextMessage?.text
-            if (m.key.fromMe === true) {
-                if (quotedMessageString === foundMessageString) {
-                    botwa.deleteMessage(m.key).catch(err => {
-                        botwa.sendMessage(groupChat!.jid, 'delete gagal')
-                    })
-                    return true
-                }
-            }
+        const { quotedMessage, receivedMessage, conversation, botwa, groupChat, messages } = args
+        const jid = groupChat?.jid!
 
-            return false
+        const quotedId = receivedMessage?.message?.extendedTextMessage?.contextInfo?.stanzaId
+        const quotedKey: proto.IMessageKey = {
+            id: quotedId,
+            fromMe: true,
+            remoteJid: jid
+        }
+
+        botwa.deleteMessage(jid, quotedKey).catch(err => {
+            botwa.sendText(groupChat!.jid, 'delete gagal')
         })
-
     }
 
 }

@@ -17,8 +17,8 @@ export class AppDatabase {
         this.dataSource = dataSource
     }
 
-   async setup() {
-        await this.dataSource.initialize()
+    async setup() {
+        if (!this.dataSource.isInitialized) return this.dataSource.initialize()
     }
 
     getServices() {

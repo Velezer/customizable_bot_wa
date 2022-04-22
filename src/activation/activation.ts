@@ -3,21 +3,20 @@ import fs from 'fs'
 import { BotLevel } from '../groups/interface';
 import { Helper } from '../helper/helper';
 import { ActivationKey } from './interface';
+import { FileCacheService } from './../typeorm/service/FileCacheService';
 
 
 
 export class Activation {
-    static activationKeyFile: string = 'activation.key'
+    activationKeyFile: string = 'activation.key'
+    storage: FileCacheService = new FileCacheService()
 
-    static getActivationKey(): ActivationKey[] {
-        if (!fs.existsSync(this.activationKeyFile)) {
-            this.generateActivationKey()
-        }
-        const keyString = fs.readFileSync(this.activationKeyFile, { encoding: 'utf-8' })
-        return JSON.parse(keyString)
+    getActivationKey(): ActivationKey[] {
+        if (!this.storage.get(this.activationKeyFile)) this.generateActivationKey()
+        return this.storage.get(this.activationKeyFile)
     }
 
-    static generateActivationKey() {
+    generateActivationKey() {
         const activationKeys: ActivationKey[] = [
             {
                 key: Helper.getRandomString(15),
@@ -28,7 +27,7 @@ export class Activation {
                 botLevel: BotLevel.ELEGANT
             }
         ]
-        fs.writeFileSync(this.activationKeyFile, JSON.stringify(activationKeys))
+        this.storage.set(this.activationKeyFile, activationKeys, 600_000)
     }
 
 }

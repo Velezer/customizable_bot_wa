@@ -1,4 +1,4 @@
-import { WAParticipantAction } from "@adiwajshing/baileys"
+import { ParticipantAction } from "@adiwajshing/baileys";
 import { WelcomeGroupParticipantAddBehavior, LeaveGroupParticipantBehavior, PromoteParticipantBehavior, DemoteParticipantBehavior } from "../behaviors/behaviors";
 import { Behavior } from "../behaviors/interface";
 import { BotWa } from "../botwa";
@@ -24,7 +24,7 @@ export class BehaviorHandler implements Handler<Behavior> {
 
 
 
-    run(action: WAParticipantAction, groupJid: string, participant: string) {
+    run(action: ParticipantAction, groupJid: string, participant: string) {
 
         this.handlers.forEach(async behavior => {
             if (behavior.action === action) {

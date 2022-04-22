@@ -1,4 +1,3 @@
-import { LoggerOcedBot } from "../logger";
 import { BotLevel } from "../groups/interface";
 import { Command, CommandLevel, RunArgs } from "./interface";
 
@@ -50,10 +49,10 @@ export class GetGroupMetadataCommand implements Command {
 
         metadata.participants.forEach(p => {
             const role = p.isAdmin ? 'admin' : 'member'
-            msg += role + ' ' + 'wa.me/' + p.jid.split('@')[0] + '\n'
+            msg += role + ' ' + 'wa.me/' + p.id.split('@')[0] + '\n'
         })
         msg.slice(0, -1)
-        await botwa.sendMessage(groupChat!.jid, msg)
+        await botwa.sendText(groupChat!.jid, msg)
 
     }
 
@@ -71,7 +70,7 @@ export class GetGroupParticipantsCommand implements Command {
 
         const jid = groupChat!.jid
         const participants = await botwa.getGroupParticipants(jid)
-        const neatParticipants = participants.map(p => p.jid.split('@')[0])
+        const neatParticipants = participants.map(p => p.id.split('@')[0])
 
         let msg = ''
         neatParticipants.forEach(p => {
@@ -79,7 +78,7 @@ export class GetGroupParticipantsCommand implements Command {
         })
         msg.slice(0. - 1)
 
-        await botwa.sendMessage(jid, msg)
+        await botwa.sendText(jid, msg)
 
     }
 

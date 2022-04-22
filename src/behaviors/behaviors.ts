@@ -1,4 +1,4 @@
-import { WAParticipantAction } from "@adiwajshing/baileys";
+import { ParticipantAction } from "@adiwajshing/baileys";
 import { BotWa } from "../botwa";
 import { GroupGreetingCard } from "../images/group-greeting.card";
 import { Services } from "../typeorm/service/interface";
@@ -6,7 +6,7 @@ import { Behavior } from "./interface";
 
 
 export class WelcomeGroupParticipantAddBehavior implements Behavior {
-    action: WAParticipantAction = 'add'
+    action: ParticipantAction = 'add'
 
     async run(botwa: BotWa, to: string, participant: string, services: Services): Promise<void> {
 
@@ -27,17 +27,17 @@ export class WelcomeGroupParticipantAddBehavior implements Behavior {
         } catch (err) {
         } finally {
             const cardBuffer = await card.getBufferAsync()
-            const preparedImageMessage = await botwa.prepareImageMessage(cardBuffer)
-            await botwa.sendButtonMessage(to, text, preparedImageMessage.message?.imageMessage!, ['/menu'], [participant])
+            await botwa.sendImage(to, cardBuffer, text, [participant])
+            await botwa.sendButtons(to, 'silakan pencet gan', ['/menu'])
         }
     }
 }
 
 
 export class LeaveGroupParticipantBehavior implements Behavior {
-    action: WAParticipantAction = 'remove'
+    action: ParticipantAction = 'remove'
 
-    async run(botwa: BotWa, to: string, participant: string,services: Services): Promise<void> {
+    async run(botwa: BotWa, to: string, participant: string, services: Services): Promise<void> {
         console.log(participant)
         const number = participant.split('@')[0]
 
@@ -58,14 +58,13 @@ export class LeaveGroupParticipantBehavior implements Behavior {
         } catch (err) {
         } finally {
             const cardBuffer = await card.getBufferAsync()
-            const preparedImageMessage = await botwa.prepareImageMessage(cardBuffer)
-            await botwa.sendButtonMessage(to, text, preparedImageMessage.message?.imageMessage!, ['Bye~~'], [participant])
+            await botwa.sendImage(to, cardBuffer, text, [participant])
         }
     }
 
 }
 export class PromoteParticipantBehavior implements Behavior {
-    action: WAParticipantAction = 'promote'
+    action: ParticipantAction = 'promote'
 
     async run(botwa: BotWa, to: string, participant: string): Promise<void> {
         const number = participant.split('@')[0]
@@ -76,7 +75,7 @@ export class PromoteParticipantBehavior implements Behavior {
 
 }
 export class DemoteParticipantBehavior implements Behavior {
-    action: WAParticipantAction = 'demote'
+    action: ParticipantAction = 'demote'
 
     async run(botwa: BotWa, to: string, participant: string): Promise<void> {
         const number = participant.split('@')[0]

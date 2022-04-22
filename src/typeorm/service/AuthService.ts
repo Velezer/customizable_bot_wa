@@ -10,12 +10,17 @@ export class AuthService {
     }
 
     async findOne(name: string) {
-        const found = await this.repo.findOneBy({name})
+        const found = await this.repo.findOneBy({ name })
         return found
     }
 
-    async create(name: string, authInfo: string) {
-        return this.repo.save(this.repo.create({name, authInfo}))
+    async set(name: string, authInfo: string) {
+        let found = await this.findOne(name)
+
+        if (found) found!.authInfo = authInfo
+        else found = this.repo.create({ name, authInfo })
+
+        return await this.repo.save(found!)
     }
 
     async remove(name: string) {
