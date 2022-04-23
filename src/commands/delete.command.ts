@@ -10,7 +10,7 @@ export class DeleteBotTypoCommand implements Command {
     level: CommandLevel = CommandLevel.ADMIN;
 
     async run(args: RunArgs): Promise<void> {
-        const { quotedMessage, receivedMessage, conversation, botwa, groupChat, messages } = args
+        const { quotedMessage, receivedMessage, conversation, botwa, groupChat } = args
         const jid = groupChat?.jid!
 
         const quotedId = receivedMessage?.message?.extendedTextMessage?.contextInfo?.stanzaId

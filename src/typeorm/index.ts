@@ -23,13 +23,16 @@ export class AppDatabase {
 
     getServices() {
         const cache = new FileCacheService()
+        
         const repoGroupMenu = new Repository(GroupMenuEntity, this.dataSource.manager)
-        const serviceGroupMenu = new GroupMenuService(repoGroupMenu, cache)
         const repoGroupChat = new Repository(GroupChatEntity, this.dataSource.manager)
-        const serviceGroupChat = new GroupChatService(repoGroupChat, cache)
+        const repoAuth = new Repository(AuthEntity, this.dataSource.manager)
+        const repoImageStorage = new Repository(ImageStorageEntity, this.dataSource.manager)
 
-        const authService = new AuthService(new Repository(AuthEntity, this.dataSource.manager))
-        const imageStorageService = new ImageStorageService(new Repository(ImageStorageEntity, this.dataSource.manager))
+        const serviceGroupMenu = new GroupMenuService(repoGroupMenu, cache)
+        const serviceGroupChat = new GroupChatService(repoGroupChat, cache)
+        const authService = new AuthService(repoAuth)
+        const imageStorageService = new ImageStorageService(repoImageStorage)
         return { serviceGroupMenu, serviceGroupChat, authService, imageStorageService }
     }
 

@@ -20,7 +20,7 @@ export class AuthService {
         if (found) found!.authInfo = authInfo
         else found = this.repo.create({ name, authInfo })
 
-        return await this.repo.save(found!)
+        return this.repo.save(found!)
     }
 
     async remove(name: string) {

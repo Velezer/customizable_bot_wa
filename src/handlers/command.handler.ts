@@ -52,7 +52,6 @@ export class CommandHandler implements Handler<Command> {
                     conversation: conversation,
                     services: this.services
                 })
-                .catch(err => console.error(err))
         }
     }
     async blacklist(conversation: string) {
@@ -63,11 +62,10 @@ export class CommandHandler implements Handler<Command> {
                     conversation: conversation,
                     services: this.services
                 })
-                .catch(err => console.error(err))
         }
     }
 
-    async run(jid: string, conversation: string, level: CommandLevel, quotedMessage: proto.IMessage, receivedMessage: proto.IWebMessageInfo, messages: proto.IWebMessageInfo[]) {
+    async run(jid: string, conversation: string, level: CommandLevel, quotedMessage: proto.IMessage, receivedMessage: proto.IWebMessageInfo) {
         let group = await this.services.serviceGroupChat.findOneByJid(jid)
         if (!group) {
             group = await this.services.serviceGroupChat.create(jid)
@@ -115,12 +113,8 @@ export class CommandHandler implements Handler<Command> {
         if (commands.length < 1) return
 
         const command = commands[0]
-        command.run({ botwa: this.botwa, groupChat: group, conversation, quotedMessage, receivedMessage, services: this.services, messages })
+        command.run({ botwa: this.botwa, groupChat: group, conversation, quotedMessage, receivedMessage, services: this.services })
     }
-
-
-
-
 }
 
 

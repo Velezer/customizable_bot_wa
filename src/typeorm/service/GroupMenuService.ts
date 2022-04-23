@@ -9,32 +9,43 @@ import { FileCacheService } from './FileCacheService';
 export class GroupMenuService {
     private repo: Repository<GroupMenuEntity>;
     private cache: FileCacheService;
+
+    private cacheKey = {
+        findAllMenu: (jid: string) => 'findAllMenu' + jid,
+        findOneMenu: (jid: string) => 'findOneMenu' + jid
+    }
     constructor(repo: Repository<GroupMenuEntity>, cache: FileCacheService) {
         this.repo = repo
         this.cache = cache
     }
 
     async findAllMenu(jid: string): Promise<GroupMenuEntity[]> {
-        const cache = this.cache.get("findallmenu" + jid)
+        const cache = this.cache.get(this.cacheKey.findAllMenu(jid))
         if (cache) return cache
 
         const founds = await this.repo.findBy({ groupChat: { jid } })
-        this.cache.set("findallmenu" + jid, founds, 1000)
+        this.cache.set(this.cacheKey.findAllMenu(jid), founds, 30 * 60_000)
         return founds
     }
 
-    async findOneMenu(jid: string, key: string) {
+    async findOneMenu(jid: string, key: string): Promise<GroupMenuEntity | null> {
+        const cache = this.cache.get(this.cacheKey.findOneMenu(jid))
+        if (cache) return cache
+
         const found = await this.repo.findOne(
             {
                 where: { groupChat: { jid }, key },
                 relations: { imageStorage: true }
             })
+        this.cache.set(this.cacheKey.findOneMenu(jid), found, 1_000)
         return found
     }
 
     async createMenu(groupChat: GroupChatEntity, key: string, value: string, type: GroupMenuType, imageStorage?: ImageStorageEntity) {
         const found = await this.findOneMenu(groupChat.jid, key)
+        this.cache.clear(this.cacheKey.findOneMenu(groupChat.jid))
         if (!found) {
+            this.cache.clear(this.cacheKey.findAllMenu(groupChat.jid))
             const groupMenu = this.repo.create({
                 groupChat,
                 key,
@@ -43,7 +54,7 @@ export class GroupMenuService {
                 imageStorage
             })
 
-            return await this.repo.save(groupMenu)
+            return this.repo.save(groupMenu)
         }
     }
     async createMenuText(groupChat: GroupChatEntity, key: string, value: string) {
@@ -60,21 +71,18 @@ export class GroupMenuService {
     async updateMenuValue(jid: string, key: string, value: string) {
         const found = await this.findOneMenu(jid, key)
         if (found) {
+            this.cache.clear(this.cacheKey.findAllMenu(jid))
+            this.cache.clear(this.cacheKey.findOneMenu(jid))
             found.value = value
-            return await this.repo.save(found)
+            return this.repo.save(found)
         }
-    }
-
-    async removeAllMenu(jid: string) {
-        const founds = await this.findAllMenu(jid)
-
-        this.cache.clearAll()
-        return this.repo.remove(founds)
     }
 
     async removeOneMenu(jid: string, key: string) {
         const found = await this.findOneMenu(jid, key)
         if (found) {
+            this.cache.clear(this.cacheKey.findAllMenu(jid))
+            this.cache.clear(this.cacheKey.findOneMenu(jid))
             return this.repo.remove(found)
         }
     }

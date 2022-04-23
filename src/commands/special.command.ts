@@ -91,7 +91,7 @@ export class UnregCommand implements Command {
         const targetJid = m1
 
         const res = await services!.serviceGroupChat.remove(targetJid)
-        if (res.affected! > 0) {
+        if (res) {
             LoggerOcedBot.log(botwa, 'unreg ' + targetJid)
         } else {
             LoggerOcedBot.log(botwa, 'unreg gagal')

@@ -41,12 +41,12 @@ describe('image menu service', () => {
         const gc = await serviceGroupChat.create(jid)
         const img = await storage.store(buffer)
         const menu = await serviceMenu.createMenuStoreImage(gc, key, img)
-        expect(menu?.groupChat.jid).toBe(jid)
-        expect(menu?.imageStorage.image).toBe(buffer)
+        expect(menu!.groupChat.jid).toBe(jid)
+        expect(menu!.imageStorage.image).toBe(buffer)
     })
     it('found image menu from db as Uint8array', async () => {
         const menu = await serviceMenu.findOneMenu(jid, key)
-        expect(menu?.imageStorage.image).toStrictEqual(Buffer.from(buffer))
+        expect(menu!.imageStorage.image).toStrictEqual(Buffer.from(buffer))
     })
 })
 
