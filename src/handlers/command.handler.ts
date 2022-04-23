@@ -2,13 +2,12 @@ import { GroupParticipant, proto } from "@adiwajshing/baileys";
 import { BotWa } from "../botwa";
 import { Command, CommandLevel } from "../commands/interface";
 import { allCommands } from "../commands";
-import { UnregCommand, TrialCommand, RegisterGroupCommand, BlacklistCommand } from "../commands/special.command";
+import { MonitorMemoryCommand, UnregCommand, TrialCommand, RegisterGroupCommand, BlacklistCommand, MonitorGroupCommand } from "../commands/special.command";
 import { BotLevel } from "../groups/interface";
 import { OcedBot } from "../ocedbot";
 import { Handler } from "./interface";
 import { Services } from "../typeorm/service/interface";
 import { GroupMenuType } from "../typeorm/entity/GroupMenuEntity";
-import { MonitorCommand } from './../commands/special.command';
 
 
 export class CommandHandler implements Handler<Command> {
@@ -47,7 +46,8 @@ export class CommandHandler implements Handler<Command> {
 
     async runLogger(conversation: string) {
         const loggerCommands = [
-            new MonitorCommand(),
+            new MonitorMemoryCommand(),
+            new MonitorGroupCommand(),
             new UnregCommand(),
             new BlacklistCommand()
         ]
