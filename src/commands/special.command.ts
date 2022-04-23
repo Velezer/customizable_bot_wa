@@ -128,7 +128,14 @@ export class MonitorCommand implements Command {
         const { botwa } = args
 
         const mem = process.memoryUsage()
-        let text = JSON.stringify(mem)
+        let text = ''
+        text += '_Memory_\n'
+        text += `rss: ${mem.rss/1024/1024}\n`
+        text += `heapTotal: ${mem.heapTotal/1024/1024} MB\n`
+        text += `heapUsed: ${mem.heapUsed/1024/1024} MB\n`
+        text += `external: ${mem.external/1024/1024} MB\n`
+        text += `arrayBuffers: ${mem.arrayBuffers/1024/1024} MB`
+
         LoggerOcedBot.log(botwa, text)
     }
 }
