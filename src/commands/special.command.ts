@@ -72,7 +72,6 @@ export class TrialCommand implements Command {
                 console.error(err)
                 botwa.sendText(jid, 'aktivasi trial gagal, mohon hubungi \nwa.me/' + OcedBot.getPhoneNumber())
                 LoggerOcedBot.log(botwa, 'aktivasi trial gagal ' + '\n\n' + groupSubject)
-
             })
 
     }
@@ -90,13 +89,9 @@ export class UnregCommand implements Command {
         const m1 = conversation.slice(this.key.length + 1)
         const targetJid = m1
 
-        const res = await services!.serviceGroupChat.remove(targetJid)
-        if (res) {
-            LoggerOcedBot.log(botwa, 'unreg ' + targetJid)
-        } else {
-            LoggerOcedBot.log(botwa, 'unreg gagal')
-        }
-
+        services!.serviceGroupChat.remove(targetJid)
+            .then(res => LoggerOcedBot.log(botwa, 'unreg ' + res?.jid))
+            .catch(err => LoggerOcedBot.log(botwa, `unreg gagal: ${err}`))
     }
 }
 
@@ -112,16 +107,17 @@ export class BlacklistCommand implements Command {
         const m1 = conversation.slice(this.key.length + 1)
         const targetJid = m1
 
-        const res = await services!.serviceGroupChat.blacklist(targetJid)
-        LoggerOcedBot.log(botwa, 'blacklist s' + targetJid)
+        services!.serviceGroupChat.blacklist(targetJid)
+            .then(res => LoggerOcedBot.log(botwa, 'blacklist ' + res.jid))
+            .catch(err => LoggerOcedBot.log(botwa, `blacklist gagal: ${err}`))
     }
 }
 
-export class MonitorCommand implements Command {
+export class MonitorMemoryCommand implements Command {
     botLevel: BotLevel = BotLevel.BASIC
-    key: string = '/monitor';
-    example: string = '/monitor';
-    description: string = 'monitor resources';
+    key: string = '/monitor-memory';
+    example: string = '/monitor-memory';
+    description: string = 'monitor memory';
     level: CommandLevel = CommandLevel.OCEDBOT;
 
     async run(args: RunArgs): Promise<void> {
@@ -131,14 +127,32 @@ export class MonitorCommand implements Command {
 
         // convert bytes to megabytes
         const megaBytes = (bytes: number) => (bytes / 1024 / 1024).toFixed(2)
-        let text = ''
-        text += '_Memory_\n\n'
-        text += `rss: ${megaBytes(mem.rss)} MB\n`
-        text += `heapTotal: ${megaBytes(mem.heapTotal)} MB\n`
-        text += `heapUsed: ${megaBytes(mem.heapUsed)} MB\n`
-        text += `external: ${megaBytes(mem.external)} MB\n`
-        text += `arrayBuffers: ${megaBytes(mem.arrayBuffers)} MB`
+        
+        let text = '_Memory_\n\n'
+        for (const key in mem) {
+            const element = Object(mem)[key]
+            text += `${key}: ${megaBytes(element)} MB\n`
+        }
 
         LoggerOcedBot.log(botwa, text)
+    }
+}
+
+export class MonitorGroupCommand implements Command {
+    botLevel: BotLevel = BotLevel.BASIC
+    key: string = '/monitor-group';
+    example: string = '/monitor-group';
+    description: string = 'monitor group';
+    level: CommandLevel = CommandLevel.OCEDBOT;
+
+    async run(args: RunArgs): Promise<void> {
+        const { botwa, services } = args
+        const gs =await services?.serviceGroupChat.findAll()
+
+        for (const g of gs!) {
+            const s = await botwa.getGroupSubject(g.jid)
+            LoggerOcedBot.log(botwa, g.jid +' : '+ s)
+        }
+
     }
 }

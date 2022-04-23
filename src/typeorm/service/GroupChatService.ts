@@ -20,6 +20,10 @@ export class GroupChatService {
         this.cache = cache
     }
 
+    async findAll() {
+        return this.repo.find()
+    }
+    
     async findOneByJid(jid: string): Promise<GroupChatEntity | null> {
         const cache = this.cache.get(this.cacheKey.findOneByJid(jid))
         if (cache) return cache
