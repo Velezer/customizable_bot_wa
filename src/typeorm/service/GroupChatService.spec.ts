@@ -27,6 +27,10 @@ describe('GroupChat with jid=jid', () => {
         expect(res.welcome).toBe(null)
         expect(res.leave).toBe(null)
     })
+    it('found all', async () => {
+        const founds = await service.findAll()
+        expect(founds.length).toBe(1)
+    })
     it('found one by jid', async () => {
         const found = await service.findOneByJid(jid)
         expect(found!.jid).toBe(jid)

@@ -127,7 +127,7 @@ export class MonitorMemoryCommand implements Command {
 
         // convert bytes to megabytes
         const megaBytes = (bytes: number) => (bytes / 1024 / 1024).toFixed(2)
-        
+
         let text = '_Memory_\n\n'
         for (const key in mem) {
             const element = Object(mem)[key]
@@ -147,11 +147,14 @@ export class MonitorGroupCommand implements Command {
 
     async run(args: RunArgs): Promise<void> {
         const { botwa, services } = args
-        const gs =await services?.serviceGroupChat.findAll()
+        const gs = await services?.serviceGroupChat.findAll()
 
         for (const g of gs!) {
-            const s = await botwa.getGroupSubject(g.jid)
-            LoggerOcedBot.log(botwa, g.jid +' : '+ s)
+            let s = ''
+            try {
+                s = await botwa.getGroupSubject(g.jid)
+            } catch (err) { }
+            await LoggerOcedBot.log(botwa, g.jid + ' : ' + s)
         }
 
     }
