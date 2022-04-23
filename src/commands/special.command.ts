@@ -116,3 +116,19 @@ export class BlacklistCommand implements Command {
         LoggerOcedBot.log(botwa, 'blacklist s' + targetJid)
     }
 }
+
+export class MonitorCommand implements Command {
+    botLevel: BotLevel = BotLevel.BASIC
+    key: string = '/monitor';
+    example: string = '/monitor';
+    description: string = 'monitor resources';
+    level: CommandLevel = CommandLevel.OCEDBOT;
+
+    async run(args: RunArgs): Promise<void> {
+        const { botwa } = args
+
+        const mem = process.memoryUsage()
+        let text = JSON.stringify(mem)
+        LoggerOcedBot.log(botwa, text)
+    }
+}

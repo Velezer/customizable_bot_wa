@@ -8,6 +8,7 @@ import { OcedBot } from "../ocedbot";
 import { Handler } from "./interface";
 import { Services } from "../typeorm/service/interface";
 import { GroupMenuType } from "../typeorm/entity/GroupMenuEntity";
+import { MonitorCommand } from './../commands/special.command';
 
 
 export class CommandHandler implements Handler<Command> {
@@ -44,25 +45,18 @@ export class CommandHandler implements Handler<Command> {
         return false
     }
 
-    async unreg(conversation: string) {
-        if (conversation.startsWith('/unreg')) {
-            new UnregCommand()
-                .run({
-                    botwa: this.botwa,
-                    conversation: conversation,
-                    services: this.services
-                })
-        }
-    }
-    async blacklist(conversation: string) {
-        if (conversation.startsWith('/blacklist')) {
+    async runLogger(conversation: string) {
+        const loggerCommands = [
+            new MonitorCommand(),
+            new UnregCommand(),
             new BlacklistCommand()
-                .run({
-                    botwa: this.botwa,
-                    conversation: conversation,
-                    services: this.services
-                })
-        }
+        ]
+        const command = loggerCommands.filter(c => c.key.startsWith(conversation))[0]
+        if (command) command.run({
+            botwa: this.botwa,
+            conversation: conversation,
+            services: this.services
+        })
     }
 
     async run(jid: string, conversation: string, level: CommandLevel, quotedMessage: proto.IMessage, receivedMessage: proto.IWebMessageInfo) {
