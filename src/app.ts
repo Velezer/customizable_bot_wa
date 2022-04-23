@@ -112,9 +112,7 @@ export async function app(dataSource: DataSource) {
         }
 
         if (jid === LoggerOcedBot.jid) {
-            commander.unreg(conversation)
-            commander.blacklist(conversation)
-            commander.monitor(conversation)
+            commander.runLogger(conversation)
         }
 
     })
