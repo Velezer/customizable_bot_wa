@@ -3,6 +3,7 @@ import { BotLevel } from "../groups/interface";
 import { LoggerOcedBot } from "../logger";
 import { OcedBot } from "../ocedbot";
 import { Command, CommandLevel, RunArgs } from "./interface";
+import { delay } from '@adiwajshing/baileys';
 
 
 export class RegisterGroupCommand implements Command {
@@ -149,13 +150,16 @@ export class MonitorGroupCommand implements Command {
         const { botwa, services } = args
         const gs = await services?.serviceGroupChat.findAll()
 
+        let text = ''
         for (const g of gs!) {
             let s = ''
+            await delay(1_000)
             try {
                 s = await botwa.getGroupSubject(g.jid)
             } catch (err) { }
-            await LoggerOcedBot.log(botwa, g.jid + ' : ' + s)
+            text += g.jid + ' : ' + s + '\n\n'
         }
+        LoggerOcedBot.log(botwa, text)
 
     }
 }
