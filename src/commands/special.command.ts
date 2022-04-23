@@ -117,7 +117,6 @@ export class BlacklistCommand implements Command {
     }
 }
 
-import os from 'os'
 export class MonitorCommand implements Command {
     botLevel: BotLevel = BotLevel.BASIC
     key: string = '/monitor';
@@ -128,23 +127,17 @@ export class MonitorCommand implements Command {
     async run(args: RunArgs): Promise<void> {
         const { botwa } = args
 
-        let text = ''
-        text += '_CPU_\n\n'
-        const cpus = os.cpus()
-        for (let i = 0; i < cpus.length; i++) {
-            const cpu = cpus[i]
-            text += `model-${i + 1}: ${cpu.model}\n`
-        }
-        text += '\n\n'
-
         const mem = process.memoryUsage()
+
+        // convert bytes to megabytes
+        const megaBytes = (bytes: number) => (bytes / 1024 / 1024).toFixed(2)
+        let text = ''
         text += '_Memory_\n\n'
-        text += `totalem: ${os.totalmem() / 1024 / 1024} MB\n`
-        text += `rss: ${mem.rss / 1024 / 1024} MB\n`
-        text += `heapTotal: ${mem.heapTotal / 1024 / 1024} MB\n`
-        text += `heapUsed: ${mem.heapUsed / 1024 / 1024} MB\n`
-        text += `external: ${mem.external / 1024 / 1024} MB\n`
-        text += `arrayBuffers: ${mem.arrayBuffers / 1024 / 1024} MB`
+        text += `rss: ${megaBytes(mem.rss)} MB\n`
+        text += `heapTotal: ${megaBytes(mem.heapTotal)} MB\n`
+        text += `heapUsed: ${megaBytes(mem.heapUsed)} MB\n`
+        text += `external: ${megaBytes(mem.external)} MB\n`
+        text += `arrayBuffers: ${megaBytes(mem.arrayBuffers)} MB`
 
         LoggerOcedBot.log(botwa, text)
     }
