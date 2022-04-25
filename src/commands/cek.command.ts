@@ -17,12 +17,12 @@ export class CekCommand implements Command {
         const localDate = (date: Date) => date.toLocaleString('id-ID', { month: 'long', year: 'numeric', day: 'numeric', timeZone: 'Asia/Jakarta' }) +
         ' jam ' + date.toLocaleString('id-ID', { hour: 'numeric', minute: 'numeric', timeZone: 'Asia/Jakarta' })
         
-        console.log(localDate(groupChat!.sewaExpiredAt))
-        console.log(localDate(groupChat!.trialExpiredAt))
         if (new Date() < groupChat!.sewaExpiredAt) {
+            console.log(localDate(groupChat!.sewaExpiredAt))
             await botwa.sendText(groupChat!.jid, groupChat!.botLevel + '\n\nsewa expired pada\n' + localDate(groupChat!.sewaExpiredAt))
         }
         if (new Date() < groupChat!.trialExpiredAt) {
+            console.log(localDate(groupChat!.trialExpiredAt))
             await botwa.sendText(groupChat!.jid, groupChat!.botLevel + '\n\ntrial expired pada\n' + localDate(groupChat!.trialExpiredAt))
         }
         
