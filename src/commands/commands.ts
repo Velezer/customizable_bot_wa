@@ -11,7 +11,7 @@ export class TagAllCommand implements Command {
     level: CommandLevel = CommandLevel.ADMIN;
 
     async run(args: RunArgs): Promise<void> {
-        const { quotedMessage, receivedMessage, conversation, botwa, groupChat } = args
+        const { conversation, botwa, groupChat } = args
 
         const m1 = conversation.slice(this.key.length + 1)
 
@@ -33,7 +33,7 @@ export class GetGroupMetadataCommand implements Command {
     level: CommandLevel = CommandLevel.ADMIN;
 
     async run(args: RunArgs): Promise<void> {
-        const { quotedMessage, receivedMessage, conversation, botwa, groupChat } = args
+        const { botwa, groupChat } = args
 
         const metadata = await botwa.getGroupMetadata(groupChat!.jid)
 
@@ -66,7 +66,7 @@ export class GetGroupParticipantsCommand implements Command {
 
 
     async run(args: RunArgs): Promise<void> {
-        const { quotedMessage, receivedMessage, conversation, botwa, groupChat } = args
+        const { botwa, groupChat } = args
 
         const jid = groupChat!.jid
         const participants = await botwa.getGroupParticipants(jid)
@@ -93,7 +93,7 @@ export class OpenGroupSettingsCommand implements Command {
 
 
     async run(args: RunArgs): Promise<void> {
-        const { quotedMessage, receivedMessage, conversation, botwa, groupChat } = args
+        const { botwa, groupChat } = args
 
 
         botwa.openGroupSettings(groupChat!.jid)
@@ -110,7 +110,7 @@ export class CloseGroupSettingsCommand implements Command {
 
 
     async run(args: RunArgs): Promise<void> {
-        const { quotedMessage, receivedMessage, conversation, botwa, groupChat } = args
+        const { botwa, groupChat } = args
 
 
         botwa.closeGroupSettings(groupChat!.jid)
@@ -127,7 +127,7 @@ export class OpenGroupChatCommand implements Command {
     level: CommandLevel = CommandLevel.ADMIN;
 
     async run(args: RunArgs): Promise<void> {
-        const { quotedMessage, receivedMessage, conversation, botwa, groupChat } = args
+        const { botwa, groupChat } = args
 
 
         botwa.openGroupChat(groupChat!.jid)
@@ -144,7 +144,7 @@ export class CloseGroupChatCommand implements Command {
 
 
     async run(args: RunArgs): Promise<void> {
-        const { quotedMessage, receivedMessage, conversation, botwa, groupChat } = args
+        const { botwa, groupChat } = args
 
         botwa.closeGroupChat(groupChat!.jid)
 

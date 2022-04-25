@@ -1,12 +1,15 @@
-import { downloadContentFromMessage, MiscMessageGenerationOptions, proto, WASocket } from "@adiwajshing/baileys";
+import { downloadContentFromMessage, GroupMetadata, MiscMessageGenerationOptions, proto, WASocket } from "@adiwajshing/baileys";
 import axios from "axios";
+import { FileCacheService } from "./typeorm/service/FileCacheService";
 
 
 export class BotWa {
     sock: WASocket;
+    cache: FileCacheService;
 
     constructor(sock: WASocket) {
         this.sock = sock
+        this.cache = new FileCacheService('__botwa__')
     }
     async downloadContentFromImgMsg(imgMsg: proto.IImageMessage): Promise<Buffer> {
         const stream = await downloadContentFromMessage({ mediaKey: imgMsg.mediaKey!, directPath: imgMsg.directPath!, url: imgMsg.url! }, 'image')
@@ -85,13 +88,25 @@ export class BotWa {
             .catch(err => console.log(err))
     }
 
-    async getGroupMetadata(jidGroup: string) {
+    /**
+     * 
+     * @param jidGroup 
+     * @param cache default false, if true will get from cache else will update the cache
+     * @returns 
+     */
+    async getGroupMetadata(jidGroup: string, cache: boolean = true): Promise<GroupMetadata> {
+        if (cache) {
+            const data = this.cache.get('metadata-' + jidGroup)
+            if (data) return data
+        }
+
         const metadata = await this.sock.groupMetadata(jidGroup)
+        this.cache.set('metadata-' + jidGroup, metadata, 30 * 60_000)
         return metadata
     }
 
-    async getGroupSubject(jidGroup: string) {
-        const subject = (await this.sock.groupMetadata(jidGroup)).subject
+    async getGroupSubject(jidGroup: string, cache: boolean = true) {
+        const subject = (await this.getGroupMetadata(jidGroup, cache)).subject
         return subject
     }
 

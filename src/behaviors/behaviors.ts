@@ -11,7 +11,7 @@ export class WelcomeGroupParticipantAddBehavior implements Behavior {
     async run(botwa: BotWa, to: string, participant: string, services: Services): Promise<void> {
 
         const gc = await services.serviceGroupChat.findOneByJid(to)
-        const groupName = await botwa.getGroupSubject(to)
+        const groupName = await botwa.getGroupSubject(to, false)
         let welcome = gc?.welcome
         if (!welcome) welcome = 'welcome [member_name] di [group_name]'
         welcome = welcome?.replace('[member_name]', `@${participant?.split('@')[0]}`)
@@ -67,6 +67,7 @@ export class PromoteParticipantBehavior implements Behavior {
     action: ParticipantAction = 'promote'
 
     async run(botwa: BotWa, to: string, participant: string): Promise<void> {
+        botwa.getGroupSubject(to, false) // update cache
         const number = participant.split('@')[0]
 
         await botwa.sendMentioned(to, 'promote @' + number, [participant])
@@ -78,6 +79,7 @@ export class DemoteParticipantBehavior implements Behavior {
     action: ParticipantAction = 'demote'
 
     async run(botwa: BotWa, to: string, participant: string): Promise<void> {
+        botwa.getGroupSubject(to, false) // update cache
         const number = participant.split('@')[0]
 
         botwa.sendMentioned(to, 'demote @' + number, [participant])
