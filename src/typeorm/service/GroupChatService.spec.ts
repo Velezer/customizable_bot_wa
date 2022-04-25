@@ -1,5 +1,4 @@
 import { delay } from "@adiwajshing/baileys";
-import { QueryFailedError } from "typeorm";
 import { BotLevel } from "../../groups/interface"
 import { futureDateFromNow } from '../helper/futureDate';
 import { TestDatabase } from "../test"
@@ -53,7 +52,7 @@ describe('GroupChat with jid=jid', () => {
 
         await delay(0)
         const found = await service.findOneByJid(jid)
-        expect(found!.trialExpiredAt).toBeTruthy()
+        expect(found!.trialExpiredAt.getDate()).toBe(futureDateFromNow(1).getDate())
     })
 
     it('sewa GroupChat', async () => {
@@ -64,7 +63,10 @@ describe('GroupChat with jid=jid', () => {
         expect(res.sewaExpiredAt.getDate()).toBe(futureDateFromNow(30).getDate())
         await delay(0)
         const found = await service.findOneByJid(jid)
-        expect(found!.sewaExpiredAt).toBeTruthy()
+        expect(found!.sewaExpiredAt.getDate()).toBe(futureDateFromNow(30).getDate())
+        await delay(0)
+        const cached = await service.findOneByJid(jid)
+        expect(cached!.sewaExpiredAt.getDate()).toBe(futureDateFromNow(30).getDate())
     })
     it('setWelcome GroupChat', async () => {
         const welcome = 'welcome comrades'
