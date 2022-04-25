@@ -11,20 +11,17 @@ export class CekCommand implements Command {
 
     async run(args: RunArgs): Promise<void> {
         const { botwa, groupChat } = args
-        console.log('/cek revoked') 
         
         const localDate = (date: Date) => date.toLocaleString('id-ID', { month: 'long', year: 'numeric', day: 'numeric', timeZone: 'Asia/Jakarta' }) +
         ' jam ' + date.toLocaleString('id-ID', { hour: 'numeric', minute: 'numeric', timeZone: 'Asia/Jakarta' })
         
         const sewaDate = new Date(groupChat!.sewaExpiredAt)
         if (new Date() < sewaDate) {
-            console.log(localDate(groupChat!.sewaExpiredAt))
-            await botwa.sendText(groupChat!.jid, groupChat!.botLevel + '\n\nsewa expired pada\n' + localDate(groupChat!.sewaExpiredAt))
+            await botwa.sendText(groupChat!.jid, groupChat!.botLevel + '\n\nsewa expired pada\n' + localDate(sewaDate))
         }
         const trialDate = new Date(groupChat!.trialExpiredAt)
         if (new Date() < trialDate) {
-            console.log(localDate(groupChat!.trialExpiredAt))
-            await botwa.sendText(groupChat!.jid, groupChat!.botLevel + '\n\ntrial expired pada\n' + localDate(groupChat!.trialExpiredAt))
+            await botwa.sendText(groupChat!.jid, groupChat!.botLevel + '\n\ntrial expired pada\n' + localDate(trialDate))
         }
         
     }
