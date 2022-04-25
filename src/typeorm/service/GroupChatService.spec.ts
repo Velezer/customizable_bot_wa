@@ -1,6 +1,6 @@
 import { delay } from "@adiwajshing/baileys";
 import { BotLevel } from "../../groups/interface"
-import { futureDateFromNow } from '../helper/futureDate';
+import { futureDateFromNow } from "../../utils";
 import { TestDatabase } from "../test"
 
 const testDatabase = new TestDatabase()

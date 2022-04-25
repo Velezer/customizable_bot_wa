@@ -2,8 +2,8 @@ import { BotLevel } from "../groups/interface";
 import { Command, CommandLevel, RunArgs } from "./interface";
 import { exec } from 'child_process'
 import fs from 'fs'
-import { Helper } from "../helper/helper";
 import Jimp from 'jimp';
+import { getRandomString } from "../utils";
 
 export class StickerCommand implements Command {
     botLevel: BotLevel = BotLevel.BASIC
@@ -13,12 +13,12 @@ export class StickerCommand implements Command {
     level: CommandLevel = CommandLevel.MEMBER;
 
     async run(args: RunArgs): Promise<void> {
-        const { botwa, groupChat, services, quotedMessage, receivedMessage } = args
+        const { botwa, groupChat, quotedMessage, receivedMessage } = args
         const jid = groupChat!.jid
-        let jpegFile = './storage/' + Helper.getRandomString(20) + '.jpeg'
-        let webpFile = './storage/' + Helper.getRandomString(20) + '.webp'
-        if (Helper.isExist(jpegFile)) fs.unlinkSync(jpegFile)
-        if (Helper.isExist(webpFile)) fs.unlinkSync(webpFile)
+        let jpegFile = './storage/' + getRandomString(20) + '.jpeg'
+        let webpFile = './storage/' + getRandomString(20) + '.webp'
+        if (fs.existsSync(jpegFile)) fs.unlinkSync(jpegFile)
+        if (fs.existsSync(webpFile)) fs.unlinkSync(webpFile)
 
         let buffer: Buffer = Buffer.from([])
         if (quotedMessage) {

@@ -1,9 +1,8 @@
 
-import fs from 'fs'
 import { BotLevel } from '../groups/interface';
-import { Helper } from '../helper/helper';
 import { ActivationKey } from './interface';
 import { FileCacheService } from './../typeorm/service/FileCacheService';
+import { getRandomString } from '../utils';
 
 
 
@@ -19,11 +18,11 @@ export class Activation {
     generateActivationKey() {
         const activationKeys: ActivationKey[] = [
             {
-                key: Helper.getRandomString(15),
+                key: getRandomString(15),
                 botLevel: BotLevel.BASIC
             },
             {
-                key: Helper.getRandomString(15),
+                key: getRandomString(15),
                 botLevel: BotLevel.ELEGANT
             }
         ]

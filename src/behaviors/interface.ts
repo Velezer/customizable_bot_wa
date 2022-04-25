@@ -1,10 +1,7 @@
-import { proto, ParticipantAction } from "@adiwajshing/baileys"
+import { ParticipantAction } from "@adiwajshing/baileys"
 import { BotWa } from "../botwa"
 import { Services } from "../typeorm/service/interface";
 
-
-export const StubTypeEnum = proto.WebMessageInfo.WebMessageInfoStubType;
-export type StubType = proto.WebMessageInfo.WebMessageInfoStubType;
 
 export interface Behavior {
     action: ParticipantAction

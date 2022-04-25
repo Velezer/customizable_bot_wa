@@ -1,10 +1,9 @@
 import { BotLevel } from "../groups/interface";
 import { Command, CommandLevel, RunArgs } from "./interface";
 import fs from 'fs'
-import { Helper } from "../helper/helper";
 import { YTDownloader } from "../video/ytdownloader";
 import ffmpeg from 'fluent-ffmpeg'
-import { retryPromise } from "../utils";
+import { getRandomString, retryPromise } from "../utils";
 
 
 
@@ -16,7 +15,7 @@ export class YTStatusCommand implements Command {
     level: CommandLevel = CommandLevel.MEMBER;
 
     async run(args: RunArgs) {
-        const { botwa, groupChat, services, quotedMessage, conversation } = args
+        const { botwa, groupChat, conversation } = args
         const m1 = conversation.slice(this.key.length + 1)
         const jid = groupChat!.jid
         const url = m1
@@ -28,7 +27,7 @@ export class YTStatusCommand implements Command {
         const videoDuration = +info!.videoDetails.lengthSeconds
         const durationPerVideo = 30
 
-        const downloadedName = Helper.getRandomString(10) + '.mp4'
+        const downloadedName = getRandomString(10) + '.mp4'
         const stream = YTDownloader.download(url)
         stream.pipe(fs.createWriteStream(downloadedName))
 
@@ -51,7 +50,7 @@ export class YTStatusCommand implements Command {
     }
 
     async makeStatus(stream: any, videoDuration: number, durationPerVideo: number, resolve: Function) {
-        const filename = Helper.getRandomString(10)
+        const filename = getRandomString(10)
         let startTime = 0
         for (let i = 0; i < videoDuration / durationPerVideo; i++) {
             const output = i + '-' + filename + '.mp4'

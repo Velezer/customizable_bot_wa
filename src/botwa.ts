@@ -91,11 +91,11 @@ export class BotWa {
     /**
      * 
      * @param jidGroup 
-     * @param cache default false, if true will get from cache else will update the cache
+     * @param getCache default false, if true will get from cache else will update the cache
      * @returns 
      */
-    async getGroupMetadata(jidGroup: string, cache: boolean = true): Promise<GroupMetadata> {
-        if (cache) {
+    async getGroupMetadata(jidGroup: string, getCache: boolean = true): Promise<GroupMetadata> {
+        if (getCache) {
             const data = this.cache.get('metadata-' + jidGroup)
             if (data) return data
         }
@@ -105,8 +105,8 @@ export class BotWa {
         return metadata
     }
 
-    async getGroupSubject(jidGroup: string, cache: boolean = true) {
-        const subject = (await this.getGroupMetadata(jidGroup, cache)).subject
+    async getGroupSubject(jidGroup: string, getCache: boolean = true) {
+        const subject = (await this.getGroupMetadata(jidGroup, getCache)).subject
         return subject
     }
 
@@ -142,7 +142,7 @@ export class BotWa {
         const participants = await this.getGroupParticipants(jidGroup)
         for (const p of participants) {
             if (p.id.includes(phoneNumber)) {
-                return await this.sock.groupParticipantsUpdate(jidGroup, [p.id], 'demote')
+                return this.sock.groupParticipantsUpdate(jidGroup, [p.id], 'demote')
             }
         }
     }
@@ -151,7 +151,7 @@ export class BotWa {
         const participants = await this.getGroupParticipants(jidGroup)
         for (const p of participants) {
             if (p.id.includes(phoneNumber)) {
-                return await this.sock.groupParticipantsUpdate(jidGroup, [p.id], 'promote')
+                return this.sock.groupParticipantsUpdate(jidGroup, [p.id], 'promote')
             }
         }
     }
