@@ -9,7 +9,7 @@ import { FileCacheService } from './../typeorm/service/FileCacheService';
 
 export class Activation {
     activationKeyFile: string = 'activation.key'
-    storage: FileCacheService = new FileCacheService()
+    storage: FileCacheService = new FileCacheService('__activation__')
 
     getActivationKey(): ActivationKey[] {
         if (!this.storage.get(this.activationKeyFile)) this.generateActivationKey()
