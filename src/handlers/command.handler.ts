@@ -67,6 +67,8 @@ export class CommandHandler implements Handler<Command> {
             return this.botwa.sendText(group.jid, 'group ini diblacklist')
         }
 
+        group.trialExpiredAt = new Date(group.trialExpiredAt)
+        group.sewaExpiredAt = new Date(group.sewaExpiredAt)
         const trialExpired = group.trialExpiredAt < new Date()
         const sewaExpired = group.sewaExpiredAt < new Date()
         const neverTrial = !group.trialExpiredAt
