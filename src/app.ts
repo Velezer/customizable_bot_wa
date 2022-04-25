@@ -13,7 +13,7 @@ import fs from 'fs'
 import MAIN_LOGGER from '@adiwajshing/baileys/lib/Utils/logger'
 
 const logger = MAIN_LOGGER.child({})
-logger.level = 'warn'
+logger.level = process.env.LOGGER_LEVEL || 'debug'
 
 
 export async function app(dataSource: DataSource) {
@@ -38,6 +38,7 @@ export async function app(dataSource: DataSource) {
         getMessage: async key => { return { conversation: 'ocedbot' } }
     })
 
+    const botwa = new BotWa(sock)
 
     sock.ev.on('creds.update', async (creds) => {
         saveState()
@@ -52,7 +53,7 @@ export async function app(dataSource: DataSource) {
                 app(dataSource)
             }
         } else if (connection === 'open') {
-            LoggerOcedBot.log(new BotWa(sock), "bot is started...");
+            LoggerOcedBot.log(botwa, "bot is started...");
         }
     })
 
@@ -61,8 +62,6 @@ export async function app(dataSource: DataSource) {
         const groupJid = groupUpdate.id
         const action = groupUpdate.action
         const participants = groupUpdate.participants
-
-        const botwa = new BotWa(sock)
 
         const participant = participants[0]
 
@@ -74,8 +73,6 @@ export async function app(dataSource: DataSource) {
     sock.ev.on('messages.upsert', async (m) => {
         const receivedMessage = m.messages[0]!
         if (receivedMessage.key.fromMe === true || !receivedMessage?.message) return
-
-        const botwa = new BotWa(sock)
 
         const jid = receivedMessage.key.remoteJid!
         const isNotGroup = jid.split('@')[1] !== 'g.us'
