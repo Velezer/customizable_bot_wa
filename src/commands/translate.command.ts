@@ -10,7 +10,7 @@ export class TranslateCommand implements Command {
     level: CommandLevel = CommandLevel.MEMBER;
 
     async run(args: RunArgs): Promise<void> {
-        const { quotedMessage, receivedMessage, conversation, botwa, groupChat } = args
+        const { conversation, botwa, groupChat } = args
         const m1 = conversation.slice(this.key.length + 1)
         const jid = groupChat?.jid!
 
