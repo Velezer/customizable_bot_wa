@@ -1,14 +1,14 @@
 
 import { BotLevel } from '../groups/interface';
 import { ActivationKey } from './interface';
-import { FileCacheService } from './../typeorm/service/FileCacheService';
 import { getRandomString } from '../utils';
+import { KVF } from 'kvfiledb';
 
 
 
 export class Activation {
     activationKeyFile: string = 'activation.key'
-    storage: FileCacheService = new FileCacheService('__activation__')
+    storage: KVF = new KVF('__activation__')
 
     getActivationKey(): ActivationKey[] {
         if (!this.storage.get(this.activationKeyFile)) this.generateActivationKey()

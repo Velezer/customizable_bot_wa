@@ -3,21 +3,13 @@ import { Repository } from 'typeorm'
 import { BotLevel } from '../../groups/interface'
 import { futureDateFromNow } from '../../utils'
 import { GroupChatEntity } from '../entity/GroupChatEntity'
-import { FileCacheService } from './FileCacheService'
-
 
 
 export class GroupChatService {
     repo: Repository<GroupChatEntity>
-    private cache: FileCacheService
 
-    private cacheKey = {
-        findOneByJid: (jid: string) => 'findOneByJid-' + jid,
-    }
-
-    constructor(repo: Repository<GroupChatEntity>, cache: FileCacheService) {
+    constructor(repo: Repository<GroupChatEntity>) {
         this.repo = repo
-        this.cache = cache
     }
 
     async findAll() {
@@ -25,11 +17,7 @@ export class GroupChatService {
     }
     
     async findOneByJid(jid: string): Promise<GroupChatEntity | null> {
-        const cache = this.cache.get(this.cacheKey.findOneByJid(jid))
-        if (cache) return cache
-
         const found = await this.repo.findOne({ where: { jid } })
-        this.cache.set(this.cacheKey.findOneByJid(jid), found, 30 * 60_000)
         return found
     }
 
@@ -46,7 +34,6 @@ export class GroupChatService {
         found!.botLevel = BotLevel.ELEGANT
         found!.trialExpiredAt = futureDateFromNow(1)
 
-        this.cache.clear(this.cacheKey.findOneByJid(jid))
         return await this.repo.save(found!)
     }
 
@@ -55,7 +42,6 @@ export class GroupChatService {
         found!.botLevel = botLevel
         found!.sewaExpiredAt = futureDateFromNow(30)
 
-        this.cache.clear(this.cacheKey.findOneByJid(jid))
         return await this.repo.save(found!)
     }
 
@@ -63,7 +49,6 @@ export class GroupChatService {
         const found = await this.findOneByJid(jid)
         found!.blacklist = true
 
-        this.cache.clear(this.cacheKey.findOneByJid(jid))
         return await this.repo.save(found!)
     }
 
@@ -72,7 +57,6 @@ export class GroupChatService {
         const found = await this.findOneByJid(jid)
         found!.welcome = welcome
 
-        this.cache.clear(this.cacheKey.findOneByJid(jid))
         return await this.repo.save(found!)
     }
 
@@ -80,14 +64,12 @@ export class GroupChatService {
         const found = await this.findOneByJid(jid)
         found!.leave = leave
 
-        this.cache.clear(this.cacheKey.findOneByJid(jid))
         return await this.repo.save(found!)
     }
 
     async remove(jid: string) {
         const found = await this.findOneByJid(jid)
         if (found) {
-            this.cache.clear(this.cacheKey.findOneByJid(jid))
             return this.repo.remove(found)
         }
     }

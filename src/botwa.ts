@@ -1,15 +1,15 @@
 import { downloadContentFromMessage, GroupMetadata, MiscMessageGenerationOptions, proto, WASocket } from "@adiwajshing/baileys";
 import axios from "axios";
-import { FileCacheService } from "./typeorm/service/FileCacheService";
+import { KVF } from 'kvfiledb';
 
 
 export class BotWa {
     sock: WASocket;
-    cache: FileCacheService;
+    cache: KVF;
 
     constructor(sock: WASocket) {
         this.sock = sock
-        this.cache = new FileCacheService('__botwa__')
+        this.cache = new KVF('__botwa__')
     }
     async downloadContentFromImgMsg(imgMsg: proto.IImageMessage): Promise<Buffer> {
         const stream = await downloadContentFromMessage({ mediaKey: imgMsg.mediaKey!, directPath: imgMsg.directPath!, url: imgMsg.url! }, 'image')

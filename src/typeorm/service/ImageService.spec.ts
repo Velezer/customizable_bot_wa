@@ -1,3 +1,4 @@
+import { GroupMenuType } from '../entity/GroupMenuEntity';
 import { TestDatabase } from '../test/index';
 
 const testDatabase = new TestDatabase()
@@ -46,7 +47,8 @@ describe('image menu service', () => {
     })
     it('found image menu from db as Uint8array', async () => {
         const menu = await serviceMenu.findOneMenu(jid, key)
-        expect(menu!.imageStorage.image).toStrictEqual(Buffer.from(buffer))
+        expect(menu!.type).toEqual(GroupMenuType.IMAGE)
+        expect(menu!.imageStorage.image).toEqual(Buffer.from(new Uint8Array([1, 2, 3, 4, 5, 34, 2])))
     })
 })
 
