@@ -5,7 +5,7 @@ import { Command, CommandLevel, RunArgs } from "./interface";
 export class CalcCommand implements Command {
     botLevel: BotLevel = BotLevel.BASIC
     key: string = '/calc';
-    example: string = '/calc 1+1';
+    example: string = '/calc 1+1*2+4/1-3**1';
     description: string = 'kalkulator kabataku';
     level: CommandLevel = CommandLevel.MEMBER;
 
@@ -14,11 +14,15 @@ export class CalcCommand implements Command {
         const m1 = conversation.slice(this.key.length + 1)
 
 
-        const dangerous = ['process', 'global', 'globalThis', 'this']
+        const dangerous = ['process', 'global', 'globalThis', 'this', 'x', 'X']
         for (const d of dangerous) {
             if (m1.includes(d)) return
         }
 
-        botwa.sendText(groupChat?.jid!, Number(Function(`return ${m1}`)()).toString())
+        try {
+            botwa.sendText(groupChat?.jid!, Number(Function(`return ${m1}`)()).toString())
+        } catch (err) {
+            botwa.sendText(groupChat?.jid!, 'pala gw pusing ngitung terus')
+        }
     }
 }
