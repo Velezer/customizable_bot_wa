@@ -29,9 +29,9 @@ export async function app(dataSource: DataSource) {
     }
 
     const { state, saveState } = useSingleFileAuthState('./auth_info_multi.json')
-
+    const {version, isLatest} = await fetchLatestBaileysVersion()
     let sock: WASocket = makeWASocket({
-        version: (await fetchLatestBaileysVersion()).version,
+        version,
         auth: state,
         printQRInTerminal: true,
         logger,
@@ -53,7 +53,7 @@ export async function app(dataSource: DataSource) {
                 app(dataSource)
             }
         } else if (connection === 'open') {
-            LoggerOcedBot.log(botwa, "bot is started...");
+            LoggerOcedBot.log(botwa, `wa version: ${version}, isLatest: ${isLatest}`);
         }
     })
 
