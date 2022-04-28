@@ -36,7 +36,7 @@
       "dotenv": "^16.0.0",
       "fluent-ffmpeg": "^2.1.2",
       "jimp": "^0.16.1",
-      "kvfiledb": "^0.1.4",
+      "kvfiledb": "^0.1.5",
       "pg": "^8.4.0",
       "pg-connection-string": "^2.5.0",
       "reflect-metadata": "^0.1.13",
