@@ -3,13 +3,16 @@ import { Repository } from 'typeorm';
 import { GroupMenuEntity, GroupMenuType } from '../entity/GroupMenuEntity';
 import { GroupChatEntity } from '../entity/GroupChatEntity';
 import { ImageStorageEntity } from '../entity/ImageEntity';
+import { KVF } from 'kvfiledb';
 
 
 export class GroupMenuService {
     private repo: Repository<GroupMenuEntity>;
+    cache: KVF;
 
     constructor(repo: Repository<GroupMenuEntity>) {
         this.repo = repo
+        this.cache = new KVF('_gmservice_')
     }
 
     async findAllMenu(jid: string): Promise<GroupMenuEntity[]> {
@@ -18,11 +21,17 @@ export class GroupMenuService {
     }
 
     async findOneMenu(jid: string, key: string): Promise<GroupMenuEntity | null> {
+        const cache = this.cache.get(jid)
+        if (cache) {
+            return cache
+        }
+
         const found = await this.repo.findOne(
             {
                 where: { groupChat: { jid }, key },
                 relations: { imageStorage: true }
             })
+        this.cache.set(jid, found, 1 * 3600 * 1000)
         return found
     }
 
@@ -36,7 +45,6 @@ export class GroupMenuService {
                 type,
                 imageStorage
             })
-
             return this.repo.save(groupMenu)
         }
     }
@@ -55,6 +63,7 @@ export class GroupMenuService {
         const found = await this.findOneMenu(jid, key)
         if (found) {
             found.value = value
+            this.cache.set(jid, found, 1 * 3600 * 1000)
             return this.repo.save(found)
         }
     }
@@ -62,6 +71,7 @@ export class GroupMenuService {
     async removeOneMenu(jid: string, key: string) {
         const found = await this.findOneMenu(jid, key)
         if (found) {
+            this.cache.set(jid, found, 1 * 3600 * 1000)
             return this.repo.remove(found)
         }
     }

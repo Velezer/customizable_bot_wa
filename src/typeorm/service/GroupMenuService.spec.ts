@@ -14,6 +14,7 @@ beforeAll(async () => {
 afterAll(async () => {
     await serviceGroupChat.remove(jid)
     await testDatabase.down()
+    serviceGroupMenu.cache.clearAll()
 })
 
 describe('GroupMenu with jid=jidmenu', () => {

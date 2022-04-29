@@ -10,6 +10,7 @@ beforeAll(async () => {
 
 afterAll(async () => {
     await testDatabase.down()
+    serviceMenu.cache.clearAll()
 })
 
 describe('image service', () => {
@@ -37,18 +38,16 @@ describe('image service', () => {
 describe('image menu service', () => {
     const jid = 'jidmenustore'
     const key = '/keyyymenustore'
-    const buffer: Uint8Array = new Uint8Array([1, 2, 3, 4, 5, 34, 2])
+    const buffer = [1, 2, 3, 4, 5, 34, 2]
     it('store image menu', async () => {
         const gc = await serviceGroupChat.create(jid)
-        const img = await storage.store(buffer)
-        const menu = await serviceMenu.createMenuStoreImage(gc, key, img)
-        expect(menu!.groupChat.jid).toBe(jid)
-        expect(menu!.imageStorage.image).toBe(buffer)
-    })
-    it('found image menu from db as Uint8array', async () => {
-        const menu = await serviceMenu.findOneMenu(jid, key)
-        expect(menu!.type).toEqual(GroupMenuType.IMAGE)
-        expect(menu!.imageStorage.image).toEqual(Buffer.from(new Uint8Array([1, 2, 3, 4, 5, 34, 2])))
+        const img = await storage.store(Buffer.from(buffer))
+        await serviceMenu.createMenuStoreImage(gc, key, img)
+
+        await serviceMenu.findOneMenu(jid, key) // cache first
+        const found = await serviceMenu.findOneMenu(jid, key) // get from cache
+        expect(found!.type).toEqual(GroupMenuType.IMAGE)
+        expect(found!.imageStorage.image).toEqual(Buffer.from(buffer))
     })
 })
 
