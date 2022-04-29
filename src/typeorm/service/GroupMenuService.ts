@@ -16,28 +16,31 @@ export class GroupMenuService {
     }
 
     async findAllMenu(jid: string): Promise<GroupMenuEntity[]> {
+        const cache = this.cache.get(jid)
+        if (cache) return cache
+
         const founds = await this.repo.findBy({ groupChat: { jid } })
+        this.cache.set(jid, founds, 1 * 3600 * 1000)
         return founds
     }
 
     async findOneMenu(jid: string, key: string): Promise<GroupMenuEntity | null> {
-        const cache = this.cache.get(jid)
-        if (cache) {
-            return cache
-        }
+        const cache = this.cache.get(jid + key) as GroupMenuEntity
+        if (cache?.type === GroupMenuType.TEXT) return cache
 
         const found = await this.repo.findOne(
             {
                 where: { groupChat: { jid }, key },
                 relations: { imageStorage: true }
             })
-        this.cache.set(jid, found, 1 * 3600 * 1000)
+        if (found?.type === GroupMenuType.TEXT) this.cache.set(jid + key, found, 1 * 3600 * 1000)
         return found
     }
 
     async createMenu(groupChat: GroupChatEntity, key: string, value: string, type: GroupMenuType, imageStorage?: ImageStorageEntity) {
         const found = await this.findOneMenu(groupChat.jid, key)
         if (!found) {
+            this.cache.clear(groupChat.jid)
             const groupMenu = this.repo.create({
                 groupChat,
                 key,
@@ -63,7 +66,7 @@ export class GroupMenuService {
         const found = await this.findOneMenu(jid, key)
         if (found) {
             found.value = value
-            this.cache.set(jid, found, 1 * 3600 * 1000)
+            this.cache.set(jid + key, found, 1 * 3600 * 1000)
             return this.repo.save(found)
         }
     }
@@ -71,7 +74,8 @@ export class GroupMenuService {
     async removeOneMenu(jid: string, key: string) {
         const found = await this.findOneMenu(jid, key)
         if (found) {
-            this.cache.set(jid, found, 1 * 3600 * 1000)
+            this.cache.clear(jid + key)
+            this.cache.clear(jid)
             return this.repo.remove(found)
         }
     }
