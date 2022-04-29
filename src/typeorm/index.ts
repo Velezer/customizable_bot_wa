@@ -14,6 +14,7 @@ export class AppDatabase {
     dataSource: DataSource
     constructor(dataSource: DataSource) {
         this.dataSource = dataSource
+        this.dataSource.setOptions({ poolSize: 2 })
     }
 
     async setup() {
