@@ -39,12 +39,7 @@ export class YTStatusCommand implements Command {
                             fs.unlinkSync(output)
                         })
                 },
-            )
-            setTimeout(() => {
-                fs.unlinkSync(downloadedName)
-            }, 5 * 60 * 1000);
-
-
+            ).then(() => fs.unlinkSync(downloadedName))
         })
 
     }
@@ -54,10 +49,13 @@ export class YTStatusCommand implements Command {
         let startTime = 0
         for (let i = 0; i < videoDuration / durationPerVideo; i++) {
             const output = i + '-' + filename + '.mp4'
-            retryPromise(() => this.cutVideo(stream, durationPerVideo, startTime, output), 10)
+            await retryPromise(() => this.cutVideo(stream, durationPerVideo, startTime, output), 10)
                 .then(output => resolve(output))
             startTime += durationPerVideo
         }
+        return new Promise<void>((res) => {
+            res()
+        })
     }
 
     async cutVideo(stream: any, durationPerVideo: number, startTime: number, output: string) {

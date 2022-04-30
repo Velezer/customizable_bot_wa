@@ -1,4 +1,4 @@
-import { LegacySocketConfig, makeInMemoryStore, WALegacySocket, AnyWASocket, proto } from "@adiwajshing/baileys";
+import { proto } from "@adiwajshing/baileys";
 import { BotLevel } from "../groups/interface";
 import { Command, CommandLevel, RunArgs } from "./interface";
 
@@ -10,7 +10,7 @@ export class DeleteBotTypoCommand implements Command {
     level: CommandLevel = CommandLevel.ADMIN;
 
     async run(args: RunArgs): Promise<void> {
-        const { quotedMessage, receivedMessage, conversation, botwa, groupChat } = args
+        const { receivedMessage, botwa, groupChat } = args
         const jid = groupChat?.jid!
 
         const quotedId = receivedMessage?.message?.extendedTextMessage?.contextInfo?.stanzaId

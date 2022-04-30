@@ -10,7 +10,7 @@ export class CalcCommand implements Command {
     level: CommandLevel = CommandLevel.MEMBER;
 
     async run(args: RunArgs) {
-        const { botwa, groupChat, services, quotedMessage, conversation } = args
+        const { botwa, groupChat, conversation } = args
         const m1 = conversation.slice(this.key.length + 1)
 
 
