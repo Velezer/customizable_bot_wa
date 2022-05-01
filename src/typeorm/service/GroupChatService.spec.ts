@@ -54,8 +54,11 @@ describe('GroupChat with jid=jid', () => {
     })
 
     it('sewa GroupChat', async () => {
-        await service.sewa(jid, BotLevel.BASIC)
+        const before = await service.findOneByJid(jid)
+        expect(before!.sewaExpiredAt).toBe(null)
 
+        await service.sewa(jid, BotLevel.BASIC)
+        
         await delay(0)
         const found = await service.findOneByJid(jid)
         expect(found!.jid).toBe(jid)
@@ -63,9 +66,17 @@ describe('GroupChat with jid=jid', () => {
         expect(found!.sewaExpiredAt.getDate()).toBe(futureDateFromNow(30).getDate())
         await delay(0)
         const cached = await service.findOneByJid(jid)
-        expect(found!.jid).toBe(jid)
-        expect(found!.botLevel).toBe(BotLevel.BASIC)
+        expect(cached!.jid).toBe(jid)
+        expect(cached!.botLevel).toBe(BotLevel.BASIC)
         expect(cached!.sewaExpiredAt.getDate()).toBe(futureDateFromNow(30).getDate())
+        
+        await service.sewa(jid, BotLevel.ELEGANT)
+        await service.findOneByJid(jid)
+        const sewaAgain = await service.findOneByJid(jid)
+        expect(sewaAgain!.jid).toBe(jid)
+        expect(sewaAgain!.botLevel).toBe(BotLevel.ELEGANT)
+        expect(sewaAgain!.sewaExpiredAt.getDate()).toBe(futureDateFromNow(30).getDate())
+
     })
     it('setWelcome GroupChat', async () => {
         const welcome = 'welcome comrades'
