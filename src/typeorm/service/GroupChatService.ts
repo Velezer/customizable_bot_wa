@@ -24,7 +24,7 @@ export class GroupChatService {
         if (cache) return cache
 
         const found = await this.repo.findOne({ where: { jid } })
-        this.cache.set(jid, found, 1 * 3600 * 1000)
+        setImmediate(() => this.cache.set(jid, found, 1 * 3600 * 1000))
         return found
     }
 
@@ -41,10 +41,8 @@ export class GroupChatService {
         found!.botLevel = BotLevel.ELEGANT
         found!.trialExpiredAt = futureDateFromNow(1)
 
-        return this.repo.save(found!).then((res) => {
-            this.cache.set(jid, found, 1 * 3600 * 1000)
-            return res
-        })
+        this.cache.clear(jid)
+        return this.repo.save(found!)
     }
 
     async sewa(jid: string, botLevel: BotLevel) {
@@ -52,20 +50,16 @@ export class GroupChatService {
         found!.botLevel = botLevel
         found!.sewaExpiredAt = futureDateFromNow(30)
 
-        return this.repo.save(found!).then((res) => {
-            this.cache.set(jid, found, 1 * 3600 * 1000)
-            return res
-        })
+        this.cache.clear(jid)
+        return this.repo.save(found!)
     }
 
     async blacklist(jid: string) {
         const found = await this.findOneByJid(jid)
         found!.blacklist = true
 
-        return this.repo.save(found!).then((res) => {
-            this.cache.set(jid, res, 1 * 3600 * 1000)
-            return res
-        })
+        this.cache.clear(jid)
+        return this.repo.save(found!)
     }
 
 
@@ -73,29 +67,23 @@ export class GroupChatService {
         const found = await this.findOneByJid(jid)
         found!.welcome = welcome
 
-        return this.repo.save(found!).then((res) => {
-            this.cache.set(jid, res, 1 * 3600 * 1000)
-            return res
-        })
+        this.cache.clear(jid)
+        return this.repo.save(found!)
     }
 
     async setLeave(jid: string, leave: string) {
         const found = await this.findOneByJid(jid)
         found!.leave = leave
 
-        return this.repo.save(found!).then((res) => {
-            this.cache.set(jid, res, 1 * 3600 * 1000)
-            return res
-        })
+        this.cache.clear(jid)
+        return this.repo.save(found!)
     }
 
     async remove(jid: string) {
         const found = await this.findOneByJid(jid)
         if (found) {
-            return this.repo.remove(found).then((res) => {
-                this.cache.clear(jid)
-                return res
-            })
+            this.cache.clear(jid)
+            return this.repo.remove(found)
         }
     }
 

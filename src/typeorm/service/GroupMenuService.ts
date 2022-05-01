@@ -20,20 +20,24 @@ export class GroupMenuService {
         if (cache) return cache
 
         const founds = await this.repo.findBy({ groupChat: { jid } })
-        this.cache.set(jid, founds, 1 * 3600 * 1000)
+
+        setImmediate(() => this.cache.set(jid, founds, 1 * 3600 * 1000))
+
         return founds
     }
 
     async findOneMenu(jid: string, key: string): Promise<GroupMenuEntity | null> {
         const cache = this.cache.get(jid + key) as GroupMenuEntity
-        if (cache?.type === GroupMenuType.TEXT) return cache
+        if (cache) return cache
 
         const found = await this.repo.findOne(
             {
                 where: { groupChat: { jid }, key },
                 relations: { imageStorage: true }
             })
-        if (found?.type === GroupMenuType.TEXT) this.cache.set(jid + key, found, 1 * 3600 * 1000)
+
+        setImmediate(() => this.cache.set(jid + key, found, 1 * 3600 * 1000))
+
         return found
     }
 
@@ -66,7 +70,7 @@ export class GroupMenuService {
         const found = await this.findOneMenu(jid, key)
         if (found) {
             found.value = value
-            this.cache.set(jid + key, found, 1 * 3600 * 1000)
+            this.cache.clear(jid + key)
             return this.repo.save(found)
         }
     }
