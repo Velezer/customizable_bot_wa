@@ -18,7 +18,7 @@ logger.level = process.env.LOGGER_LEVEL || 'warn'
 
 export async function app(dataSource: DataSource) {
     const db = new AppDatabase(dataSource)
-    await db.setup().then(() => console.log('db connected'))
+    await db.setup().then(() => console.log('db connected')).catch(err => console.log(err))
     const services = db.getServices()
 
 
@@ -26,10 +26,12 @@ export async function app(dataSource: DataSource) {
     const foundAuth = await services.authService.findOne(authName)
     if (foundAuth && foundAuth.authInfo) {
         fs.writeFileSync('./auth_info_multi.json', foundAuth.authInfo);
+    } else {
+        fs.unlinkSync('./auth_info_multi.json')
     }
-
     const { state, saveState } = useSingleFileAuthState('./auth_info_multi.json')
-    const {version, isLatest} = await fetchLatestBaileysVersion()
+    console.log(state)
+    const { version, isLatest } = await fetchLatestBaileysVersion()
     let sock: WASocket = makeWASocket({
         version,
         auth: state,
@@ -49,6 +51,8 @@ export async function app(dataSource: DataSource) {
         const { connection, lastDisconnect } = update
         if (connection === 'close') {
             const shouldReconnect = (lastDisconnect?.error as Boom)?.output?.statusCode !== DisconnectReason.loggedOut
+            console.log('connection closed due to ', lastDisconnect?.error, ', reconnecting ', shouldReconnect)
+            // reconnect if not logged out
             if (shouldReconnect) {
                 app(dataSource)
             }
